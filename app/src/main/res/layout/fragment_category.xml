@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_white"
+        tools:context=".ui.category.CategoryFragment"
+        tools:ignore="SpeakableTextPresentCheck">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/heading_category"-->
+<!--                android:fontFamily="@font/fredoka_one"-->
+<!--                android:textSize="35sp"-->
+<!--                android:gravity="center"-->
+<!--                android:background="@drawable/category_heading_bg"-->
+<!--                android:textColor="@color/white"-->
+<!--                />-->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:text="@string/heading_category_men"
+                android:fontFamily="@font/coiny"
+                android:textColor="@color/black"
+                android:gravity="center"/>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/category_men"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:background="@drawable/category_men_bg"
+                android:padding="10dp"
+                app:shapeAppearanceOverlay="@style/Circular"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/coiny"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:text="@string/heading_category_women"
+                android:textColor="@color/black"
+                android:textSize="30sp" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/category_women"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:background="@drawable/category_women_bg"
+                android:padding="10dp"
+                app:shapeAppearanceOverlay="@style/Circular" />
+
+            <!--            <RelativeLayout-->
+<!--                android:id="@+id/menCategory"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="150dp"-->
+<!--                android:background="@drawable/category_men_bg">-->
+
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:fontFamily="@font/fredoka_one"-->
+<!--                    android:padding="25dp"-->
+<!--                    android:text="@string/heading_category_men"-->
+<!--                    android:textColor="@color/white"-->
+<!--                    android:textSize="30sp" />-->
+
+<!--                <Button-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:background="#00000000"-->
+<!--                    android:padding="20dp"-->
+<!--                    tools:ignore="SpeakableTextPresentCheck" />-->
+
+<!--            </RelativeLayout>-->
+
+<!--            <RelativeLayout-->
+<!--                android:id="@+id/womenCategory"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="150dp"-->
+<!--                android:background="@drawable/category_women_bg">-->
+
+<!--            </RelativeLayout>-->
+
+        </LinearLayout>
+    </ScrollView>
+</layout>

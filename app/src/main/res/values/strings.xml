@@ -1,0 +1,61 @@
+<resources>
+    <string name="app_name">Adore</string>
+    <!-- Strings related to login -->
+    <string name="prompt_name">Name</string>
+    <string name="prompt_phone_no">Mobile no</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_confirm_password">Confirm password</string>
+    <string name="forgot_password">Forgot password</string>
+    <string name="action_login">Login</string>
+    <string name="action_signup">Sign Up</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string name="shop_now">SHOP NOW!</string>
+
+    <!--Category-->
+    <string name="heading_category">CATEGORIES</string>
+    <string name="heading_category_men">Men\'s Collection</string>
+    <string name="heading_category_women">Women\'s Collection</string>
+
+    <!--Men's category-->
+    <string name="heading_men_category">MEN</string>
+    <string name="t_shirts">T-Shirts</string>
+    <string name="shirts">Shirts</string>
+    <string name="jeans">Jeans</string>
+    <string name="formal_wear">Formal wear</string>
+    <string name="track_pants">Track Pants</string>
+    <string name="ethnic_wear">Ethnic Wear</string>
+    <string name="sports_wear">Sports Wear</string>
+    <string name="inner_wear">Inner Wear</string>
+
+    <!--Slide-->
+    <string name="festive_collections">Festive Collections</string>
+    <string name="casuals">Tops &amp; Tees | Jeans </string>
+    <string name="Dresses_and_jumpsuits">Dresses | Jumpsuits</string>
+
+    <!--Women's category-->
+    <string name="heading_women_category">WOMEN</string>
+    <string name="tops_and_tees">Tops &amp; Tees</string>
+    <string name="kurtas">Kurtas</string>
+    <string name="Dresses">Dresses</string>
+    <string name="ethnic_sets">Ethnic Wear</string>
+    <string name="Bottom_wear">Bottom Wear</string>
+    <string name="lingerie">Lingerie</string>
+
+    <!--Varieties-->
+    <string name="heading_varieties">VARIETIES</string>
+
+    <!--icons-->
+    <string name="favourites">Favorites</string>
+    <string name="cart">Cart</string>
+    <string name="categories">Categories</string>
+
+</resources>
