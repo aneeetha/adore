@@ -7,9 +7,51 @@
     <fragment
         android:id="@+id/categoryFragment"
         android:name="com.example.adore.ui.category.CategoryFragment"
-        android:label="CategoryFragment" />
+        android:label="Categories"
+        tools:layout="@layout/fragment_category">
+        <action
+            android:id="@+id/action_categoryFragment_to_varietiesFragment"
+            app:destination="@id/varietiesFragment" />
+        <action
+            android:id="@+id/action_categoryFragment_to_productsFragment"
+            app:destination="@id/productsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.adore.ui.home.HomeFragment"
-        android:label="HomeFragment" />
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favoFragment"
+        android:name="com.example.adore.ui.fragments.FavoFragment"
+        android:label="Favorites"
+        tools:layout="@layout/fragment_favo" />
+    <fragment
+        android:id="@+id/cartFragment"
+        android:name="com.example.adore.ui.fragments.CartFragment"
+        android:label="Cart"
+        tools:layout="@layout/fragment_cart" />
+    <fragment
+        android:id="@+id/varietiesFragment"
+        android:name="com.example.adore.ui.category.VarietiesFragment"
+        android:label="Varieties"
+        tools:layout="@layout/fragment_varieties">
+        <argument
+            android:name="category"
+            app:argType="string"/>
+    </fragment>
+    <fragment
+        android:id="@+id/productsFragment"
+        android:name="com.example.adore.ui.products.ProductsFragment"
+        android:label="fragment_products"
+        tools:layout="@layout/fragment_products" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.adore.ui.fragments.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" />
 </navigation>

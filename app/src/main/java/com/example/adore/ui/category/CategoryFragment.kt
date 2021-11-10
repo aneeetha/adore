@@ -5,7 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
+import androidx.databinding.DataBindingUtil
 import com.example.adore.R
+import com.example.adore.databinding.FragmentCategoryBinding
 
 class CategoryFragment : Fragment() {
 
@@ -13,8 +16,21 @@ class CategoryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_category, container, false)
+        val binding: FragmentCategoryBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_category, container, false)
+        binding.apply {
+
+            categoryMen.setOnClickListener {
+               // findNavController().navigate(CategoryFragmentDirections.actionCategoryFragmentToVarietiesFragment("men"))
+                findNavController().navigate(CategoryFragmentDirections.actionCategoryFragmentToProductsFragment())
+            }
+
+            categoryWomen.setOnClickListener {
+               // findNavController().navigate(CategoryFragmentDirections.actionCategoryFragmentToVarietiesFragment("women"))
+                findNavController().navigate(CategoryFragmentDirections.actionCategoryFragmentToProductsFragment())
+            }
+        }
+
+        return binding.root
     }
 
 }
