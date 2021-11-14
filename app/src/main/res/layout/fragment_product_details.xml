@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="productDetailsViewModel"
+            type="com.example.adore.ui.viewmodels.ProductDetailsViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.fragments.ProductDetailsFragment">
+
+        <RelativeLayout
+            android:id="@+id/top_toolbar"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/default_action_bar_size"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_back_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@color/white"
+                android:padding="15dp"
+                android:src="@drawable/general_back_icon" />
+
+            <ImageView
+                android:id="@+id/iv_search_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@color/white"
+                android:layout_toStartOf="@+id/iv_favo_icon"
+                android:padding="15dp"
+                android:src="@drawable/general_search_icon" />
+
+            <ImageView
+                android:id="@+id/iv_favo_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/iv_cart_icon"
+                android:padding="15dp"
+                android:src="@drawable/general_favo_icon" />
+
+            <ImageView
+                android:id="@+id/iv_cart_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="15dp"
+                android:src="@drawable/general_cart_filled_icon" />
+
+        </RelativeLayout>
+
+        <ScrollView
+            android:id="@+id/sv_product_details"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:paddingBottom="30dp"
+            app:layout_constraintBottom_toTopOf="@id/bottom_toolbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/top_toolbar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_product_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="500dp"
+                    android:padding="10dp"
+                    android:scaleType="centerCrop"
+                    app:productImage="@{productDetailsViewModel.product.imageUrl}" />
+
+                <TextView
+                    android:id="@+id/tv_product_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka_one"
+                    android:text="@{productDetailsViewModel.product.name}"
+                    android:textSize="@dimen/product_detail_font_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_product_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/bree_serif"
+                    android:text="@{productDetailsViewModel.product.description}"
+                    android:textSize="@dimen/product_detail_font_size" />
+
+                <TextView
+                    android:id="@+id/tv_product_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka_one"
+                    android:padding="10dp"
+                    android:textColor="@color/red"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:productPriceString="@{productDetailsViewModel.product.price}" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray"
+                    android:padding="10dp" />
+
+                <TextView
+                    android:id="@+id/tv_heading_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/bree_serif"
+                    android:paddingEnd="15dp"
+                    android:text="@string/heading_size"
+                    android:textSize="@dimen/product_detail_font_size"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_product_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+        </ScrollView>
+
+        <RelativeLayout
+            android:id="@+id/bottom_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/default_action_bar_size"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/tv_add_to_favo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="@string/add_to_favo"
+                android:background="@color/white"
+                android:textStyle="bold"
+                android:paddingStart="40dp"
+                android:paddingEnd="40dp"
+                android:textSize="@dimen/product_detail_font_size"/>
+
+            <Button
+                android:id="@+id/btn_add_to_cart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@color/yellow_700"
+                android:paddingStart="40dp"
+                android:paddingEnd="40dp"
+                android:text="@string/add_to_cart"
+                android:textColor="@color/white"
+                android:textSize="@dimen/button_font_size"
+                android:textStyle="bold"
+                android:onClick="@{() -> productDetailsViewModel.onAddToCartClicked()}"
+                tools:ignore="TextContrastCheck" />
+
+        </RelativeLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

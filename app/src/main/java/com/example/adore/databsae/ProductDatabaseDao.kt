@@ -10,6 +10,9 @@ interface ProductDatabaseDao {
     @Query("SELECT * FROM products")
     fun getAllProducts(): LiveData<List<Product>>
 
+    @Query("SELECT * from products WHERE _id = :key")
+    fun getProductWithId(key: String): LiveData<Product>
+
     @Delete
     fun deleteProduct(product: Product)
 }

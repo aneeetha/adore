@@ -10,6 +10,8 @@ import com.example.adore.R
 import com.example.adore.databinding.ActivityAdorableBinding
 import com.example.adore.databsae.ProductDatabase
 import com.example.adore.repository.ProductsRepository
+import com.example.adore.ui.viewmodels.factory.ProductsViewModelProviderFactory
+import com.example.adore.ui.viewmodels.ProductsViewModel
 
 class AdorableActivity : AppCompatActivity() {
 

@@ -4,4 +4,8 @@
     <dimen name="fragment_vertical_margin">16dp</dimen>
     <dimen name="default_action_bar_size">56dp</dimen>
     <dimen name="toolbar_icon_size">30dp</dimen>
+    <dimen name="product_detail_font_size">20sp</dimen>
+    <dimen name="button_font_size">18sp</dimen>
+    <dimen name="preview_product_font_size">15sp</dimen>
+    <dimen name="size_view_width">50dp</dimen>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.adore.ui
+package com.example.adore.ui.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,6 +13,7 @@ import retrofit2.Response
 class ProductsViewModel(
     private val productsRepository: ProductsRepository
 ): ViewModel() {
+
     private val _allProducts: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
     val allProducts: LiveData<Resource<ProductResponse>>
         get() = _allProducts
@@ -20,6 +21,18 @@ class ProductsViewModel(
     private val _searchResult: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
     val searchResult: LiveData<Resource<ProductResponse>>
         get() = _searchResult
+
+    private val _navigateToProductDetails = MutableLiveData<String>()
+    val navigateToProductDetails
+        get() = _navigateToProductDetails
+
+    fun onProductClicked(id: String){
+        _navigateToProductDetails.value = id
+    }
+
+//    fun onProductDetailsNavigated(){
+//        _navigateToProductDetails.value = null
+//    }
 
     init {
         getAllProducts()

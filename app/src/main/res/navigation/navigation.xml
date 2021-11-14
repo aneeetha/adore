@@ -29,7 +29,11 @@
         android:id="@+id/favoFragment"
         android:name="com.example.adore.ui.fragments.FavoFragment"
         android:label="Favorites"
-        tools:layout="@layout/fragment_favo" />
+        tools:layout="@layout/fragment_favo" >
+        <action
+            android:id="@+id/action_favoFragment_to_productDetailsFragment"
+            app:destination="@id/productDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/cartFragment"
         android:name="com.example.adore.ui.fragments.CartFragment"
@@ -46,12 +50,32 @@
     </fragment>
     <fragment
         android:id="@+id/productsFragment"
-        android:name="com.example.adore.ui.products.ProductsFragment"
+        android:name="com.example.adore.ui.fragments.ProductsFragment"
         android:label="fragment_products"
-        tools:layout="@layout/fragment_products" />
+        tools:layout="@layout/fragment_products" >
+        <action
+            android:id="@+id/action_productsFragment_to_productDetailsFragment"
+            app:destination="@id/productDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.adore.ui.fragments.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_productDetailsFragment"
+            app:destination="@id/productDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/productDetailsFragment"
+        android:name="com.example.adore.ui.fragments.ProductDetailsFragment"
+        android:label="fragment_product_details"
+        tools:layout="@layout/fragment_product_details" >
+        <argument
+            android:name="product"
+            app:argType="com.example.adore.models.Product" />
+        <action
+            android:id="@+id/action_productDetailsFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
+    </fragment>
 </navigation>

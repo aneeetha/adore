@@ -8,29 +8,23 @@
         android:layout_height="match_parent">
 
         <RelativeLayout
-            android:id="@+id/toolbar"
+            android:id="@+id/top_toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/default_action_bar_size"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/iv_back_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:padding="15dp"
-                android:src="@drawable/general_back_icon" />
+
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="0dp"
-                android:layout_toEndOf="@+id/iv_back_icon"
+                android:layout_alignParentStart="true"
+                android:padding="10dp"
                 android:fontFamily="@font/fredoka_one"
-                android:text="@string/heading_category"
+                android:text="@string/shop_now"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
@@ -51,7 +45,7 @@
             android:background="@color/light_white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintTop_toBottomOf="@+id/top_toolbar"
             tools:context=".ui.category.CategoryFragment"
             tools:ignore="SpeakableTextPresentCheck">
 
@@ -77,7 +71,7 @@
                     android:layout_height="250dp"
                     android:background="@drawable/category_men_bg"
                     android:padding="10dp"
-                    app:shapeAppearanceOverlay="@style/Circular"
+                    app:shapeAppearanceOverlay="@style/rectangle"
                     tools:ignore="SpeakableTextPresentCheck" />
 
                 <TextView

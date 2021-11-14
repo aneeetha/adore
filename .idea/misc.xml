@@ -13,12 +13,16 @@
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/circle_corner.xml" value="0.2703125" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/circle_img.xml" value="0.2703125" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/edit_text_bg.xml" value="0.25" />
+        <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/faded_text_view_bg.xml" value="0.2351851851851852" />
+        <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/highlight_text_view_bg.xml" value="0.2351851851851852" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/ic_a_d_o_r_e.xml" value="0.26666666666666666" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/ic_adore_login_bg.xml" value="0.72" />
+        <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/ic_category_background.xml" value="0.2703125" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/ic_logo_background.xml" value="0.16203703703703703" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/ic_yellow_bg.xml" value="0.26615384615384613" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/login_bg.xml" value="0.24351851851851852" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/splash_background.xml" value="0.1" />
+        <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/text_view_bg.xml" value="0.2703125" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/vie_bg.xml" value="0.25" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/drawable/yellow_bg.xml" value="0.24351851851851852" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/action_bar.xml" value="0.20380434782608695" />
@@ -34,13 +38,17 @@
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/fragment_home.xml" value="0.23278985507246377" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/fragment_login.xml" value="0.24010416666666667" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/fragment_login_tab.xml" value="0.19429347826086957" />
+        <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/fragment_product_details.xml" value="0.2" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/fragment_products.xml" value="0.2513586956521739" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/fragment_search.xml" value="0.2513586956521739" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/fragment_sign_up.xml" value="0.2" />
+        <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/fragment_size.xml" value="0.21195652173913043" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/fragment_varieties.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/fragment_view_product.xml" value="0.2513586956521739" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/grid_item.xml" value="0.264" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/product_preview.xml" value="0.21739130434782608" />
+        <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/product_size_item.xml" value="0.21195652173913043" />
+        <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/size_item.xml" value="0.21195652173913043" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/layout/varieties_slide_layout.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/menu/bottom_nav_menu.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/anitha-11964/AndroidStudioProjects/Adore/app/src/main/res/menu/home_bottom_navigation_menu.xml" value="0.25416666666666665" />

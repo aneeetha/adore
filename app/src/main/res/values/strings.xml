@@ -21,6 +21,7 @@
     <string name="shop_now">SHOP NOW!</string>
 
     <!--Category-->
+    <string name="heading_shop">Shop</string>
     <string name="heading_category">CATEGORIES</string>
     <string name="heading_category_men">Men\'s Collection</string>
     <string name="heading_category_women">Women\'s Collection</string>
@@ -57,5 +58,27 @@
     <string name="favourites">Favorites</string>
     <string name="cart">Cart</string>
     <string name="categories">Categories</string>
+
+    <!--product detail-->
+    <string name="add_to_cart">ADD TO CART</string>
+    <string name="go_to_cart">GO TO CART</string>
+    <string name="add_to_favo">&#9825; FAVO</string>
+    <string name="added_to_favo">&#10084; FAVOURED</string>
+
+    <string name="heading_size">Size</string>
+    <string name="size_xs">XS</string>
+    <string name="size_s">S</string>
+    <string name="size_m">M</string>
+    <string name="size_l">L</string>
+    <string name="size_xl">XL</string>
+
+    <!--product preview-->
+    <string name="product_preview_name">Product name</string>
+    <string name="product_preview_description">Product description provided here</string>
+    <string name="product_preview_price">Rs.799</string>
+
+
+    <!-- Size -->
+    <string name="size_not_chosen_message">You haven\'t chosen any size yet!</string>
 
 </resources>

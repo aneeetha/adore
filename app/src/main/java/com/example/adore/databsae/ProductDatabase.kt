@@ -1,15 +1,14 @@
 package com.example.adore.databsae
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
 import com.example.adore.models.Product
 
 @Database(
     entities = [Product::class],
     version = 1
 )
+@TypeConverters(ColorTypeConverter::class, InStockCountTypeConverter::class, CategoryTypeConverter::class)
 abstract class ProductDatabase: RoomDatabase() {
 
     abstract fun getProductDatabaseDao():ProductDatabaseDao

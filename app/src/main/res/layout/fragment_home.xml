@@ -28,7 +28,7 @@
                 android:layout_height="match_parent">
 
                 <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
+                    android:id="@+id/top_toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="56dp"
@@ -65,9 +65,9 @@
                     android:layout_height="@dimen/toolbar_icon_size"
                     android:layout_marginEnd="16dp"
                     android:onClick="@{()-> homeFragment.navigateToSearchFragment()}"
-                    app:layout_constraintBottom_toBottomOf="@id/toolbar"
-                    app:layout_constraintEnd_toEndOf="@+id/toolbar"
-                    app:layout_constraintTop_toTopOf="@id/toolbar"
+                    app:layout_constraintBottom_toBottomOf="@id/top_toolbar"
+                    app:layout_constraintEnd_toEndOf="@+id/top_toolbar"
+                    app:layout_constraintTop_toTopOf="@id/top_toolbar"
                     app:srcCompat="@drawable/general_search_icon" />
 
 

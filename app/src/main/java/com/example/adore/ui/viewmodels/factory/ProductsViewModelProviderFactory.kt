@@ -1,8 +1,9 @@
-package com.example.adore.ui
+package com.example.adore.ui.viewmodels.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.adore.repository.ProductsRepository
+import com.example.adore.ui.viewmodels.ProductsViewModel
 
 class ProductsViewModelProviderFactory(
     private val productsRepository: ProductsRepository
