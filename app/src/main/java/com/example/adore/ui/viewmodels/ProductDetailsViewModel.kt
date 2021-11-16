@@ -42,6 +42,4 @@ class ProductDetailsViewModel(val product: Product, dataSource: ProductDatabaseD
     fun doneShowingSnackBar(){
         _showSnackBar.value = false
     }
-
-
 }

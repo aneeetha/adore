@@ -1,33 +1,43 @@
 package com.example.adore.adapters
 
-import android.content.res.Resources
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adore.R
 import com.example.adore.models.DressSize
 import com.example.adore.models.Stock
 import kotlinx.android.synthetic.main.size_item.view.*
 
-class ProductSizeAdapter(private val stock: List<Stock>) : RecyclerView.Adapter<ProductSizeAdapter.TextViewHolder>() {
+class ProductSizeAdapter() : ListAdapter<Stock, ProductSizeAdapter.TextViewHolder>(SizeViewDiffCallback()){
+
+    private var selectedSizePosition = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextViewHolder = TextViewHolder.from(parent)
 
-    override fun getItemCount(): Int = stock.size
-
     override fun onBindViewHolder(holder: TextViewHolder, position: Int) {
-        stock[position].run {
-            holder.itemView.tv_size_item.text = size.toString()
-            if(availableCount>1){
-                holder.itemView.setOnClickListener {
-                    onItemClickListener?.let {
-                        holder.itemView.setBackgroundResource(R.drawable.faded_text_view_bg)
-                        it(size)}
+        val currentItem = getItem(position)
+        holder.apply {
+            itemView.tv_size_item.text = currentItem.size.name
+            if(currentItem.availableCount>1){
+                if(selectedSizePosition != bindingAdapterPosition)  unCheckSizeView(itemView)
+                itemView.setOnClickListener {
+                    onItemClickListener?.let{
+                        setSizeViewChecked(itemView)
+                        selectedSizePosition = bindingAdapterPosition
+                        it(currentItem.size)
+                        notifyItemRangeChanged(0, position)
+                    }
                 }
             }else{
-                holder.itemView.setBackgroundResource(R.drawable.faded_text_view_bg)  }
+                currentList.remove(currentItem)
+                submitList(currentList)
+                //setSizeNotAvailable(itemView)
+            }
+
         }
     }
 
@@ -47,5 +57,21 @@ class ProductSizeAdapter(private val stock: List<Stock>) : RecyclerView.Adapter<
         }
     }
 
+    class SizeViewDiffCallback: DiffUtil.ItemCallback<Stock>() {
+        override fun areItemsTheSame(oldItem: Stock, newItem: Stock): Boolean = oldItem.id==newItem.id
 
+        override fun areContentsTheSame(oldItem: Stock, newItem: Stock): Boolean = oldItem==newItem
+    }
+
+    private fun setSizeViewChecked(view: View){
+        view.setBackgroundResource(R.drawable.highlight_text_view_bg)
+    }
+
+    private fun unCheckSizeView(view: View){
+        view.setBackgroundResource(R.drawable.text_view_bg)
+    }
+
+    private fun setSizeNotAvailable(view: View){
+        view.setBackgroundResource(R.drawable.faded_text_view_bg)
+    }
 }

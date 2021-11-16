@@ -1,7 +1,6 @@
 package com.example.adore.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
@@ -24,7 +23,7 @@ class ProductDetailsFragment : Fragment() {
 
     lateinit var viewModel: ProductDetailsViewModel
     lateinit var binding:FragmentProductDetailsBinding
-    lateinit var productSizAdapter: ProductSizeAdapter
+    lateinit var productSizeAdapter: ProductSizeAdapter
     lateinit var arguments: ProductDetailsFragmentArgs
 
     override fun onCreateView(
@@ -50,7 +49,7 @@ class ProductDetailsFragment : Fragment() {
         binding.productDetailsViewModel = viewModel
         binding.lifecycleOwner = this
 
-        productSizAdapter.setOnItemClickListener {
+        productSizeAdapter.setOnItemClickListener {
             viewModel.setChosenProductSize(it)
         }
 
@@ -75,9 +74,10 @@ class ProductDetailsFragment : Fragment() {
     }
 
     private fun setupRecyclerView(){
-        productSizAdapter = ProductSizeAdapter(arguments.product.inStockCount)
+        productSizeAdapter = ProductSizeAdapter()
+        productSizeAdapter.submitList(arguments.product.inStockCount)
         rv_product_size.apply {
-            adapter = productSizAdapter
+            adapter = productSizeAdapter
             layoutManager = GridLayoutManager(activity, 5)
         }
     }
