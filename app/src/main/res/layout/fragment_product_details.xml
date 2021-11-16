@@ -14,8 +14,9 @@
         android:layout_height="match_parent"
         tools:context=".ui.fragments.ProductDetailsFragment">
 
+
         <RelativeLayout
-            android:id="@+id/top_toolbar"
+            android:id="@+id/toolbar"
             android:layout_width="0dp"
             android:layout_height="@dimen/default_action_bar_size"
             app:layout_constraintTop_toTopOf="parent"
@@ -36,20 +37,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:background="@color/white"
                 android:layout_toStartOf="@+id/iv_favo_icon"
+                android:background="@color/white"
                 android:padding="15dp"
+                android:onClick="@{()->productDetailsViewModel.goToSearchFragmentClicked()}"
                 android:src="@drawable/general_search_icon" />
 
             <ImageView
-                android:id="@+id/iv_favo_icon"
+                android:id="@id/iv_favo_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
                 android:layout_centerVertical="true"
                 android:layout_toStartOf="@id/iv_cart_icon"
+                android:background="@color/white"
+                android:onClick="@{()->productDetailsViewModel.goToFavoFragmentClicked()}"
                 android:padding="15dp"
-                android:src="@drawable/general_favo_icon" />
+                android:src="@drawable/general_favo_icon"
+                tools:ignore="SpeakableTextPresentCheck" />
 
             <ImageView
                 android:id="@+id/iv_cart_icon"
@@ -58,6 +62,7 @@
                 android:background="@color/white"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:onClick="@{()->productDetailsViewModel.goToCartFragmentClicked()}"
                 android:padding="15dp"
                 android:src="@drawable/general_cart_filled_icon" />
 
@@ -71,7 +76,7 @@
             app:layout_constraintBottom_toTopOf="@id/bottom_toolbar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/top_toolbar">
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -154,12 +159,13 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="@string/add_to_favo"
                 android:background="@color/white"
-                android:textStyle="bold"
+                android:onClick="@{() -> productDetailsViewModel.addToFavlistClicked()}"
                 android:paddingStart="40dp"
                 android:paddingEnd="40dp"
-                android:textSize="@dimen/product_detail_font_size"/>
+                android:text="@string/add_to_favo"
+                android:textSize="@dimen/product_detail_font_size"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btn_add_to_cart"

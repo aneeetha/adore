@@ -8,14 +8,12 @@
         android:layout_height="match_parent">
 
         <RelativeLayout
-            android:id="@+id/top_toolbar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/default_action_bar_size"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
-
 
             <TextView
                 android:layout_width="wrap_content"
@@ -24,7 +22,7 @@
                 android:layout_alignParentStart="true"
                 android:padding="10dp"
                 android:fontFamily="@font/fredoka_one"
-                android:text="@string/shop_now"
+                android:text="@string/categories"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
@@ -32,10 +30,10 @@
                 android:id="@+id/iv_search_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:padding="15dp"
-                android:src="@drawable/general_search_icon" />
+                android:src="@drawable/general_search_icon"/>
 
         </RelativeLayout>
 
@@ -43,9 +41,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_white"
+            android:paddingBottom="50dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/top_toolbar"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
             tools:context=".ui.category.CategoryFragment"
             tools:ignore="SpeakableTextPresentCheck">
 
@@ -71,7 +70,7 @@
                     android:layout_height="250dp"
                     android:background="@drawable/category_men_bg"
                     android:padding="10dp"
-                    app:shapeAppearanceOverlay="@style/rectangle"
+                    app:shapeAppearanceOverlay="@style/Circular"
                     tools:ignore="SpeakableTextPresentCheck" />
 
                 <TextView

@@ -1,17 +1,18 @@
 package com.example.adore.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.adore.models.ProductResponse
-import com.example.adore.repository.ProductsRepository
+import com.example.adore.repository.AdoreRepository
 import com.example.adore.util.Resource
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class ProductsViewModel(
-    private val productsRepository: ProductsRepository
+    private val adoreRepository: AdoreRepository
 ): ViewModel() {
 
     private val _allProducts: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
@@ -21,6 +22,10 @@ class ProductsViewModel(
     private val _searchResult: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
     val searchResult: LiveData<Resource<ProductResponse>>
         get() = _searchResult
+
+    private val _favlistResult: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
+    val favlistResult
+        get() = _favlistResult
 
     private val _navigateToProductDetails = MutableLiveData<String>()
     val navigateToProductDetails
@@ -40,14 +45,21 @@ class ProductsViewModel(
 
     private fun getAllProducts() = viewModelScope.launch {
         _allProducts.value = Resource.Loading()
-        val response = productsRepository.getProducts()
+        val response = adoreRepository.getProducts()
         _allProducts.value = handleProductResponse(response)
     }
 
     fun getSearchResult(searchQuery: String) =  viewModelScope.launch {
         _searchResult.value = Resource.Loading()
-        val response = productsRepository.searchForProducts(searchQuery)
+        val response = adoreRepository.searchForProducts(searchQuery)
         _searchResult.value = handleProductResponse(response)
+    }
+
+    fun getFavlist() = viewModelScope.launch {
+        _favlistResult.value = Resource.Loading()
+        val response = adoreRepository.getFavlist()
+        Log.i("FavoFragment", response.message())
+        _favlistResult.value = handleProductResponse(response)
     }
 
     private fun handleProductResponse(response: Response<ProductResponse>): Resource<ProductResponse>{

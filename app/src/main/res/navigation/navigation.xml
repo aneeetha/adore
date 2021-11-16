@@ -15,11 +15,13 @@
         <action
             android:id="@+id/action_categoryFragment_to_productsFragment"
             app:destination="@id/productsFragment" />
+        <action
+            android:id="@+id/action_categoryFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.adore.ui.home.HomeFragment"
-        android:label="Home"
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_searchFragment"
@@ -33,12 +35,19 @@
         <action
             android:id="@+id/action_favoFragment_to_productDetailsFragment"
             app:destination="@id/productDetailsFragment" />
+        <action
+            android:id="@+id/action_favoFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
         android:name="com.example.adore.ui.fragments.CartFragment"
         android:label="Cart"
-        tools:layout="@layout/fragment_cart" />
+        tools:layout="@layout/fragment_cart" >
+        <action
+            android:id="@+id/action_cartFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
     <fragment
         android:id="@+id/varietiesFragment"
         android:name="com.example.adore.ui.category.VarietiesFragment"
@@ -56,6 +65,18 @@
         <action
             android:id="@+id/action_productsFragment_to_productDetailsFragment"
             app:destination="@id/productDetailsFragment" />
+        <action
+            android:id="@+id/action_productsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_productsFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
+        <action
+            android:id="@+id/action_productsFragment_to_searchFragment2"
+            app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_productsFragment_to_favoFragment"
+            app:destination="@id/favoFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -77,5 +98,11 @@
         <action
             android:id="@+id/action_productDetailsFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
+        <action
+            android:id="@+id/action_productDetailsFragment_to_favoFragment"
+            app:destination="@id/favoFragment" />
+        <action
+            android:id="@+id/action_productDetailsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
 </navigation>

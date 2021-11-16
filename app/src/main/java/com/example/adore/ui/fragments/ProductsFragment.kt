@@ -11,7 +11,12 @@ import com.example.adore.adapters.ProductsAdapter
 import com.example.adore.ui.AdorableActivity
 import com.example.adore.ui.viewmodels.ProductsViewModel
 import com.example.adore.util.Resource
+import kotlinx.android.synthetic.main.fragment_product_details.*
 import kotlinx.android.synthetic.main.fragment_products.*
+import kotlinx.android.synthetic.main.fragment_products.iv_back_icon
+import kotlinx.android.synthetic.main.fragment_products.iv_cart_icon
+import kotlinx.android.synthetic.main.fragment_products.iv_favo_icon
+import kotlinx.android.synthetic.main.fragment_products.iv_search_icon
 
 class ProductsFragment : Fragment(R.layout.fragment_products) {
 
@@ -48,6 +53,22 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
             )
         }
 
+        iv_back_icon.setOnClickListener {
+            parentFragmentManager.popBackStackImmediate()
+        }
+
+        iv_cart_icon.setOnClickListener {
+            findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToCartFragment())
+        }
+
+        iv_favo_icon.setOnClickListener {
+            findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToFavoFragment())
+        }
+
+        iv_search_icon.setOnClickListener {
+            findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToSearchFragment())
+        }
+
         viewModel.allProducts.observe(viewLifecycleOwner, { response ->
             when(response) {
                 is Resource.Success -> {
@@ -80,9 +101,7 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
     }
 
     private fun setUpRecyclerView(){
-        productsAdapter = ProductsAdapter(ProductsAdapter.ProductClickListener {
-            viewModel.onProductClicked(it)
-        })
+        productsAdapter = ProductsAdapter()
         rv_products.apply {
             adapter = productsAdapter
             layoutManager = GridLayoutManager(activity, 2)

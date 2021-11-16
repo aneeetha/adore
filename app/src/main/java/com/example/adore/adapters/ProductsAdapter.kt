@@ -10,12 +10,12 @@ import com.example.adore.databinding.ProductPreviewBinding
 import com.example.adore.models.Product
 import kotlinx.android.synthetic.main.product_preview.view.*
 
-class ProductsAdapter(private val clickListener: ProductClickListener): RecyclerView.Adapter<ProductsAdapter.ProductViewHolder>(){
+class ProductsAdapter(): RecyclerView.Adapter<ProductsAdapter.ProductViewHolder>(){
 
     private val differCallback = object: DiffUtil.ItemCallback<Product>(){
         override fun areItemsTheSame(
             oldItem: Product,
-            newItem: Product) = oldItem.id == newItem.id
+            newItem: Product) = oldItem._id == newItem._id
 
 
         override fun areContentsTheSame(oldItem: Product, newItem: Product)= oldItem==newItem
@@ -32,7 +32,6 @@ class ProductsAdapter(private val clickListener: ProductClickListener): Recycler
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = differ.currentList[position]
         val currency = "Rs. "
-        holder.bind(product, clickListener)
         holder.itemView.apply {
             Glide.with(this).load(product.imageUrl).into(iv_product_image)
             tv_product_name.text = product.name
@@ -52,18 +51,8 @@ class ProductsAdapter(private val clickListener: ProductClickListener): Recycler
         onItemClickListener = listener
     }
 
-    class ProductClickListener(val clickListener: (productId: String)->Unit){
-        fun onClick(product: Product) = clickListener(product.id)
-    }
 
-    class ProductViewHolder(val binding: ProductPreviewBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(item: Product, clickListener: ProductClickListener){
-            binding.apply {
-                product = item
-                this.clickListener = clickListener
-                executePendingBindings()
-            }
-        }
+    class ProductViewHolder(private val binding: ProductPreviewBinding): RecyclerView.ViewHolder(binding.root){
 
         companion object{
             fun from(parent: ViewGroup): ProductViewHolder {

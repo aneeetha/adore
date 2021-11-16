@@ -2,20 +2,22 @@ package com.example.adore.databsae
 
 import android.content.Context
 import androidx.room.*
+import com.example.adore.models.Favo
 import com.example.adore.models.Product
 
 @Database(
-    entities = [Product::class],
-    version = 1
+    entities = [Product::class, Favo::class],
+    version = 2
 )
-@TypeConverters(ColorTypeConverter::class, InStockCountTypeConverter::class, CategoryTypeConverter::class)
-abstract class ProductDatabase: RoomDatabase() {
+@TypeConverters(ListOfStringTypeConverter::class, InStockCountTypeConverter::class, CategoryTypeConverter::class)
+abstract class AdoreDatabase: RoomDatabase() {
 
-    abstract fun getProductDatabaseDao():ProductDatabaseDao
+    abstract fun getProductDao():ProductDao
+    abstract fun getFavoDao():FavoDao
 
     companion object{
 
-        private var instance: ProductDatabase? = null
+        private var instance: AdoreDatabase? = null
 
         operator fun invoke(context: Context) = instance?: synchronized(this){
             instance?:createDatabase(context).also { instance = it }
@@ -23,8 +25,8 @@ abstract class ProductDatabase: RoomDatabase() {
 
         private fun createDatabase(context: Context) = Room.databaseBuilder(
             context.applicationContext,
-            ProductDatabase::class.java,
-            "product_database"
+            AdoreDatabase::class.java,
+            "adore_database"
         ).build()
     }
 }

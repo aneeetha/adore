@@ -92,9 +92,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun setUpRecyclerView(){
-        productsAdapter = ProductsAdapter(ProductsAdapter.ProductClickListener { id ->
-            viewModel.onProductClicked(id)
-        })
+        productsAdapter = ProductsAdapter()
         rv_search.apply {
             adapter = productsAdapter
             layoutManager = GridLayoutManager(activity, 2)

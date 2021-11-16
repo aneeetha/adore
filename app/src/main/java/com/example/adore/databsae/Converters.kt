@@ -5,7 +5,7 @@ import com.example.adore.models.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class ColorTypeConverter {
+class ListOfStringTypeConverter {
     @TypeConverter
     fun fromString(value: String?): List<String>{
         val listType = object : TypeToken<List<String>>(){}.type
@@ -13,7 +13,7 @@ class ColorTypeConverter {
     }
 
     @TypeConverter
-    fun fromColorList(list: List<String>): String = Gson().toJson(list)
+    fun fromList(list: List<String>): String = Gson().toJson(list)
 
 }
 

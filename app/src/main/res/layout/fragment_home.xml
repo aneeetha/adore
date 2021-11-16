@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="homeFragment"
             type="com.example.adore.ui.home.HomeFragment" />
@@ -15,66 +16,55 @@
         android:layout_height="match_parent"
         tools:context=".ui.home.HomeFragment">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appBarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/top_toolbar"
+                <com.google.android.material.appbar.AppBarLayout
+                    android:id="@+id/appBarLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="56dp"
-                    android:background="@color/light_white"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-<!--                <ImageView-->
-<!--                    android:id="@+id/small_logo"-->
-<!--                    android:layout_width="30dp"-->
-<!--                    android:layout_height="30dp"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="@+id/toolbar"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    app:srcCompat="@drawable/small_adorable_logo" />-->
-
-                <TextView
-                    android:id="@+id/app_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/fredoka_one"
-                    android:paddingLeft="5dp"
-                    android:text="@string/app_name"
-                    android:textColor="@color/black"
-                    android:textSize="30sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/searchIconIcon"
-                    android:layout_width="@dimen/toolbar_icon_size"
-                    android:layout_height="@dimen/toolbar_icon_size"
-                    android:layout_marginEnd="16dp"
-                    android:onClick="@{()-> homeFragment.navigateToSearchFragment()}"
-                    app:layout_constraintBottom_toBottomOf="@id/top_toolbar"
-                    app:layout_constraintEnd_toEndOf="@+id/top_toolbar"
-                    app:layout_constraintTop_toTopOf="@id/top_toolbar"
-                    app:srcCompat="@drawable/general_search_icon" />
+                    app:layout_constraintTop_toTopOf="parent">
 
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:minHeight="?actionBarSize">
 
-        </com.google.android.material.appbar.AppBarLayout>
 
+                        <!--                <ImageView-->
+                        <!--                    android:id="@+id/small_logo"-->
+                        <!--                    android:layout_width="30dp"-->
+                        <!--                    android:layout_height="30dp"-->
+                        <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+                        <!--                    app:layout_constraintStart_toStartOf="@+id/toolbar"-->
+                        <!--                    app:layout_constraintTop_toTopOf="parent"-->
+                        <!--                    app:srcCompat="@drawable/small_adorable_logo" />-->
+
+                        <TextView
+                            android:id="@+id/app_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredoka_one"
+                            android:layout_marginStart="20dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/app_name"
+                            android:textColor="@color/black"
+                            android:textSize="30sp" />
+
+                        <ImageView
+                            android:id="@+id/searchIcon"
+                            android:layout_width="@dimen/toolbar_icon_size"
+                            android:layout_height="@dimen/toolbar_icon_size"
+                            android:onClick="@{()-> homeFragment.navigateToSearchFragment()}"
+                            android:layout_gravity="end"
+                            android:layout_marginEnd="10dp"
+                            app:srcCompat="@drawable/general_search_icon" />
+
+                    </androidx.appcompat.widget.Toolbar>
+
+                </com.google.android.material.appbar.AppBarLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,6 +16,10 @@ class CategoryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        val navBar = activity?.findViewById<View>(R.id.bottom_navigation_view)
+        navBar?.visibility = View.VISIBLE
+
         val binding: FragmentCategoryBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_category, container, false)
         binding.apply {
 
@@ -28,9 +32,12 @@ class CategoryFragment : Fragment() {
                // findNavController().navigate(CategoryFragmentDirections.actionCategoryFragmentToVarietiesFragment("women"))
                 findNavController().navigate(CategoryFragmentDirections.actionCategoryFragmentToProductsFragment())
             }
+
+            ivSearchIcon.setOnClickListener {
+                findNavController().navigate(CategoryFragmentDirections.actionCategoryFragmentToSearchFragment())
+            }
         }
 
         return binding.root
     }
-
 }

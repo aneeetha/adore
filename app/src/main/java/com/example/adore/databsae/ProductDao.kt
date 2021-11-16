@@ -5,8 +5,7 @@ import androidx.room.*
 import com.example.adore.models.Product
 
 @Dao
-interface ProductDatabaseDao {
-
+interface ProductDao {
     @Query("SELECT * FROM products")
     fun getAllProducts(): LiveData<List<Product>>
 
@@ -14,5 +13,5 @@ interface ProductDatabaseDao {
     fun getProductWithId(key: String): LiveData<Product>
 
     @Delete
-    fun deleteProduct(product: Product)
+    suspend fun deleteProduct(product: Product)
 }

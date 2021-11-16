@@ -6,16 +6,13 @@
         <variable
             name="product"
             type="com.example.adore.models.Product" />
-        <variable
-            name="clickListener"
-            type="com.example.adore.adapters.ProductsAdapter.ProductClickListener" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="200dp"
-        android:layout_height="260dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -54,6 +51,18 @@
             android:textSize="@dimen/preview_product_font_size"
             android:textStyle="bold"
             android:textColor="@color/red"/>
+
+        <Button
+            android:id="@+id/btn_add_to_cart"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:background="@color/white"
+            android:text="@string/add_to_cart"
+            android:textColor="@color/black"
+            android:textSize="@dimen/preview_button_font_size"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:ignore="TextContrastCheck" />
 
     </LinearLayout>
 

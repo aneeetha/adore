@@ -1,6 +1,5 @@
 package com.example.adore.adapters
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,7 +34,6 @@ class ProductSizeAdapter() : ListAdapter<Stock, ProductSizeAdapter.TextViewHolde
             }else{
                 currentList.remove(currentItem)
                 submitList(currentList)
-                //setSizeNotAvailable(itemView)
             }
 
         }
