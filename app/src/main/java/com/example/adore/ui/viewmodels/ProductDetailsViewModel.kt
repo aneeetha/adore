@@ -43,8 +43,8 @@ class ProductDetailsViewModel(val product: Product, private val repository: Ador
 
     fun addToFavlistClicked(){
         viewModelScope.launch {
-            repository.addProductToFav(product._id)
             _addedToFavlist.value = true
+            repository.addProductToFav(product._id)
         }
     }
 

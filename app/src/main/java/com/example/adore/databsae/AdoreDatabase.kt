@@ -6,14 +6,18 @@ import com.example.adore.models.Favo
 import com.example.adore.models.Product
 
 @Database(
-    entities = [Product::class, Favo::class],
+    entities = [Product::class],
     version = 2
 )
-@TypeConverters(ListOfStringTypeConverter::class, InStockCountTypeConverter::class, CategoryTypeConverter::class)
+@TypeConverters(ListOfStringTypeConverter::class,
+    ListOfStockTypeConverter::class,
+    CategoryTypeConverter::class,
+    ProductCategoryTypeConverter::class,
+    ColorTypeConverter::class,
+    GenderTypeConverter::class)
 abstract class AdoreDatabase: RoomDatabase() {
 
     abstract fun getProductDao():ProductDao
-    abstract fun getFavoDao():FavoDao
 
     companion object{
 

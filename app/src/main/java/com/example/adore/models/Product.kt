@@ -1,6 +1,5 @@
 package com.example.adore.models
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
@@ -11,13 +10,20 @@ import java.io.Serializable
 data class Product(
     @PrimaryKey
     val _id: String,
-    val productId: Int,
+    val itemGroupId: Int,
     val name: String,
     val price: Float,
-    val category: Category,
-    val color: List<String>,
+    val color: List<Color>,
+    val gender: Gender,
+    val category: List<Category>,
+    val productType: List<ProductType>,
     val description: String,
     val imageUrl: String,
     val isAvailable: Boolean,
-    val inStockCount: List<Stock>
+    val stock: List<Stock>,
+    val sizeChartUrl: String,
+    val customLabels: List<String>
 ): Serializable
+
+
+

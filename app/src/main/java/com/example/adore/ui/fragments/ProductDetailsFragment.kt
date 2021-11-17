@@ -1,14 +1,11 @@
 package com.example.adore.ui.fragments
 
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -24,7 +21,6 @@ import com.example.adore.ui.viewmodels.ProductsViewModel
 import com.example.adore.ui.viewmodels.factory.ProductDetailsViewModelProviderFactory
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_product_details.*
-import kotlinx.coroutines.flow.callbackFlow
 
 class ProductDetailsFragment : Fragment() {
 
@@ -119,7 +115,7 @@ class ProductDetailsFragment : Fragment() {
 
     private fun setupRecyclerView(){
         productSizeAdapter = ProductSizeAdapter()
-        productSizeAdapter.submitList(arguments.product.inStockCount)
+        productSizeAdapter.submitList(arguments.product.stock)
         rv_product_size.apply {
             adapter = productSizeAdapter
             layoutManager = GridLayoutManager(activity, 5)

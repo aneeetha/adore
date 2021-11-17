@@ -17,7 +17,7 @@ class ListOfStringTypeConverter {
 
 }
 
-class InStockCountTypeConverter{
+class ListOfStockTypeConverter{
     @TypeConverter
     fun fromList(list: List<Stock>): String{
         val listType = object : TypeToken<List<Stock>>(){}.type
@@ -28,18 +28,63 @@ class InStockCountTypeConverter{
     fun fromString(stockElements: String): List<Stock> = Gson().fromJson(stockElements, Array<Stock>::class.java).asList()
 }
 
+class ProductCategoryTypeConverter{
+    @TypeConverter
+    fun fromList(list: List<ProductType>): String{
+        val listType = object : TypeToken<List<ProductType>>(){}.type
+        return Gson().toJson(list, listType)
+    }
+
+    @TypeConverter
+    fun fromString(productTypes: String): List<ProductType> = Gson().fromJson(productTypes, Array<ProductType>::class.java).asList()
+}
 
 class CategoryTypeConverter{
     @TypeConverter
-    fun fromString(categoryElements: String): Category = Gson().fromJson(categoryElements, Category::class.java)
-
+    fun fromList(list: List<Category>): String{
+        val listType = object : TypeToken<List<Category>>(){}.type
+        return Gson().toJson(list, listType)
+    }
 
     @TypeConverter
-    fun fromCategory(category: Category): String{
-        val type = object: TypeToken<Category>(){}.type
-        return Gson().toJson(category, type)
-    }
+    fun fromString(categories: String): List<Category> = Gson().fromJson(categories, Array<Category>::class.java).asList()
 }
+
+class ColorTypeConverter{
+    @TypeConverter
+    fun fromList(list: List<Color>): String{
+        val listType = object : TypeToken<List<Color>>(){}.type
+        return Gson().toJson(list, listType)
+    }
+
+    @TypeConverter
+    fun fromString(colors: String): List<Color> = Gson().fromJson(colors, Array<Color>::class.java).asList()
+}
+
+class GenderTypeConverter{
+    @TypeConverter
+    fun fromGender(gender: Gender): String{
+        val listType = object : TypeToken<Gender>(){}.type
+        return Gson().toJson(gender, listType)
+    }
+
+    @TypeConverter
+    fun fromString(gender: String): Gender = Gson().fromJson(gender, Gender::class.java)
+}
+
+
+
+//class CategoryTypeConverter{
+//    @TypeConverter
+//    fun fromString(categoryElements: String): Category = Gson().fromJson(categoryElements, Category::class.java)
+//
+//
+//    @TypeConverter
+//    fun fromCategory(category: Category): String{
+//        val type = object: TypeToken<Category>(){}.type
+//        return Gson().toJson(category, type)
+//    }
+//}
 
 //        val category = categoryLabel.split(" > ")
 //        val jsonStringCategory = JSONObject()

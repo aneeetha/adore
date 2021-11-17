@@ -1,11 +1,7 @@
 package com.example.adore.models
 
-enum class GenderCategory{
-    Men,
-    Women
-}
 
-enum class TopLevelCategory {
+enum class ProductType {
     Bottoms,
     Ethnicwear,
     DressesAndJumpsuits,
@@ -16,7 +12,7 @@ enum class TopLevelCategory {
     Nightwear
 }
 
-enum class SubCategory{
+enum class Category{
     Tops,
     Shirts,
     Tees,
