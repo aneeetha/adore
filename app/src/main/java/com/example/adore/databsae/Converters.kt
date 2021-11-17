@@ -2,6 +2,7 @@ package com.example.adore.databsae
 
 import androidx.room.TypeConverter
 import com.example.adore.models.*
+import com.example.adore.models.enums.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

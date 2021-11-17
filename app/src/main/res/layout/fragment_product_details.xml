@@ -72,7 +72,10 @@
             android:id="@+id/sv_product_details"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:paddingBottom="30dp"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="50dp"
             app:layout_constraintBottom_toTopOf="@id/bottom_toolbar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -137,6 +140,7 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_product_size"
+                    android:padding="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>

@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.adore.models.DressSize
+import com.example.adore.models.enums.DressSize
 import com.example.adore.models.Product
 import com.example.adore.repository.AdoreRepository
 import kotlinx.coroutines.launch
@@ -15,6 +15,10 @@ class ProductDetailsViewModel(val product: Product, private val repository: Ador
     fun setChosenProductSize(size: DressSize){
         chosenSize = size
     }
+
+    private var _addToCartClicked = MutableLiveData<Boolean?>()
+    val addToCartClicked
+        get() = _addToCartClicked
 
     private var _goBackPressed = MutableLiveData<Boolean>()
     val  goBackPressed
@@ -51,7 +55,14 @@ class ProductDetailsViewModel(val product: Product, private val repository: Ador
 
     fun onAddToCartClicked(){
         chosenSize?.let {
-            _navigateToCartFragment.value = true
+            if(addToCartClicked.value==true){
+                goToCartFragmentClicked()
+            }else{
+                _addToCartClicked.value = true
+                viewModelScope.launch {
+                    repository.addItemToCart(product._id, chosenSize!!.name, 1)
+                }
+            }
         }?:setShowSnackBar()
     }
 

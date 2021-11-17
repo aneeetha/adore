@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adore.R
-import com.example.adore.models.DressSize
+import com.example.adore.models.enums.DressSize
 import com.example.adore.models.Stock
 import kotlinx.android.synthetic.main.size_item.view.*
 

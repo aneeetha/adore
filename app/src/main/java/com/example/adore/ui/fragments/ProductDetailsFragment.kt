@@ -79,6 +79,12 @@ class ProductDetailsFragment : Fragment() {
             }
         })
 
+        viewModel.addToCartClicked.observe(viewLifecycleOwner, {
+            if(it==true){
+                btn_add_to_cart.text = context?.getString(R.string.go_to_cart)
+            }
+        })
+
         viewModel.navigateToCartFragment.observe(viewLifecycleOwner, Observer {
             if(it==true){
                 findNavController().navigate(ProductDetailsFragmentDirections.actionProductDetailsFragmentToCartFragment())

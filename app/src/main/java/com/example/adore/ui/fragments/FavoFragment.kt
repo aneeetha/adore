@@ -23,6 +23,9 @@ class FavoFragment : Fragment(R.layout.fragment_favo) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val navBar = activity?.findViewById<View>(R.id.bottom_navigation_view)
+        navBar?.visibility = View.VISIBLE
+
         viewModel = (activity as AdorableActivity).viewModel
         setUpRecyclerView()
         viewModel.getFavlist()
@@ -35,10 +38,6 @@ class FavoFragment : Fragment(R.layout.fragment_favo) {
                 R.id.action_favoFragment_to_productDetailsFragment,
                 bundle
             )
-        }
-
-        iv_search_icon.setOnClickListener {
-            findNavController().navigate(FavoFragmentDirections.actionFavoFragmentToSearchFragment())
         }
 
         viewModel.favlistResult.observe(viewLifecycleOwner, { response ->

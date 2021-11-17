@@ -32,14 +32,6 @@
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
-            <ImageView
-                android:id="@+id/iv_search_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:padding="15dp"
-                android:src="@drawable/general_search_icon"/>
 
         </RelativeLayout>
 

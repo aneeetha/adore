@@ -17,7 +17,6 @@ class ProductsAdapter(): RecyclerView.Adapter<ProductsAdapter.ProductViewHolder>
             oldItem: Product,
             newItem: Product) = oldItem._id == newItem._id
 
-
         override fun areContentsTheSame(oldItem: Product, newItem: Product)= oldItem==newItem
 
     }
@@ -53,7 +52,6 @@ class ProductsAdapter(): RecyclerView.Adapter<ProductsAdapter.ProductViewHolder>
 
 
     class ProductViewHolder(private val binding: ProductPreviewBinding): RecyclerView.ViewHolder(binding.root){
-
         companion object{
             fun from(parent: ViewGroup): ProductViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)

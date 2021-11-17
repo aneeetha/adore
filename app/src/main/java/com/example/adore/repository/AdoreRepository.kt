@@ -15,6 +15,12 @@ class AdoreRepository(
 
     suspend fun addProductToFav(id: String) = RetrofitInstance.api.addProductToFav(id)
 
+    suspend fun getCartItems() = RetrofitInstance.api.getCartItems()
+
+    suspend fun addItemToCart(id: String, size: String, quantity: Int) = RetrofitInstance.api.addItemToCart(id, size, quantity)
+
+    suspend fun updateCart(cartItemId: String, quantity:Int) = RetrofitInstance.api.updateQuantityInCart(cartItemId, quantity)
+
 //    suspend fun insertNewUser(favo: Favo) = db.getFavoDao().insert(favo)
 //
 //    suspend fun getFavlist(userId:String) = db.getFavoDao().getFavlist(userId)

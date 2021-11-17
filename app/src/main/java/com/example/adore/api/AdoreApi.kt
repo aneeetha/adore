@@ -1,12 +1,11 @@
 package com.example.adore.api
 
-import com.example.adore.models.Product
-import com.example.adore.models.ProductResponse
-import com.example.adore.models.SuccessResponse
+import com.example.adore.models.enums.DressSize
+import com.example.adore.models.responses.CartResponse
+import com.example.adore.models.responses.ProductResponse
+import com.example.adore.models.responses.SuccessResponse
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface AdoreApi {
 
@@ -27,9 +26,23 @@ interface AdoreApi {
         @Query("id")
         id: String
     ):Response<SuccessResponse>
-//    @GET("api/products/:id")
-//    suspend fun getProductWithId(
-//        @Query("id")
-//        id:String
-//    ):Response<Product>
+
+    @GET("api/cart")
+    suspend fun getCartItems(): Response<CartResponse>
+
+    @POST("api/cart")
+    suspend fun addItemToCart(
+        @Query("sku")
+        productId: String,
+        @Query("size")
+        size: String,
+        @Query("quantity")
+        quantity: Int
+    ):Response<SuccessResponse>
+
+    @PATCH("api/cart/{id}")
+    suspend fun updateQuantityInCart(
+        @Path("id") id: String,
+        @Query("quantity")quantity: Int
+    ): Response<SuccessResponse>
 }

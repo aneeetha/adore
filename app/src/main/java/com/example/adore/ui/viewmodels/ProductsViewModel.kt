@@ -5,7 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.adore.models.ProductResponse
+import com.example.adore.models.responses.CartResponse
+import com.example.adore.models.responses.ProductResponse
 import com.example.adore.repository.AdoreRepository
 import com.example.adore.util.Resource
 import kotlinx.coroutines.launch
@@ -26,6 +27,10 @@ class ProductsViewModel(
     private val _favlistResult: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
     val favlistResult
         get() = _favlistResult
+
+    private val _cartItems: MutableLiveData<Resource<CartResponse>> = MutableLiveData()
+    val cartItems
+        get() = _cartItems
 
     private val _navigateToProductDetails = MutableLiveData<String>()
     val navigateToProductDetails
@@ -62,13 +67,30 @@ class ProductsViewModel(
         _favlistResult.value = handleProductResponse(response)
     }
 
+    fun getCartItem() = viewModelScope.launch {
+        _cartItems.value = Resource.Loading()
+        val response = adoreRepository.getCartItems()
+        Log.i("FavoFragment", response.message())
+        _cartItems.value = handleCartResponse(response)
+    }
+
     private fun handleProductResponse(response: Response<ProductResponse>): Resource<ProductResponse>{
         if(response.isSuccessful){
-            response.body()!!.let { response ->
-                 return Resource.Success(response)
+            response.body()!!.let {
+                 return Resource.Success(it)
             }
         }else{
            return Resource.Error(response.message())
+        }
+    }
+
+    private fun handleCartResponse(response: Response<CartResponse>): Resource<CartResponse>{
+        if(response.isSuccessful){
+            response.body()!!.let {
+                return Resource.Success(it)
+            }
+        }else{
+            return Resource.Error(response.message())
         }
     }
 }

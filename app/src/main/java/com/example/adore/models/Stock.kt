@@ -1,6 +1,7 @@
 package com.example.adore.models
 
 import androidx.room.ColumnInfo
+import com.example.adore.models.enums.DressSize
 
 data class Stock(
     @ColumnInfo(name = "_id")

@@ -35,19 +35,12 @@
         <action
             android:id="@+id/action_favoFragment_to_productDetailsFragment"
             app:destination="@id/productDetailsFragment" />
-        <action
-            android:id="@+id/action_favoFragment_to_searchFragment"
-            app:destination="@id/searchFragment" />
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
         android:name="com.example.adore.ui.fragments.CartFragment"
         android:label="Cart"
-        tools:layout="@layout/fragment_cart" >
-        <action
-            android:id="@+id/action_cartFragment_to_searchFragment"
-            app:destination="@id/searchFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_cart" />
     <fragment
         android:id="@+id/varietiesFragment"
         android:name="com.example.adore.ui.category.VarietiesFragment"

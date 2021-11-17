@@ -1,4 +1,4 @@
-package com.example.adore.models
+package com.example.adore.models.enums
 
 enum class CustomLabel(val code: String) {
     Seasonal("100"),

@@ -2,6 +2,10 @@ package com.example.adore.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.adore.models.enums.Category
+import com.example.adore.models.enums.Color
+import com.example.adore.models.enums.Gender
+import com.example.adore.models.enums.ProductType
 import java.io.Serializable
 
 @Entity(
