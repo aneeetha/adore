@@ -18,5 +18,6 @@ data class ProductDetails(
     val name: String,
     val description: String,
     val imageUrl: String,
-    val price: Float
+    val price: Float,
+    val availableCount: Int
 )

@@ -1,6 +1,7 @@
 package com.example.adore.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
@@ -60,7 +61,10 @@ class ProductDetailsFragment : Fragment() {
         }
 
         iv_back_icon.setOnClickListener {
-            parentFragmentManager.popBackStackImmediate()
+            Log.e("Navigation", "${findNavController().currentDestination}")
+            //childFragmentManager.popBackStackImmediate()
+            findNavController().navigateUp()
+            //parentFragmentManager.popBackStackImmediate()
         }
 
 //        val callback = object: OnBackPressedCallback(true){
@@ -82,6 +86,8 @@ class ProductDetailsFragment : Fragment() {
         viewModel.addToCartClicked.observe(viewLifecycleOwner, {
             if(it==true){
                 btn_add_to_cart.text = context?.getString(R.string.go_to_cart)
+            }else{
+                btn_add_to_cart.text = context?.getString(R.string.add_to_cart)
             }
         })
 

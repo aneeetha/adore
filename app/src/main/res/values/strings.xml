@@ -87,7 +87,8 @@
     <string name="size_not_chosen_message">You haven\'t chosen any size yet!</string>
 
     <!-- Cart -->
-    <string name="Checkout">CHECKOUT NOW</string>
+    <string name="checkout">CHECKOUT NOW</string>
+    <string name="total_price"><![CDATA[<font color="black"><small>Total: Rs.</small></font><big>%s</big>]]></string>
     <string name="order_placed">Your order is placed!</string>
 
 </resources>

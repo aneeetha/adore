@@ -11,9 +11,12 @@ import kotlinx.coroutines.launch
 
 class ProductDetailsViewModel(val product: Product, private val repository: AdoreRepository): ViewModel() {
 
+
     private var chosenSize: DressSize? = null
     fun setChosenProductSize(size: DressSize){
         chosenSize = size
+        _addToCartClicked.value = false
+
     }
 
     private var _addToCartClicked = MutableLiveData<Boolean?>()
@@ -60,7 +63,7 @@ class ProductDetailsViewModel(val product: Product, private val repository: Ador
             }else{
                 _addToCartClicked.value = true
                 viewModelScope.launch {
-                    repository.addItemToCart(product._id, chosenSize!!.name, 1)
+                    repository.addItemToCart(product._id, it.name, 1)
                 }
             }
         }?:setShowSnackBar()

@@ -27,6 +27,11 @@ interface AdoreApi {
         id: String
     ):Response<SuccessResponse>
 
+    @DELETE("api/favo/{id}")
+    suspend fun removeFavoItem(
+        @Path("id")id: String
+    ): Response<SuccessResponse>
+
     @GET("api/cart")
     suspend fun getCartItems(): Response<CartResponse>
 
@@ -44,5 +49,10 @@ interface AdoreApi {
     suspend fun updateQuantityInCart(
         @Path("id") id: String,
         @Query("quantity")quantity: Int
+    ): Response<SuccessResponse>
+
+    @DELETE("api/cart/{id}")
+    suspend fun removeCartItem(
+        @Path("id")id: String
     ): Response<SuccessResponse>
 }

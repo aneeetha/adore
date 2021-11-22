@@ -5,7 +5,7 @@
     android:id="@+id/signup_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.login.SignUpFragment">
+    tools:context=".ui.login.SignUpTabFragment">
 
     <EditText
         android:id="@+id/et_firstname"

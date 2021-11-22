@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.adore.models.CartItem
 import com.example.adore.models.responses.CartResponse
 import com.example.adore.models.responses.ProductResponse
 import com.example.adore.repository.AdoreRepository
@@ -31,6 +32,11 @@ class ProductsViewModel(
     private val _cartItems: MutableLiveData<Resource<CartResponse>> = MutableLiveData()
     val cartItems
         get() = _cartItems
+
+    private val _totalPrice: MutableLiveData<Float> = MutableLiveData()
+    val totalPrice
+        get() = _totalPrice
+
 
     private val _navigateToProductDetails = MutableLiveData<String>()
     val navigateToProductDetails
@@ -73,6 +79,30 @@ class ProductsViewModel(
         Log.i("FavoFragment", response.message())
         _cartItems.value = handleCartResponse(response)
     }
+
+    fun cartItemQuantityChanged(quantity: Int, cartItemId: String) = viewModelScope.launch {
+        adoreRepository.updateCart(cartItemId, quantity)
+        getCartItem()
+    }
+
+    fun removeCartItem(cartItemId: String) = viewModelScope.launch {
+        adoreRepository.removeCartItem(cartItemId)
+        getCartItem()
+    }
+
+    fun removeFavoItem(productId: String) = viewModelScope.launch {
+        adoreRepository.removeFavoItem(productId)
+        //getCartItem()
+    }
+
+    fun getTotalPrice(cartItems: List<CartItem>){
+        var sum = 0F
+        cartItems.forEach {
+            sum += it.quantity * it.productDetails.price
+        }
+        _totalPrice.value = sum
+    }
+
 
     private fun handleProductResponse(response: Response<ProductResponse>): Resource<ProductResponse>{
         if(response.isSuccessful){

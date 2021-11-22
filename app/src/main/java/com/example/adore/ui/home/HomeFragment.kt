@@ -15,11 +15,15 @@ import com.google.android.material.tabs.TabLayoutMediator
 class HomeFragment : Fragment() {
 
     lateinit var binding: FragmentHomeBinding
-   override fun onCreateView(
+    override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding =DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
+
+        val navBar = activity?.findViewById<View>(R.id.bottom_navigation_view)
+        navBar?.visibility = View.VISIBLE
+
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         binding.apply {
             homeFragment = this@HomeFragment
         }
@@ -27,7 +31,7 @@ class HomeFragment : Fragment() {
     }
 
 
-    fun navigateToSearchFragment(){
+    fun navigateToSearchFragment() {
         findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSearchFragment())
     }
 

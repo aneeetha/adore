@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.adore.R
@@ -47,14 +48,28 @@ class ProductsFragment : Fragment(R.layout.fragment_products) {
             val bundle = Bundle().apply {
                 putSerializable("product", it)
             }
-            findNavController().navigate(
-                R.id.action_productsFragment_to_productDetailsFragment,
-                bundle
-            )
+            Log.e("Navigation", "${findNavController().currentDestination}")
+                findNavController().navigate(
+                    R.id.action_productsFragment_to_productDetailsFragment,
+                    bundle
+                )
+        }
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val a =childFragmentManager.getBackStackEntryAt(1)
+                Log.e("Navigation", "$a ...")
+                Log.e("Navigation", "here")
+            }
         }
 
         iv_back_icon.setOnClickListener {
-            parentFragmentManager.popBackStackImmediate()
+            Log.e("Navigation", "${findNavController().currentDestination}")
+            findNavController().navigateUp()
+            //requireActivity().onBackPressed()
+            //findNavController().backStack.pop()
+//            childFragmentManager.popBackStackImmediate()
+            //parentFragmentManager.popBackStackImmediate()
         }
 
         iv_cart_icon.setOnClickListener {
