@@ -2,27 +2,37 @@ package com.example.adore.ui.fragments
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.adore.R
 import com.example.adore.adapters.ProductsAdapter
+import com.example.adore.databinding.FragmentSearchBinding
 import com.example.adore.ui.AdorableActivity
 import com.example.adore.ui.viewmodels.ProductsViewModel
 import com.example.adore.util.Constants.Companion.SEARCH_TIME_DELAY
 import com.example.adore.util.Resource
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.coroutines.*
 
-class SearchFragment : Fragment(R.layout.fragment_search) {
+class SearchFragment : Fragment() {
 
     private lateinit var viewModel: ProductsViewModel
     private lateinit var productsAdapter: ProductsAdapter
+    lateinit var binding: FragmentSearchBinding
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+
 
         viewModel = (activity as AdorableActivity).viewModel
         setUpRecyclerView()
@@ -48,7 +58,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
         var job: Job? = null
 
-        et_search_bar.addTextChangedListener { editable ->
+        binding.etSearchBar.addTextChangedListener { editable ->
             job?.cancel()
             job = MainScope().launch {
                 delay(SEARCH_TIME_DELAY)
@@ -71,6 +81,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let { message ->
+                        showSnackBarWithMessage(message)
                         Log.e("SearchFragment", "An error occurred: $message")
                     }
                 }
@@ -81,22 +92,33 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
         })
 
+        return binding.root
     }
 
+
+
     private fun hideProgressBar(){
-        progress_bar.visibility = View.INVISIBLE
+        binding.progressBar.visibility = View.INVISIBLE
     }
 
     private fun showProgressBar(){
-        progress_bar.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
     }
 
     private fun setUpRecyclerView(){
         productsAdapter = ProductsAdapter()
-        rv_search.apply {
+        binding.rvSearch.apply {
             adapter = productsAdapter
             layoutManager = GridLayoutManager(activity, 2)
         }
+    }
+
+    private fun showSnackBarWithMessage(message: String){
+        Snackbar.make(
+            requireActivity().findViewById(android.R.id.content),
+            message,
+            Snackbar.LENGTH_SHORT // How long to display the message.
+        ).show()
     }
 
 }

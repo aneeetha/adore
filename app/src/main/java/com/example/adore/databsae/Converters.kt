@@ -5,10 +5,19 @@ import com.example.adore.models.*
 import com.example.adore.models.enums.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.util.*
+
+class DateTypeConvertor{
+    @TypeConverter
+    fun fromDate(date: Date?) = date?.time
+
+    @TypeConverter
+    fun toDate(dateLong: Long?) = dateLong?.let { Date(dateLong) }
+}
 
 class ListOfStringTypeConverter {
     @TypeConverter
-    fun fromString(value: String?): List<String>{
+    fun fromString(value: String): List<String>{
         val listType = object : TypeToken<List<String>>(){}.type
         return Gson().fromJson(value, listType)
     }
@@ -64,13 +73,24 @@ class ColorTypeConverter{
 
 class GenderTypeConverter{
     @TypeConverter
-    fun fromGender(gender: Gender): String{
+    fun fromGender(gender: Gender?): String?{
         val listType = object : TypeToken<Gender>(){}.type
-        return Gson().toJson(gender, listType)
+        return gender?.let{Gson().toJson(gender, listType)}
     }
 
     @TypeConverter
-    fun fromString(gender: String): Gender = Gson().fromJson(gender, Gender::class.java)
+    fun fromString(gender: String?): Gender? = gender?.let{Gson().fromJson(gender, Gender::class.java)}
+}
+
+class DistrictTypeConverter{
+    @TypeConverter
+    fun fromGender(district: District): String{
+        val listType = object : TypeToken<District>(){}.type
+        return Gson().toJson(district, listType)
+    }
+
+    @TypeConverter
+    fun fromString(district: String?): District = Gson().fromJson(district, District::class.java)
 }
 
 

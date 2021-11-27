@@ -2,35 +2,43 @@ package com.example.adore.ui.fragments
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.adore.R
-import com.example.adore.adapters.ProductsAdapter
+import com.example.adore.adapters.FavoProductAdapter
+import com.example.adore.databinding.FragmentFavoBinding
 import com.example.adore.ui.AdorableActivity
 import com.example.adore.ui.viewmodels.ProductsViewModel
 import com.example.adore.util.Resource
-import kotlinx.android.synthetic.main.fragment_favo.*
-import kotlinx.android.synthetic.main.fragment_favo.progress_bar
+import com.google.android.material.snackbar.Snackbar
 
-class FavoFragment : Fragment(R.layout.fragment_favo) {
+class FavoFragment : Fragment() {
 
     lateinit var viewModel: ProductsViewModel
-    lateinit var productsAdapter: ProductsAdapter
+    lateinit var favoProductAdapter: FavoProductAdapter
+    lateinit var binding: FragmentFavoBinding
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentFavoBinding.inflate(inflater, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         val navBar = activity?.findViewById<View>(R.id.bottom_navigation_view)
         navBar?.visibility = View.VISIBLE
+
 
         viewModel = (activity as AdorableActivity).viewModel
         setUpRecyclerView()
         viewModel.getFavlist()
 
-        productsAdapter.setOnItemClickListener {
+        favoProductAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
                 putSerializable("product", it)
             }
@@ -40,17 +48,25 @@ class FavoFragment : Fragment(R.layout.fragment_favo) {
             )
         }
 
+        viewModel.favoSnackBarMessage.observe(viewLifecycleOwner, { response ->
+            response?.data?.let {
+                showSnackBarWithMessage(it.message)
+                viewModel.doneShowingSnackBarInFavo()
+            }
+        })
+
         viewModel.favlistResult.observe(viewLifecycleOwner, { response ->
-            when(response) {
+            when (response) {
                 is Resource.Success -> {
                     hideProgressBar()
                     response.data?.let { productsResponse ->
-                        productsAdapter.differ.submitList(productsResponse.products)
+                        favoProductAdapter.differ.submitList(productsResponse.products)
                     }
                 }
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let { message ->
+                        showSnackBarWithMessage(message)
                         Log.e("SearchFragment", "An error occurred: $message")
                     }
                 }
@@ -58,23 +74,35 @@ class FavoFragment : Fragment(R.layout.fragment_favo) {
                     showProgressBar()
                 }
             }
-
         })
+
+        return binding.root
     }
 
-    private fun hideProgressBar(){
-        progress_bar.visibility = View.INVISIBLE
+
+    private fun hideProgressBar() {
+        binding.progressBar.visibility = View.INVISIBLE
     }
 
-    private fun showProgressBar(){
-        progress_bar.visibility = View.VISIBLE
+    private fun showProgressBar() {
+        binding.progressBar.visibility = View.VISIBLE
     }
 
     private fun setUpRecyclerView() {
-        productsAdapter = ProductsAdapter()
-        rv_favo_products.apply {
-            adapter = productsAdapter
+        favoProductAdapter = FavoProductAdapter(viewModel)
+        binding.rvFavoProducts.apply {
+            adapter = favoProductAdapter
             layoutManager = GridLayoutManager(activity, 2)
         }
     }
+
+    private fun showSnackBarWithMessage(message: String) {
+        Snackbar.make(
+            requireActivity().findViewById(android.R.id.content),
+            message,
+            Snackbar.LENGTH_SHORT // How long to display the message.
+        ).show()
+    }
+
+
 }

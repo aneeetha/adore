@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.adore.databinding.ProductPreviewBinding
-import com.example.adore.models.Product
+import com.example.adore.models.entities.Product
 import kotlinx.android.synthetic.main.product_preview.view.*
 
 class ProductsAdapter(): RecyclerView.Adapter<ProductsAdapter.ProductViewHolder>(){
@@ -15,7 +15,8 @@ class ProductsAdapter(): RecyclerView.Adapter<ProductsAdapter.ProductViewHolder>
     private val differCallback = object: DiffUtil.ItemCallback<Product>(){
         override fun areItemsTheSame(
             oldItem: Product,
-            newItem: Product) = oldItem._id == newItem._id
+            newItem: Product
+        ) = oldItem._id == newItem._id
 
         override fun areContentsTheSame(oldItem: Product, newItem: Product)= oldItem==newItem
 

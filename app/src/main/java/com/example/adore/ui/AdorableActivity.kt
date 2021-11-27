@@ -16,9 +16,10 @@ import com.example.adore.R
 import com.example.adore.databinding.ActivityAdorableBinding
 import com.example.adore.databsae.AdoreDatabase
 import com.example.adore.repository.AdoreRepository
-import com.example.adore.ui.home.HomeFragmentDirections
+import com.example.adore.ui.fragments.HomeFragmentDirections
 import com.example.adore.ui.viewmodels.factory.ProductsViewModelProviderFactory
 import com.example.adore.ui.viewmodels.ProductsViewModel
+import com.example.adore.util.Resource
 
 class AdorableActivity : AppCompatActivity() {
 
@@ -34,7 +35,7 @@ class AdorableActivity : AppCompatActivity() {
         )
 
         val adoreRepository = AdoreRepository(AdoreDatabase(this))
-        val viewModelProviderFactory = ProductsViewModelProviderFactory(adoreRepository)
+        val viewModelProviderFactory = ProductsViewModelProviderFactory(application, adoreRepository)
 
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(ProductsViewModel::class.java)
 
@@ -46,16 +47,31 @@ class AdorableActivity : AppCompatActivity() {
         findViewById<Toolbar>(R.id.toolbar).setupWithNavController(navController, appBarConfiguration)
         bottomNavigationView.setupWithNavController(navController)
         //setupActionBarWithNavController(navController)
+
+//        viewModel.getCurrentUser()
+//        viewModel.currentUser.observe(this, {response ->
+//            when(response){
+//                is Resource.Success -> {
+//                    if(response.data?.userId == 0){
+//                        //showLoginDialogBox()
+//                    }
+//                }
+//                else -> {}
+//            }
+//        })
     }
 
-    override fun onBackPressed() {
-        val fm  = supportFragmentManager
-        if(fm.backStackEntryCount>0){
-            Log.i("MainActivity", "popping backstack")
-            fm.popBackStack()
-        }else {
-            Log.i("MainActivity", "nothing on backstack, calling super");
-            super.onBackPressed()
-        }
+//    override fun onBackPressed() {
+//        val fm  = supportFragmentManager
+//        if(fm.backStackEntryCount>0){
+//            Log.i("MainActivity", "popping backstack")
+//            fm.popBackStack()
+//        }else {
+//            Log.i("MainActivity", "nothing on backstack, calling super");
+//            super.onBackPressed()
+//        }
+//    }
+
+    fun showLoginDialogBox(){
     }
 }

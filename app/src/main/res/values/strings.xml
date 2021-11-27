@@ -1,11 +1,15 @@
 <resources>
     <string name="app_name">Adore</string>
     <!-- Strings related to login -->
-    <string name="prompt_name">Name</string>
-    <string name="prompt_phone_no">Mobile no</string>
+    <string name="heading_signup">Signup</string>
+    <string name="prompt_name">Name <font color="red">*</font></string>
+    <string name="prompt_phone_no">Mobile no <font color="red">*</font></string>
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="prompt_confirm_password">Confirm password</string>
+    <string name="prompt_password">Password <font color="red">*</font></string>
+    <string name="prompt_confirm_password">Confirm password <font color="red">*</font></string>
+    <string name="prompt_dob">Birth date</string>
+    <string name="gender_male">Male</string>
+    <string name="gender_female">Female</string>
     <string name="forgot_password">Forgot password</string>
     <string name="action_login">Login</string>
     <string name="action_signup">Sign Up</string>
@@ -14,6 +18,10 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="new_user">New user? </string>
+    <string name="invalid_mobile_no_or_password">Invalid mobile no or password</string>
+    <string name="click_here">Click here</string>
+    <string name="save_details">SAVE DETAILS</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
@@ -61,12 +69,22 @@
     <string name="favourites">Favorites</string>
     <string name="cart">Cart</string>
     <string name="categories">Categories</string>
+    <string name="user_profile">Profile</string>
 
-    <!--product detail-->
+    <!--user profile-->
+    <string name="user_data">Profile details</string>
+    <string name="account_details">Account Details</string>
+    <string name="account_address">Address</string>
+    <string name="add_address">Add new address!</string>
+    <string name="account_orders">Orders</string>
+    <string name="logout">LOGOUT</string>
+    <string name="save_address">SAVE ADDRESS</string>
+
+    <!--product detail &#9825;-->
     <string name="add_to_cart">ADD TO CART</string>
     <string name="go_to_cart">GO TO CART</string>
-    <string name="add_to_favo">&#9825;</string>
-    <string name="added_to_favo">&#10084;</string>
+    <string name="add_to_favo">ADD TO FAVO</string>
+    <string name="added_to_favo"><font color="red">FAVOURED</font> &#10084;</string>
 
 
     <string name="heading_size">Size</string>
@@ -90,5 +108,16 @@
     <string name="checkout">CHECKOUT NOW</string>
     <string name="total_price"><![CDATA[<font color="black"><small>Total: Rs.</small></font><big>%s</big>]]></string>
     <string name="order_placed">Your order is placed!</string>
+
+    <!--Address details-->
+    <string name="deliver_to">Deliver to</string>
+    <string name="contact">Contact</string>
+    <string name="address_line">Address line</string>
+    <string name="locality">Locality</string>
+    <string name="city">City</string>
+    <string name="pincode">Pincode</string>
+    <string name="state">State</string>
+    <string name="address_type">Address type</string>
+    <string name="state_name">TAMILNADU</string>
 
 </resources>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_product_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/rectangle"
+            app:srcCompat="@drawable/men_casuals" />
+
+        <TextView
+            android:id="@+id/tv_product_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/fredoka_one"
+            android:text="@string/product_preview_name"
+            android:textColor="@color/black"
+            android:textSize="@dimen/preview_product_font_size"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_product_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/bree_serif"
+            android:text="@string/product_preview_description"
+            android:textSize="10sp" />
+
+        <RelativeLayout
+            android:id="@+id/layout_favo_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/tv_product_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredoka_one"
+                android:text="@string/product_preview_price"
+                android:textColor="@color/red"
+                android:textSize="@dimen/preview_product_font_size"
+                android:textStyle="bold"/>
+
+            <ImageView
+                android:id="@+id/iv_remove_item"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:paddingEnd="5dp"
+                android:src="@drawable/delete_icon"
+                android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
+
+<!--        <Button-->
+<!--            android:id="@+id/btn_add_to_cart"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="20dp"-->
+<!--            android:background="@color/white"-->
+<!--            android:text="@string/add_to_cart"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:textSize="@dimen/preview_button_font_size"-->
+<!--            android:textStyle="bold"-->
+<!--            tools:ignore="TextContrastCheck" />-->
+    </LinearLayout>
+
+</layout>

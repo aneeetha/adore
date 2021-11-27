@@ -16,7 +16,6 @@ import com.example.adore.ui.AdorableActivity
 import com.example.adore.ui.viewmodels.ProductsViewModel
 import com.example.adore.util.Resource
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_cart.*
 
 
 class CartFragment : Fragment() {
@@ -31,11 +30,6 @@ class CartFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_cart, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
         val navBar = activity?.findViewById<View>(R.id.bottom_navigation_view)
         navBar?.visibility = View.VISIBLE
@@ -45,9 +39,8 @@ class CartFragment : Fragment() {
         viewModel.getCartItem()
 
 
-
         viewModel.cartItems.observe(viewLifecycleOwner, { response ->
-            when(response) {
+            when (response) {
                 is Resource.Success -> {
                     hideProgressBar()
                     response.data?.let { cartResponse ->
@@ -59,6 +52,7 @@ class CartFragment : Fragment() {
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let { message ->
+                        showSnackBarWithMessage(message)
                         Log.e("CartFragment", "An error occurred: $message")
                     }
                 }
@@ -69,9 +63,20 @@ class CartFragment : Fragment() {
 
         })
 
+        viewModel.cartSnackBarMessage.observe(viewLifecycleOwner, { response ->
+            response?.data?.let {
+                Snackbar.make(
+                    requireActivity().findViewById(android.R.id.content),
+                    it.message,
+                    Snackbar.LENGTH_SHORT // How long to display the message.
+                ).show()
+                viewModel.doneShowingSnackBarInCart()
+            }
+        })
+
         viewModel.totalPrice.observe(viewLifecycleOwner, { it ->
             val text = context?.getString(R.string.total_price, it.toString())
-            text?.let {text->
+            text?.let { text ->
                 val dynamicText = String.format(text, "placeholder1")
                 val dynamicStyledText =
                     HtmlCompat.fromHtml(dynamicText, HtmlCompat.FROM_HTML_MODE_COMPACT)
@@ -80,14 +85,6 @@ class CartFragment : Fragment() {
             //binding.tvTotalPrice.text = context?.getString(R.string.total_price, it.toString())
         })
 
-        cartAdapter.setOnQuantityItemClickListener { quantity, cartItemId ->
-            viewModel.cartItemQuantityChanged(quantity.toInt(), cartItemId)
-        }
-
-        cartAdapter.setOnRemoveButtonClickListener { cartItemId->
-            viewModel.removeCartItem(cartItemId)
-        }
-
         binding.btnCheckout.setOnClickListener {
             Snackbar.make(
                 requireActivity().findViewById(android.R.id.content),
@@ -95,9 +92,11 @@ class CartFragment : Fragment() {
                 Snackbar.LENGTH_SHORT // How long to display the message.
             ).show()
         }
+        return binding.root
     }
 
-    private fun hideProgressBar(){
+
+    private fun hideProgressBar() {
         binding.apply {
             progressBar.visibility = View.INVISIBLE
             btnCheckout.visibility = View.VISIBLE
@@ -106,7 +105,7 @@ class CartFragment : Fragment() {
         }
     }
 
-    private fun showProgressBar(){
+    private fun showProgressBar() {
         binding.apply {
             progressBar.visibility = View.VISIBLE
             btnCheckout.visibility = View.INVISIBLE
@@ -116,10 +115,18 @@ class CartFragment : Fragment() {
     }
 
     private fun setUpRecyclerView() {
-        cartAdapter = CartAdapter()
-        rv_cart.apply {
+        cartAdapter = CartAdapter(viewModel)
+        binding.rvCart.apply {
             adapter = cartAdapter
             layoutManager = LinearLayoutManager(activity)
         }
+    }
+
+    private fun showSnackBarWithMessage(message: String) {
+        Snackbar.make(
+            requireActivity().findViewById(android.R.id.content),
+            message,
+            Snackbar.LENGTH_SHORT // How long to display the message.
+        ).show()
     }
 }

@@ -140,9 +140,9 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_product_size"
-                    android:padding="15dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:padding="15dp" />
             </LinearLayout>
 
         </ScrollView>
@@ -159,14 +159,14 @@
 
             <TextView
                 android:id="@+id/tv_add_to_favo"
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
+                android:padding="5dp"
                 android:background="@color/white"
                 android:onClick="@{() -> productDetailsViewModel.addToFavlistClicked()}"
-                android:paddingStart="40dp"
-                android:paddingEnd="40dp"
+                android:textAlignment="center"
                 android:text="@string/add_to_favo"
                 android:textSize="@dimen/product_detail_font_size"
                 android:textStyle="bold" />
@@ -175,16 +175,16 @@
                 android:id="@+id/btn_add_to_cart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_alignEnd="@id/tv_add_to_favo"
+                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="@color/yellow_700"
-                android:paddingStart="40dp"
-                android:paddingEnd="40dp"
+                android:onClick="@{() -> productDetailsViewModel.onAddToCartClicked()}"
                 android:text="@string/add_to_cart"
+                android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="@dimen/button_font_size"
                 android:textStyle="bold"
-                android:onClick="@{() -> productDetailsViewModel.onAddToCartClicked()}"
                 tools:ignore="TextContrastCheck" />
 
         </RelativeLayout>

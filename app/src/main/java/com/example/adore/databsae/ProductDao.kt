@@ -2,7 +2,7 @@ package com.example.adore.databsae
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.adore.models.Product
+import com.example.adore.models.entities.Product
 
 @Dao
 interface ProductDao {

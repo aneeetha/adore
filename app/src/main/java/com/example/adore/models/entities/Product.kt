@@ -1,7 +1,8 @@
-package com.example.adore.models
+package com.example.adore.models.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.adore.models.Stock
 import com.example.adore.models.enums.Category
 import com.example.adore.models.enums.Color
 import com.example.adore.models.enums.Gender

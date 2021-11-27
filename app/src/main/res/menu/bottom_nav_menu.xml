@@ -16,4 +16,8 @@
         android:title="Cart"
         android:icon="@drawable/general_cart_filled_icon"/>
 
+    <item android:id="@+id/userProfileFragment"
+        android:title="User"
+        android:icon="@drawable/user_icon"/>
+
 </menu>

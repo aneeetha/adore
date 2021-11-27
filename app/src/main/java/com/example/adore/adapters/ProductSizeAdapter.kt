@@ -29,6 +29,7 @@ class ProductSizeAdapter() : ListAdapter<Stock, ProductSizeAdapter.TextViewHolde
                         selectedSizePosition = bindingAdapterPosition
                         it(currentItem.size)
                         notifyItemRangeChanged(0, position)
+                        notifyItemRangeChanged(position+1, currentList.size)
                     }
                 }
             }else{

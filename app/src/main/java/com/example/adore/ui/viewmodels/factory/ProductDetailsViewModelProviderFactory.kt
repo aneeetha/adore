@@ -2,7 +2,7 @@ package com.example.adore.ui.viewmodels.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.adore.models.Product
+import com.example.adore.models.entities.Product
 import com.example.adore.repository.AdoreRepository
 import com.example.adore.ui.viewmodels.ProductDetailsViewModel
 
