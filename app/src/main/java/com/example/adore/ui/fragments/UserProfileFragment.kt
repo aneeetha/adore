@@ -1,23 +1,27 @@
 package com.example.adore.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.adore.databinding.FragmentUserProfileBinding
 import com.example.adore.databsae.AdoreDatabase
 import com.example.adore.repository.AdoreRepository
-import com.example.adore.ui.viewmodels.UserProfileViewModel
+import com.example.adore.ui.viewmodels.SharedUserProfileViewModel
 import com.example.adore.ui.viewmodels.factory.UserProfileViewModelProviderFactory
+import com.example.adore.util.Resource
+import com.google.android.material.snackbar.Snackbar
 
 
 class UserProfileFragment : Fragment() {
 
     lateinit var binding: FragmentUserProfileBinding
-    lateinit var viewModel: UserProfileViewModel
+    private lateinit var viewModelShared: SharedUserProfileViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,17 +33,19 @@ class UserProfileFragment : Fragment() {
         val adoreRepository = AdoreRepository(AdoreDatabase(application))
 
         val viewModelFactory = UserProfileViewModelProviderFactory(application, adoreRepository)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(UserProfileViewModel::class.java)
+        viewModelShared = ViewModelProvider(requireActivity(), viewModelFactory).get(SharedUserProfileViewModel::class.java)
 
         binding.apply {
             userProfileFragment = this@UserProfileFragment
         }
 
+
+
         return binding.root
     }
 
     fun navigateToUserAddressFragment(){
-        findNavController().navigate(UserProfileFragmentDirections.actionUserProfileFragmentToAddressDetailsFragment())
+        findNavController().navigate(UserProfileFragmentDirections.actionUserProfileFragmentToAddressFragment())
     }
 
     fun navigateToUserDetails(){
@@ -49,7 +55,9 @@ class UserProfileFragment : Fragment() {
         findNavController().navigate(UserProfileFragmentDirections.actionUserProfileFragmentToFavoFragment())
     }
     fun logout(){
-        viewModel.logoutCurrentUser()
+        viewModelShared.logoutCurrentUser()
         findNavController().navigate(UserProfileFragmentDirections.actionUserProfileFragmentToHomeFragment())
     }
+
+
 }

@@ -41,11 +41,6 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        //get currentUser
-        //dialog box for login
-        //navigation
-        //user profile
-
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         binding.apply {
             homeFragment = this@HomeFragment

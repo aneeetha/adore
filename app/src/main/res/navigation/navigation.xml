@@ -127,8 +127,8 @@
             android:id="@+id/action_userProfileFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
         <action
-            android:id="@+id/action_userProfileFragment_to_addressDetailsFragment"
-            app:destination="@id/addressDetailsFragment" />
+            android:id="@+id/action_userProfileFragment_to_addressFragment"
+            app:destination="@id/addressFragment" />
     </fragment>
     <fragment
         android:id="@+id/userDetailsFragment"
@@ -137,5 +137,20 @@
     <fragment
         android:id="@+id/addressDetailsFragment"
         android:name="com.example.adore.ui.fragments.AddressDetailsFragment"
-        android:label="AddressDetailsFragment" />
+        android:label="AddressDetailsFragment" >
+        <argument
+            android:name="address"
+            app:argType="com.example.adore.models.entities.Address" />
+        <action
+            android:id="@+id/action_addressDetailsFragment_to_addressFragment"
+            app:destination="@id/addressFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addressFragment"
+        android:name="com.example.adore.ui.fragments.AddressFragment"
+        android:label="AddressFragment" >
+        <action
+            android:id="@+id/action_addressFragment_to_addressDetailsFragment"
+            app:destination="@id/addressDetailsFragment" />
+    </fragment>
 </navigation>

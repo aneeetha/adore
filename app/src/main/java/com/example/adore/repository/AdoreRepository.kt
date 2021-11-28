@@ -4,6 +4,7 @@ import com.example.adore.api.RetrofitInstance
 import com.example.adore.databsae.AdoreDatabase
 import com.example.adore.models.Favo
 import com.example.adore.models.entities.Address
+import com.example.adore.models.entities.AddressDetailUpdate
 import com.example.adore.models.entities.User
 import com.example.adore.models.entities.UserDetailUpdate
 
@@ -40,6 +41,8 @@ class AdoreRepository(
 
     suspend fun addNewAddressToUser(address: Address) = db.getUserDao().insertAddress(address)
 
+    fun getLastInsertedAddress() = db.getUserDao().getLastInsertedAddress()
+
     fun getUser(userId: Int) = db.getUserDao().getUser(userId)
 
     suspend fun getUserWithMobileNo(mobileNo: String) = db.getUserDao().getUserWithMobileNo(mobileNo)
@@ -48,7 +51,9 @@ class AdoreRepository(
 
     suspend fun updateUserDetails(userDetail: UserDetailUpdate) = db.getUserDao().updateUserDetails(userDetail)
 
-    suspend fun getAddressesOfUser(userId: Int) = db.getUserDao().getUserWithAddresses(userId)
+    suspend fun updateAddress(addressDetail: AddressDetailUpdate) = db.getUserDao().updateAddress(addressDetail)
+
+    fun getAddressesOfUser(userId: Int) = db.getUserDao().getUserWithAddresses(userId)
 
 //    suspend fun insertNewUser(favo: Favo) = db.getFavoDao().insert(favo)
 //

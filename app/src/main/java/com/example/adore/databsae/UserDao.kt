@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.room.*
 import com.example.adore.models.entities.Address
+import com.example.adore.models.entities.AddressDetailUpdate
 import com.example.adore.models.entities.User
 import com.example.adore.models.entities.UserDetailUpdate
 import com.example.adore.models.relations.UserWithAddresses
@@ -29,6 +30,11 @@ interface UserDao {
     @Delete
     suspend fun deleteAddress(address: Address)
 
+    @Query("SELECT * FROM address ORDER BY address_id DESC LIMIT 1")
+    fun getLastInsertedAddress(): LiveData<Address>
+
+    @Update(entity = Address::class)
+    suspend fun updateAddress(obj: AddressDetailUpdate)
 
     @Query("Select * from user where user_id = :userId")
     fun getUser(userId: Int): LiveData<User>
@@ -41,6 +47,6 @@ interface UserDao {
     fun getAllUsers(): LiveData<List<User>>
 
     @Query("Select * from user where user_id = :userId")
-    suspend fun getUserWithAddresses(userId: Int): List<UserWithAddresses>
+    fun getUserWithAddresses(userId: Int): LiveData<UserWithAddresses>
 
 }

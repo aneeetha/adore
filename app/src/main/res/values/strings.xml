@@ -79,6 +79,7 @@
     <string name="account_orders">Orders</string>
     <string name="logout">LOGOUT</string>
     <string name="save_address">SAVE ADDRESS</string>
+    <string name="add_new_address">ADD NEW ADDRESS</string>
 
     <!--product detail &#9825;-->
     <string name="add_to_cart">ADD TO CART</string>

@@ -84,6 +84,17 @@
                 android:onClick="@{()->userProfileFragment.navigateToFavoFragment()}"/>
         </LinearLayout>
 
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/btn_logout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <Button
             android:id="@+id/btn_logout"
             android:layout_width="0dp"

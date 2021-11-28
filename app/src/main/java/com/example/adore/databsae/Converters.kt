@@ -84,13 +84,13 @@ class GenderTypeConverter{
 
 class DistrictTypeConverter{
     @TypeConverter
-    fun fromGender(district: District): String{
+    fun fromGender(district: District?): String?{
         val listType = object : TypeToken<District>(){}.type
-        return Gson().toJson(district, listType)
+        return district?.let{Gson().toJson(district, listType)}
     }
 
     @TypeConverter
-    fun fromString(district: String?): District = Gson().fromJson(district, District::class.java)
+    fun fromString(district: String?): District? = district?.let{Gson().fromJson(district, District::class.java)}
 }
 
 
