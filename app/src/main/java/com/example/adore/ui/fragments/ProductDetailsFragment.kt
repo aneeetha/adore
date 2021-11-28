@@ -138,10 +138,6 @@ class ProductDetailsFragment : Fragment() {
         return binding.root
     }
 
-    private fun showSnackBarWithMessage(message: String) {
-
-    }
-
     private fun setupRecyclerView() {
         productSizeAdapter = ProductSizeAdapter()
         productSizeAdapter.submitList(arguments.product.stock)
