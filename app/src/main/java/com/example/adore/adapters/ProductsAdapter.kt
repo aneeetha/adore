@@ -1,6 +1,9 @@
 package com.example.adore.adapters
 
+import android.graphics.Paint
+import android.graphics.Typeface
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -8,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.adore.databinding.ProductPreviewBinding
 import com.example.adore.models.entities.Product
+import com.example.adore.models.enums.CustomLabel
+import com.example.adore.util.AdoreLogic
+import com.example.adore.util.Constants
 import kotlinx.android.synthetic.main.product_preview.view.*
 
 class ProductsAdapter(): RecyclerView.Adapter<ProductsAdapter.ProductViewHolder>(){
@@ -32,13 +38,22 @@ class ProductsAdapter(): RecyclerView.Adapter<ProductsAdapter.ProductViewHolder>
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = differ.currentList[position]
         val currency = "Rs. "
-        holder.itemView.apply {
-            Glide.with(this).load(product.imageUrl).into(iv_product_image)
-            tv_product_name.text = product.name
+        holder.binding.apply {
+            Glide.with(holder.itemView).load(product.imageUrl).into(ivProductImage)
+            tvProductName.text = product.name
             val price = currency + product.price.toString()
-            tv_product_price.text = price
-            tv_product_description.text = product.description
-            setOnClickListener {
+            tvProductPrice.text = price
+            val discount: Int = AdoreLogic.getDiscount(product.customLabels)
+            if(discount!=0){
+                tvProductPriceDiscounted.visibility = View.VISIBLE
+                val discountedPrice = Constants.CURRENCY + (product.price - (product.price.times(discount).div(100))).toString()
+                tvProductPriceDiscounted.text = discountedPrice
+                tvProductPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                tvProductPrice.typeface = Typeface.DEFAULT
+                tvProductPrice.textSize = 11F
+            }
+            tvProductDescription.text = product.description
+            holder.itemView.setOnClickListener {
                 onItemClickListener?.let {
                     it(product) }
             }
@@ -52,7 +67,7 @@ class ProductsAdapter(): RecyclerView.Adapter<ProductsAdapter.ProductViewHolder>
     }
 
 
-    class ProductViewHolder(private val binding: ProductPreviewBinding): RecyclerView.ViewHolder(binding.root){
+    class ProductViewHolder(val binding: ProductPreviewBinding): RecyclerView.ViewHolder(binding.root){
         companion object{
             fun from(parent: ViewGroup): ProductViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)

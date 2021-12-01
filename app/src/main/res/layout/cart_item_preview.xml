@@ -11,8 +11,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_product_image"
-            android:layout_width="150dp"
-            android:layout_height="200dp"
+            android:layout_width="130dp"
+            android:layout_height="170dp"
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -22,9 +22,9 @@
         <TextView
             android:id="@+id/tv_product_name"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:fontFamily="@font/fredoka_one"
-            android:padding="10dp"
+            android:padding="5dp"
             android:text="@string/product_preview_name"
             android:textColor="@color/black"
             android:textSize="@dimen/preview_product_font_size"
@@ -36,9 +36,9 @@
         <TextView
             android:id="@+id/tv_product_description"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:fontFamily="@font/bree_serif"
-            android:padding="10dp"
+            android:padding="5dp"
             android:text="@string/product_preview_description"
             android:textSize="@dimen/preview_product_font_size"
             app:layout_constraintEnd_toEndOf="parent"
@@ -50,26 +50,42 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/fredoka_one"
-            android:padding="10dp"
+            android:padding="5dp"
             android:text="@string/product_preview_price"
             android:textColor="@color/red"
             android:textSize="@dimen/preview_product_font_size"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/tv_selected_size"
+            app:layout_constraintEnd_toStartOf="@id/tv_product_price_discounted"
             app:layout_constraintStart_toEndOf="@id/iv_product_image"
             app:layout_constraintTop_toBottomOf="@id/tv_product_description" />
+
+        <TextView
+            android:id="@+id/tv_product_price_discounted"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/fredoka_one"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/product_preview_price"
+            android:textColor="@color/red"
+            android:textSize="@dimen/preview_product_font_size"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/tv_product_price"
+            app:layout_constraintEnd_toStartOf="@id/tv_selected_size"
+            app:layout_constraintTop_toBottomOf="@id/tv_product_description"/>
+
 
         <TextView
             android:id="@+id/tv_selected_size"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/fredoka_one"
-            android:padding="10dp"
+            android:padding="5dp"
             android:text="@string/size_view"
             android:textColor="@color/black"
             android:textSize="@dimen/preview_product_font_size"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@id/tv_product_price"
+            app:layout_constraintStart_toEndOf="@id/tv_product_price_discounted"
             app:layout_constraintTop_toBottomOf="@id/tv_product_description"
             app:layout_constraintEnd_toEndOf="parent"/>
 

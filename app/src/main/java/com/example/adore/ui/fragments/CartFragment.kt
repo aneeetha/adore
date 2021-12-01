@@ -8,13 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.adore.R
 import com.example.adore.adapters.CartAdapter
 import com.example.adore.databinding.FragmentCartBinding
+import com.example.adore.models.entities.Address
 import com.example.adore.ui.AdorableActivity
 import com.example.adore.ui.viewmodels.ProductsViewModel
+import com.example.adore.util.AdoreLogic
 import com.example.adore.util.Resource
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -46,14 +50,13 @@ class CartFragment : Fragment() {
                     response.data?.let { cartResponse ->
                         cartAdapter.submitList(cartResponse.cartItems)
                         viewModel.getTotalPrice(cartResponse.cartItems)
-                        Log.e("CartFragment", "An error occurred: ${cartResponse.cartItems}")
                     }
                 }
                 is Resource.Error -> {
                     hideProgressBar()
+                    hideViewsAndActions()
                     response.message?.let { message ->
                         showSnackBarWithMessage(message)
-                        Log.e("CartFragment", "An error occurred: $message")
                     }
                 }
                 is Resource.Loading -> {
@@ -74,24 +77,34 @@ class CartFragment : Fragment() {
             }
         })
 
-        viewModel.totalPrice.observe(viewLifecycleOwner, { it ->
-            val text = context?.getString(R.string.total_price, it.toString())
-            text?.let { text ->
-                val dynamicText = String.format(text, "placeholder1")
-                val dynamicStyledText =
-                    HtmlCompat.fromHtml(dynamicText, HtmlCompat.FROM_HTML_MODE_COMPACT)
-                binding.tvTotalPrice.text = dynamicStyledText
+        binding.apply {
+
+        viewModel.totalPrice.observe(viewLifecycleOwner, {
+            val deliveryCharge = AdoreLogic.getDeliveryCharge(it)
+
+            context?.getString(R.string.delivery_charge, deliveryCharge.toString())?.let { text->
+                tvDeliveryCharge.text = HtmlCompat.fromHtml(String.format(text, "placeholder1"), HtmlCompat.FROM_HTML_MODE_COMPACT)
             }
-            //binding.tvTotalPrice.text = context?.getString(R.string.total_price, it.toString())
+
+            context?.getString(R.string.total_price, it.plus(deliveryCharge).toString())?.let { text ->
+                tvTotalPrice.text = HtmlCompat.fromHtml(String.format(text, "placeholder1"), HtmlCompat.FROM_HTML_MODE_COMPACT)
+            }
         })
 
-        binding.btnCheckout.setOnClickListener {
-            Snackbar.make(
-                requireActivity().findViewById(android.R.id.content),
-                getString(R.string.order_placed),
-                Snackbar.LENGTH_SHORT // How long to display the message.
-            ).show()
+        viewModel.navigateToOrderSuccessPage.observe(viewLifecycleOwner,{
+            it?.let {
+                findNavController().navigate(CartFragmentDirections.actionCartFragmentToOrderSuccessFragment())
+                viewModel.doneNavigatingToOrderSuccessPage()
+            }
+        })
+
+
+            btnCheckout.setOnClickListener {
+                getAddress()
+            }
         }
+
+
         return binding.root
     }
 
@@ -99,18 +112,32 @@ class CartFragment : Fragment() {
     private fun hideProgressBar() {
         binding.apply {
             progressBar.visibility = View.INVISIBLE
-            btnCheckout.visibility = View.VISIBLE
-            tvTotalPrice.visibility = View.VISIBLE
-            rvCart.visibility = View.VISIBLE
+            showViewsAndActions()
         }
     }
 
     private fun showProgressBar() {
         binding.apply {
             progressBar.visibility = View.VISIBLE
+            hideViewsAndActions()
+        }
+    }
+
+    private fun hideViewsAndActions(){
+        binding.apply {
             btnCheckout.visibility = View.INVISIBLE
             tvTotalPrice.visibility = View.INVISIBLE
             rvCart.visibility = View.INVISIBLE
+            tvDeliveryCharge.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun showViewsAndActions(){
+        binding.apply {
+            btnCheckout.visibility = View.VISIBLE
+            tvTotalPrice.visibility = View.VISIBLE
+            rvCart.visibility = View.VISIBLE
+            tvDeliveryCharge.visibility = View.VISIBLE
         }
     }
 
@@ -120,6 +147,59 @@ class CartFragment : Fragment() {
             adapter = cartAdapter
             layoutManager = LinearLayoutManager(activity)
         }
+    }
+
+    private fun getAddress(){
+        viewModel.currentUser.observe(viewLifecycleOwner, { response ->
+            when (response) {
+                is Resource.Success -> {
+                    hideProgressBar()
+                    response.data?.let { currentUserResponse ->
+                        if (currentUserResponse.userId != 0L) {
+                            viewModel.getAddressesOfCurrentUser(currentUserResponse.userId)
+                                .observe(viewLifecycleOwner, {
+                                    it?.let{
+                                        val addressList = it.addresses.map { address ->
+                                            address.addressType
+                                        }
+                                        showConfirmationDialog(addressList.toTypedArray(), it.addresses)
+                                        //if(position!=-1){
+                                          //  viewModel.placeOrder(it.addresses[position].addressId!!)
+                                        //}
+                                    }
+                                })
+                        }
+                    }
+                }
+                is Resource.Error -> {
+                    hideProgressBar()
+                    response.message?.let { message ->
+                        showSnackBarWithMessage(message)
+                    }
+                }
+                is Resource.Loading -> {
+                    showProgressBar()
+                }
+            }
+
+        })
+    }
+
+    private fun showConfirmationDialog(addressTypes: Array<String>, address: List<Address>):Int{
+        var selectedAddressIndex = 0
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Select Delivery Address")
+            .setSingleChoiceItems(addressTypes, selectedAddressIndex){ _, which ->
+                selectedAddressIndex = which
+            }
+            .setPositiveButton("Confirm"){ _, _ ->
+                showSnackBarWithMessage("Address chosen!")
+                viewModel.placeOrder(address[selectedAddressIndex].addressId!!)
+            }
+            .setNeutralButton("Add New"){ _, _ ->
+                findNavController().navigate(CartFragmentDirections.actionCartFragmentToAddressFragment())
+            }.show()
+        return selectedAddressIndex
     }
 
     private fun showSnackBarWithMessage(message: String) {

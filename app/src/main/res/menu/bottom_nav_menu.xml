@@ -4,7 +4,7 @@
         android:title="Home"
         android:icon="@drawable/general_home_icon"/>
 
-    <item android:id="@+id/categoryFragment"
+    <item android:id="@+id/genderCategoryFragment"
         android:title="Categories"
         android:icon="@drawable/general_category_icon"/>
 

@@ -9,12 +9,14 @@ data class CartItem(
     val _id: String,
     val sku: String,
     @Embedded
-    val productDetails: ProductDetails,
+    val productDetails: CartProductDetails,
+    val sellingPrice: Float,
+    val discount: Int,
     val selectedSize: DressSize,
     val quantity: Int
 )
 
-data class ProductDetails(
+data class CartProductDetails(
     val name: String,
     val description: String,
     val imageUrl: String,

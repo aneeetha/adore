@@ -16,4 +16,12 @@
     <color name="blue">#00377A</color>
     <color name="pink">#E2285F</color>
     <color name="red">#DC143C</color>
+    <color name="light_green">#4C9A2A</color>
+
+
+<!--  card colors  -->
+    <color name="color_1">#B67171</color>
+    <color name="sandal">#C5A880</color>
+    <color name="color_3">#4E3D53</color>
+    <color name="color_4">#BFB051</color>
 </resources>

@@ -7,14 +7,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.adore.models.enums.DressSize
 import com.example.adore.models.entities.Product
+import com.example.adore.models.enums.CustomLabel
 import com.example.adore.models.responses.ApiTransactionResponse
 import com.example.adore.repository.AdoreRepository
+import com.example.adore.util.AdoreLogic
+import com.example.adore.util.Constants
 import com.example.adore.util.Resource
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class ProductDetailsViewModel(val product: Product, private val repository: AdoreRepository) :
     ViewModel() {
+
 
 
     private var chosenSize: DressSize? = null
@@ -82,13 +86,15 @@ class ProductDetailsViewModel(val product: Product, private val repository: Ador
                         repository.addItemToCart(
                             product._id,
                             it.name,
-                            1
+                            1,
+                            AdoreLogic.getDiscount(product.customLabels)
                         )
                     )
                 }
             }
         } ?: setShowSnackBar()
     }
+
 
     fun doneShowingSnackBarWithMessage(){
         _snackBarMessage.value = null

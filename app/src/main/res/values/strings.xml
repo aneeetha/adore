@@ -79,6 +79,7 @@
     <string name="account_orders">Orders</string>
     <string name="logout">LOGOUT</string>
     <string name="save_address">SAVE ADDRESS</string>
+    <string name="discard">DISCARD</string>
     <string name="add_new_address">ADD NEW ADDRESS</string>
 
     <!--product detail &#9825;-->
@@ -103,14 +104,18 @@
 
     <!-- Size -->
     <string name="size_view">Size: %s</string>
+    <string name="quantity">Qty: %s</string>
     <string name="size_not_chosen_message">You haven\'t chosen any size yet!</string>
 
     <!-- Cart -->
     <string name="checkout">CHECKOUT NOW</string>
+    <string name="delivery_charge"><![CDATA[<font color="black"><small>Delivery Charge: </small></font><big>%s</big>]]></string>
     <string name="total_price"><![CDATA[<font color="black"><small>Total: Rs.</small></font><big>%s</big>]]></string>
     <string name="order_placed">Your order is placed!</string>
 
     <!--Address details-->
+    <string name="address_deleted">Address discarded</string>
+    <string name="address_added">Address Inserted!</string>
     <string name="deliver_to">Deliver to</string>
     <string name="contact">Contact</string>
     <string name="address_line">Address line</string>
@@ -120,5 +125,15 @@
     <string name="state">State</string>
     <string name="address_type">Address type</string>
     <string name="state_name">TAMILNADU</string>
+
+    <!--Order-->
+    <string name="order_success">SUCCESS</string>
+    <string name="orders">View order</string>
+    <string name="heading_orders">Orders</string>
+    <string name="heading_orders_details">Order Details</string>
+    <string name="order_id">TRACK ORDER: %s </string>
+    <string name="order_status"><![CDATA[<font color="black"><small>Order Status: </small></font><big>%s</big>]]></string>
+    <string name="product_type">Product type</string>
+
 
 </resources>

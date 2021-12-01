@@ -1,9 +1,6 @@
 package com.example.adore.api
 
-import com.example.adore.models.responses.CartResponse
-import com.example.adore.models.responses.CurrentUserResponse
-import com.example.adore.models.responses.ProductResponse
-import com.example.adore.models.responses.ApiTransactionResponse
+import com.example.adore.models.responses.*
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -13,7 +10,7 @@ interface AdoreApi {
     suspend fun getCurrentUser():Response<CurrentUserResponse>
 
     @POST("api/user/{id}")
-    suspend fun setCurrentUser(@Path("id")id: Int):Response<ApiTransactionResponse>
+    suspend fun setCurrentUser(@Path("id")id: Long):Response<ApiTransactionResponse>
 
     @GET("api/products")
     suspend fun getProducts():Response<ProductResponse>
@@ -41,6 +38,15 @@ interface AdoreApi {
     @GET("api/cart")
     suspend fun getCartItems(): Response<CartResponse>
 
+    @GET("api/orders")
+    suspend fun getOrders(): Response<OrderResponse>
+
+    @POST("api/placeorder")
+    suspend fun placeOrder(
+        @Query("addressId")
+        addressId: Int
+    ): Response<ApiTransactionResponse>
+
     @POST("api/cart")
     suspend fun addItemToCart(
         @Query("sku")
@@ -48,7 +54,9 @@ interface AdoreApi {
         @Query("size")
         size: String,
         @Query("quantity")
-        quantity: Int
+        quantity: Int,
+        @Query("discount")
+        discount: Int
     ):Response<ApiTransactionResponse>
 
     @PATCH("api/cart/{id}")
@@ -66,4 +74,14 @@ interface AdoreApi {
     suspend fun getProductsWithLabel(
         @Path("id")
         labelId: String): Response<ProductResponse>
+
+    @GET("api/filter")
+    suspend fun getProductsOfCategory(
+        @Query("gender")
+        gender: String,
+        @Query("productType")
+        productType: String,
+        @Query("category")
+        category: String
+    ): Response<ProductResponse>
 }

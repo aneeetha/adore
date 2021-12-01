@@ -1,5 +1,7 @@
 package com.example.adore.ui.fragments
 
+import android.graphics.Paint
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,11 +17,14 @@ import com.example.adore.R
 import com.example.adore.adapters.ProductSizeAdapter
 import com.example.adore.databinding.FragmentProductDetailsBinding
 import com.example.adore.databsae.AdoreDatabase
+import com.example.adore.models.enums.CustomLabel
 import com.example.adore.repository.AdoreRepository
 import com.example.adore.ui.AdorableActivity
 import com.example.adore.ui.viewmodels.ProductDetailsViewModel
 import com.example.adore.ui.viewmodels.ProductsViewModel
 import com.example.adore.ui.viewmodels.factory.ProductDetailsViewModelProviderFactory
+import com.example.adore.util.AdoreLogic
+import com.example.adore.util.Constants
 import com.google.android.material.snackbar.Snackbar
 
 class ProductDetailsFragment : Fragment() {
@@ -54,26 +59,29 @@ class ProductDetailsFragment : Fragment() {
         binding.productDetailsViewModel = viewModel
         binding.lifecycleOwner = this
 
+        val discount = AdoreLogic.getDiscount(arguments.product.customLabels)
+        val sellingPrice = Constants.CURRENCY + (arguments.product.price - (arguments.product.price.times(discount).div(100))).toString()
+
+
         productSizeAdapter.setOnItemClickListener {
             viewModel.setChosenProductSize(it)
         }
 
-        binding.ivBackIcon.setOnClickListener {
-            Log.e("Navigation", "${findNavController().currentDestination}")
-            //childFragmentManager.popBackStackImmediate()
-            findNavController().navigateUp()
-            //parentFragmentManager.popBackStackImmediate()
+        binding.apply {
+            val discountString = "$discount% discount"
+            tvProductPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            tvProductPrice.typeface = Typeface.DEFAULT
+            tvProductPrice.textSize = 14F
+            tvProductPriceDiscounted.text = sellingPrice
+            tvProductDiscount.text = discountString
+            ivBackIcon.setOnClickListener {
+                //childFragmentManager.popBackStackImmediate()
+                findNavController().navigateUp()
+                //parentFragmentManager.popBackStackImmediate()
+            }
         }
 
-//        val callback = object: OnBackPressedCallback(true){
-//            override fun handleOnBackPressed() {
-//                requireActivity().onBackPressed()
-//            }
-//        }
-//
-//        binding.ivBackIcon.setOnClickListener {
-//            (activity as AdorableActivity).onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-//        }
+
 
         viewModel.addedToFavlist.observe(viewLifecycleOwner, {
             if (it == true) {

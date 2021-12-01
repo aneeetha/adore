@@ -155,10 +155,8 @@ class HomeViewModel(
         }
     }
 
-    private fun setCurrentUser(userId: Int?) = viewModelScope.launch {
-        userId?.let {
-            adoreRepository.setCurrentUser(it)
-        }
+    private fun setCurrentUser(userId: Long) = viewModelScope.launch {
+            adoreRepository.setCurrentUser(userId)
     }
 
     fun doneShowingSnackBarMessage(){

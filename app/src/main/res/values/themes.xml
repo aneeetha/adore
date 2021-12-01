@@ -3,8 +3,8 @@
     <style name="Theme.Adore" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/yellow_700</item>
-        <item name="colorPrimaryVariant">@color/yellow_500</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryVariant">@color/navy</item>
+        <item name="colorOnPrimary">@color/navy_light</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/navy</item>
         <item name="colorSecondaryVariant">@color/navy_light</item>

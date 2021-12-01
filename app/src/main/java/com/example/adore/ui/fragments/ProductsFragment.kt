@@ -43,59 +43,47 @@ class ProductsFragment : Fragment() {
         viewModel = (activity as AdorableActivity).viewModel
         setUpRecyclerView()
 
-//        viewModel.navigateToProductDetails.observe(viewLifecycleOwner, {id ->
-//            id?.let {
-//                findNavController().navigate(
-//                    ProductsFragmentDirections.actionProductsFragmentToProductDetailsFragment(it)
-//                )
-//                viewModel.onProductDetailsNavigated()
-//
-//                android:onClick="@{() -> clickListener.onClick(product)}"
-//            }
-//        })
+        val arguments = ProductsFragmentArgs.fromBundle(requireArguments())
+        viewModel.getProductWithCategories(arguments.gender, arguments.productType, arguments.category)
 
         productsAdapter.setOnItemClickListener {
-            val bundle = Bundle().apply {
-                putSerializable("product", it)
-            }
-            Log.e("Navigation", "${findNavController().currentDestination}")
-            findNavController().navigate(
-                R.id.action_productsFragment_to_productDetailsFragment,
-                bundle
-            )
-        }
-
-//        val callback = object : OnBackPressedCallback(true) {
-//            override fun handleOnBackPressed() {
-//                val a =childFragmentManager.getBackStackEntryAt(1)
-//                Log.e("Navigation", "$a ...")
-//                Log.e("Navigation", "here")
+//            val bundle = Bundle().apply {
+//                putSerializable("product", it)
 //            }
-//        }
+//            Log.e("Navigation", "${findNavController().currentDestination}")
+//            findNavController().navigate(
+//                R.id.action_productsFragment_to_productDetailsFragment,
+//                bundle
+//            )
+            findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToProductDetailsFragment(it))
+        }
 
-        binding.ivBackIcon.setOnClickListener {
-            Log.e("Navigation", "${findNavController().currentDestination}")
-            findNavController().navigateUp()
-            //requireActivity().onBackPressed()
-            //findNavController().backStack.pop()
+
+        binding.apply {
+            ivBackIcon.setOnClickListener {
+                Log.e("Navigation", "${findNavController().currentDestination}")
+                findNavController().navigateUp()
+                //requireActivity().onBackPressed()
+                //findNavController().backStack.pop()
 //            childFragmentManager.popBackStackImmediate()
-            //parentFragmentManager.popBackStackImmediate()
+                //parentFragmentManager.popBackStackImmediate()
+            }
+
+            ivCartIcon.setOnClickListener {
+                findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToCartFragment())
+            }
+
+            ivFavoIcon.setOnClickListener {
+                findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToFavoFragment())
+            }
+
+            ivSearchIcon.setOnClickListener {
+                findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToSearchFragment())
+            }
         }
 
-        binding.ivCartIcon.setOnClickListener {
-            findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToCartFragment())
-        }
-
-        binding.ivFavoIcon.setOnClickListener {
-            findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToFavoFragment())
-        }
-
-        binding.ivSearchIcon.setOnClickListener {
-            findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToSearchFragment())
-        }
-
-        viewModel.allProducts.observe(viewLifecycleOwner, { response ->
-            when(response) {
+        viewModel.productsOfCategory.observe(viewLifecycleOwner, { response ->
+            when (response) {
                 is Resource.Success -> {
                     hideProgressBar()
                     response.data?.let { productsResponse ->
@@ -121,15 +109,15 @@ class ProductsFragment : Fragment() {
     }
 
 
-    private fun hideProgressBar(){
+    private fun hideProgressBar() {
         binding.progressBar.visibility = View.INVISIBLE
     }
 
-    private fun showProgressBar(){
+    private fun showProgressBar() {
         binding.progressBar.visibility = View.VISIBLE
     }
 
-    private fun setUpRecyclerView(){
+    private fun setUpRecyclerView() {
         productsAdapter = ProductsAdapter()
         binding.rvProducts.apply {
             adapter = productsAdapter
@@ -137,7 +125,7 @@ class ProductsFragment : Fragment() {
         }
     }
 
-    private fun showSnackBarWithMessage(message: String){
+    private fun showSnackBarWithMessage(message: String) {
         Snackbar.make(
             requireActivity().findViewById(android.R.id.content),
             message,

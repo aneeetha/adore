@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.adore.R
 import com.example.adore.adapters.AddressAdapter
 import com.example.adore.databinding.FragmentAddressBinding
 import com.example.adore.databsae.AdoreDatabase
@@ -30,7 +31,10 @@ class AddressFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var userId: Int? = null
+        var userId: Long? = null
+        val navBar = activity?.findViewById<View>(R.id.bottom_navigation_view)
+        navBar?.visibility = View.GONE
+
         binding = FragmentAddressBinding.inflate(inflater, container, false)
         setupRecyclerView()
 
@@ -43,6 +47,8 @@ class AddressFragment : Fragment() {
             viewModelFactory
         ).get(SharedUserProfileViewModel::class.java)
 
+        viewModelShared.getCurrentUser()
+
         addressesAdapter.setOnItemClickListener {
             findNavController().navigate(
                 AddressFragmentDirections.actionAddressFragmentToAddressDetailsFragment(
@@ -52,22 +58,6 @@ class AddressFragment : Fragment() {
         }
 
         binding.apply {
-            btnAddNewAddress.setOnClickListener {
-                Log.e("AddressFragment", "$userId")
-                userId?.let {
-                    viewModelShared.insertNewAddress(Address(it))
-                    viewModelShared.getLastInsertedAddress().observe(viewLifecycleOwner, { data ->
-                        Log.e("AddressFragment", "current  $data")
-                        data?.let { address ->
-                            findNavController().navigate(
-                                AddressFragmentDirections.actionAddressFragmentToAddressDetailsFragment(
-                                    address
-                                )
-                            )
-                        }
-                    })
-                }
-            }
             ivBackIcon.setOnClickListener {
                 findNavController().navigateUp()
             }
@@ -78,12 +68,32 @@ class AddressFragment : Fragment() {
                 is Resource.Success -> {
                     hideProgressBar()
                     response.data?.let { currentUserResponse ->
-                        if (currentUserResponse.userId != 0) {
-                            Log.e("Home", "${currentUserResponse.userId}")
+                        if (currentUserResponse.userId != 0L) {
                             userId = currentUserResponse.userId
+                            binding.btnAddNewAddress.setOnClickListener {
+                                Log.e("AddressFragment", "${currentUserResponse.userId}")
+                                viewModelShared.insertNewAddress(
+                                    Address(
+                                        currentUserResponse.userId,
+                                        "address ${(0 until 10).random()}"
+                                    )
+                                )
+
+                                viewModelShared.getLastInsertedAddress()
+                                    .observe(viewLifecycleOwner, { data ->
+                                        Log.e("AddressFragment", "current  $data")
+                                        data?.let { address ->
+                                            findNavController().navigate(
+                                                AddressFragmentDirections.actionAddressFragmentToAddressDetailsFragment(
+                                                    address
+                                                )
+                                            )
+                                        }
+                                    })
+                            }
                             viewModelShared.getAddressesOfCurrentUser(currentUserResponse.userId)
                                 .observe(viewLifecycleOwner, {
-                                    Log.e("AddressFragment", "$it")
+                                    Log.e("AddressFragment", "${it.user.userId}")
                                     it?.let { addressesAdapter.submitList(it.addresses) }
                                         ?: Log.e("AddressFragment", "0")
                                 })
@@ -116,17 +126,19 @@ class AddressFragment : Fragment() {
 
     private fun hideProgressBar() {
         binding.progressBar.visibility = View.INVISIBLE
+        binding.btnAddNewAddress.visibility = View.VISIBLE
     }
 
     private fun showProgressBar() {
         binding.progressBar.visibility = View.VISIBLE
+        binding.btnAddNewAddress.visibility = View.INVISIBLE
     }
 
     private fun showSnackBarWithMessage(message: String) {
         Snackbar.make(
             requireActivity().findViewById(android.R.id.content),
             message,
-            Snackbar.LENGTH_SHORT // How long to display the message.
+            Snackbar.LENGTH_SHORT
         ).show()
     }
 }

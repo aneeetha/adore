@@ -11,9 +11,9 @@ import java.io.Serializable
 )
 data class Address(
     @ColumnInfo(name = "user_id")
-    val userId: Int,
+    val userId: Long,
     @ColumnInfo(name = "address_type")
-    var addressType: String?=null,
+    var addressType: String,
     @ColumnInfo(name = "address_line")
     var addressLine: String?=null,
     var name: String?=null,
@@ -29,7 +29,7 @@ data class Address(
 
 data class AddressDetailUpdate(
     var address_id: Int?,
-    var address_type: String?,
+    var address_type: String,
     var address_line: String?,
     var name: String?,
     var contact:String?,

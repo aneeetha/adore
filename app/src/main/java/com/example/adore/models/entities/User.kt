@@ -19,17 +19,16 @@ data class User(
     @ColumnInfo(name = "password")
     var password: String,
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @ColumnInfo(name = "user_id")
-    var userId: Int? = null,
-
+    var userId: Long,
     var email: String? = null,
     var dob: Date? = null,
     var gender: Gender? = null
 )
 
 data class UserDetailUpdate(
-    var user_id: Int?,
+    var user_id: Long,
     var email: String? = null,
     var dob: Date? = null,
     var gender: Gender? = null

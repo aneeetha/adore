@@ -47,13 +47,14 @@ class SearchFragment : Fragment() {
 //        })
 
         productsAdapter.setOnItemClickListener {
-            val bundle = Bundle().apply {
-                putSerializable("product", it)
-            }
-            findNavController().navigate(
-                R.id.action_searchFragment_to_productDetailsFragment,
-                bundle
-            )
+//            val bundle = Bundle().apply {
+//                putSerializable("product", it)
+//            }
+//            findNavController().navigate(
+//                R.id.action_searchFragment_to_productDetailsFragment,
+//                bundle
+//            )
+            findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToProductDetailsFragment(it))
         }
 
         var job: Job? = null

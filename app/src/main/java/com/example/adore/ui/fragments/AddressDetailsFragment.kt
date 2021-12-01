@@ -1,5 +1,6 @@
 package com.example.adore.ui.fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +13,14 @@ import androidx.navigation.fragment.findNavController
 import com.example.adore.R
 import com.example.adore.databinding.FragmentAddressDetailsBinding
 import com.example.adore.databsae.AdoreDatabase
+import com.example.adore.models.entities.Address
 import com.example.adore.models.entities.AddressDetailUpdate
 import com.example.adore.models.enums.District
 import com.example.adore.repository.AdoreRepository
 import com.example.adore.ui.viewmodels.SharedUserProfileViewModel
 import com.example.adore.ui.viewmodels.factory.UserProfileViewModelProviderFactory
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 
 class AddressDetailsFragment : Fragment() {
@@ -52,29 +56,56 @@ class AddressDetailsFragment : Fragment() {
 
             (tilEtCity.editText as AutoCompleteTextView).setAdapter(cityAdapter)
             btnSaveDetails.setOnClickListener {
-                if (tilEtDeliverTo.validateField()
-                    && tilEtContact.validateField()
-                    && tilEtAddressLine.validateField()
-                    && tilEtAddressType.validateField() && tilEtLocality.validateField() && tilEtPincode.validateField() && tilEtCity.validateField()){
-                    val address = AddressDetailUpdate(currentAddress.addressId, etAddressType.text.toString(), etAddressLine.text.toString(), etDeliverTo.text.toString(), etContact.text.toString(), etLocality.text.toString(), District.valueOf(tilEtCity.editText?.text.toString()), etPincode.text.toString().toInt())
-                    viewModelShared.updateAddress(address)
-                }
+                saveDetails(currentAddress)
+            }
+
+            btnDiscard.setOnClickListener {
+                viewModelShared.deleteAddress(currentAddress)
+                showSnackBarWithMessage(getString(R.string.address_deleted))
+                findNavController().navigate(AddressDetailsFragmentDirections.actionAddressDetailsFragmentToUserProfileFragment())
             }
 
             ivBackIcon.setOnClickListener {
-                findNavController().navigateUp()
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Wanna save changes?")
+                    .setPositiveButton("Yes"){ _, _ ->
+                        saveDetails(currentAddress)
+                    }
+                    .setNeutralButton("No"){ _, _ ->
+                        showSnackBarWithMessage("Changes not saved!")
+                        findNavController().navigate(AddressDetailsFragmentDirections.actionAddressDetailsFragmentToUserProfileFragment())
+                    }.show()
             }
         }
 
-        viewModelShared.navigateToAddressFragment.observe(viewLifecycleOwner, {
+        viewModelShared.navigateToUserProfile.observe(viewLifecycleOwner, {
             it?.let {
-                findNavController().navigate(AddressDetailsFragmentDirections.actionAddressDetailsFragmentToAddressFragment())
-                viewModelShared.doneNavigatingToAddressFragment()
+                findNavController().navigate(AddressDetailsFragmentDirections.actionAddressDetailsFragmentToUserProfileFragment())
+                viewModelShared.doneNavigatingToUserProfile()
             }
         })
 
         return binding.root
     }
+
+    private fun allFieldsValid(): Boolean {
+        var fields: List<TextInputLayout>
+        binding.apply {
+            fields = listOf(tilEtDeliverTo, tilEtContact, tilEtAddressLine, tilEtAddressType, tilEtLocality, tilEtPincode, tilEtCity)
+        }
+        return !fields.map { it.validateField() }.contains(false)
+    }
+
+    private fun saveDetails(currentAddress: Address){
+        binding.apply {
+            if (allFieldsValid()){
+                val address = AddressDetailUpdate(currentAddress.addressId, etAddressType.text.toString(), etAddressLine.text.toString(), etDeliverTo.text.toString(), etContact.text.toString(), etLocality.text.toString(), District.valueOf(tilEtCity.editText?.text.toString()), etPincode.text.toString().toInt())
+                showSnackBarWithMessage(getString(R.string.address_added))
+                viewModelShared.updateAddress(address)
+            }
+        }
+    }
+
 
     private fun TextInputLayout.validateField() = when {
         editText?.text.toString().isEmpty() -> {
@@ -85,6 +116,14 @@ class AddressDetailsFragment : Fragment() {
             error = null
             true
         }
+    }
+
+    private fun showSnackBarWithMessage(message: String) {
+        Snackbar.make(
+            requireActivity().findViewById(android.R.id.content),
+            message,
+            Snackbar.LENGTH_SHORT // How long to display the message.
+        ).show()
     }
 
 

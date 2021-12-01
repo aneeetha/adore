@@ -5,6 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <ImageView
             android:id="@+id/iv_back_icon"
             android:layout_width="0dp"
@@ -22,7 +23,7 @@
             android:layout_height="wrap_content"
             android:text="@string/add_address"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/iv_back_icon"
+            app:layout_constraintStart_toEndOf="@id/iv_back_icon"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ScrollView
@@ -35,10 +36,7 @@
 
             <LinearLayout
                 android:id="@+id/ll_address"
-                android:paddingTop="15dp"
-                android:paddingStart="15dp"
-                android:paddingEnd="15dp"
-                android:paddingBottom="50dp"
+                android:padding="20dp"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -47,7 +45,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_et_address_type"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:hint="@string/address_type"
@@ -65,7 +63,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_et_deliver_to"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:hint="@string/deliver_to"
@@ -83,7 +81,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_et_contact"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:hint="@string/contact"
@@ -101,7 +99,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_et_address_line"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:hint="@string/address_line"
@@ -120,7 +118,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_et_locality"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:hint="@string/locality"
@@ -139,7 +137,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_et_city"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:hint="@string/city"
@@ -155,7 +153,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_et_pincode"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:hint="@string/pincode"
@@ -171,20 +169,6 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    android:id="@+id/til_et_state"-->
-<!--                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"-->
-<!--                    android:layout_width="350dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_margin="10dp"-->
-<!--                    android:hint="@string/state"-->
-<!--                    app:hintEnabled="true">-->
-
-<!--                    <AutoCompleteTextView-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"/>-->
-
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
 
             </LinearLayout>
 
@@ -194,12 +178,27 @@
             android:id="@+id/btn_save_details"
             android:layout_width="0dp"
             android:layout_height="70dp"
+            android:layout_margin="10dp"
             android:text="@string/save_address"
+            android:background="@drawable/button_bg"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_discard"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/btn_discard"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_margin="10dp"
+            android:text="@string/discard"
+            android:background="@drawable/button_bg"
+            android:textColor="@color/white"
+            android:textSize="15sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toEndOf="@id/btn_save_details"/>
 
         <ProgressBar
             android:id="@+id/progress_bar"

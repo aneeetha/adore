@@ -9,10 +9,10 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.adore.AdoreApplication
 import com.example.adore.models.CartItem
-import com.example.adore.models.responses.ApiTransactionResponse
-import com.example.adore.models.responses.CartResponse
-import com.example.adore.models.responses.CurrentUserResponse
-import com.example.adore.models.responses.ProductResponse
+import com.example.adore.models.enums.Category
+import com.example.adore.models.enums.Gender
+import com.example.adore.models.enums.ProductType
+import com.example.adore.models.responses.*
 import com.example.adore.repository.AdoreRepository
 import com.example.adore.util.Resource
 import kotlinx.coroutines.launch
@@ -32,9 +32,10 @@ class ProductsViewModel(
     val allProducts: LiveData<Resource<ProductResponse>>
         get() = _allProducts
 
-//    private val _productsWithLabel: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
-//    val productsWithLabel: LiveData<Resource<ProductResponse>>
-//        get() = _productsWithLabel
+    private val _productsOfCategory: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
+    val productsOfCategory: LiveData<Resource<ProductResponse>>
+        get() = _productsOfCategory
+
 
     private val _searchResult: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
     val searchResult: LiveData<Resource<ProductResponse>>
@@ -48,10 +49,17 @@ class ProductsViewModel(
     val cartItems
         get() = _cartItems
 
+    private val _orders: MutableLiveData<Resource<OrderResponse>> = MutableLiveData()
+    val orders
+        get() = _orders
+
     private val _totalPrice: MutableLiveData<Float> = MutableLiveData()
     val totalPrice
         get() = _totalPrice
 
+    private val _navigateToOrderSuccessPage = MutableLiveData<Boolean?>()
+    val navigateToOrderSuccessPage
+        get() = _navigateToOrderSuccessPage
 
     private val _navigateToProductDetails = MutableLiveData<String>()
     val navigateToProductDetails
@@ -75,14 +83,17 @@ class ProductsViewModel(
 //    }
 
     init {
-        getAllProducts()
+        getCurrentUser()
+        //getAllProducts()
         //getProductsWithCustomLabel()
     }
 
-//    fun getCurrentUser() = viewModelScope.launch {
-//        val response = adoreRepository.getCurrentUser()
-//        _currentUser.value = handleCurrentUserResponse(response)
-//    }
+    fun getCurrentUser() = viewModelScope.launch {
+        val response = adoreRepository.getCurrentUser()
+        _currentUser.value = handleResponse(response)
+    }
+
+    fun getAddressesOfCurrentUser(userId: Long) = adoreRepository.getAddressesOfUser(userId)
 
     private fun getAllProducts() = viewModelScope.launch {
         safeGetAllProductsCall()
@@ -100,6 +111,14 @@ class ProductsViewModel(
         safeGetCartItemsCall()
     }
 
+    fun getOrders() = viewModelScope.launch {
+        safeGetOrdersCall()
+    }
+
+    fun getProductWithCategories(gender: Gender, productType: ProductType, category: Category)= viewModelScope.launch{
+        safeGetProductWithCategoriesCall(gender, productType, category)
+    }
+
     fun cartItemQuantityChanged(quantity: Int, cartItemId: String) = viewModelScope.launch {
         _cartSnackBarMessage.value =
             handleApiTransactionResponse(adoreRepository.updateCart(cartItemId, quantity))
@@ -112,6 +131,11 @@ class ProductsViewModel(
         getCartItem()
     }
 
+    fun placeOrder(addressId: Int) = viewModelScope.launch {
+        _cartSnackBarMessage.value = handleApiTransactionResponse(adoreRepository.placeOrder(addressId))
+        _navigateToOrderSuccessPage.value = true
+    }
+
     fun removeFavoItem(productId: String) = viewModelScope.launch {
         _favoSnackBarMessage.value =
             handleApiTransactionResponse(adoreRepository.removeFavoItem(productId))
@@ -121,7 +145,7 @@ class ProductsViewModel(
     fun getTotalPrice(cartItems: List<CartItem>) {
         var sum = 0F
         cartItems.forEach {
-            sum += it.quantity * it.productDetails.price
+            sum += it.quantity * it.sellingPrice
         }
         _totalPrice.value = sum
     }
@@ -134,12 +158,16 @@ class ProductsViewModel(
         _favoSnackBarMessage.value=null
     }
 
+    fun doneNavigatingToOrderSuccessPage(){
+        _navigateToOrderSuccessPage.value = null
+    }
+
     private suspend fun safeSearchForProductsCall(searchQuery: String){
         _searchResult.value = Resource.Loading()
         try{
             if(hasInternetConnection()){
                 val response = adoreRepository.searchForProducts(searchQuery) //Seasonal
-                _searchResult.value = handleProductResponse(response)
+                _searchResult.value = handleResponse(response)
             }else{
                 _searchResult.value = Resource.Error("No internet connection :(")
             }
@@ -151,12 +179,29 @@ class ProductsViewModel(
         }
     }
 
+    private suspend fun safeGetProductWithCategoriesCall(gender: Gender, productType: ProductType, category: Category){
+        _productsOfCategory.value = Resource.Loading()
+        try{
+            if(hasInternetConnection()){
+                val response = adoreRepository.getProductsOfCategory(gender, productType, category)
+                _productsOfCategory.value = handleResponse(response)
+            }else{
+                _productsOfCategory.value = Resource.Error("No internet connection :(")
+            }
+        }catch(t: Throwable){
+            when(t){
+                is IOException -> _productsOfCategory.postValue(Resource.Error("Network Failure!"))
+                else -> _productsOfCategory.postValue(Resource.Error("Conversion Error!"))
+            }
+        }
+    }
+
     private suspend fun safeGetAllProductsCall(){
         _allProducts.value = Resource.Loading()
         try{
             if(hasInternetConnection()){
                 val response = adoreRepository.getProducts() //Seasonal
-                _allProducts.value = handleProductResponse(response)
+                _allProducts.value = handleResponse(response)
             }else{
                 _allProducts.value = Resource.Error("No internet connection :(")
             }
@@ -173,7 +218,7 @@ class ProductsViewModel(
         try{
             if(hasInternetConnection()){
                 val response = adoreRepository.getFavlist() //Seasonal
-                _favlistResult.value = handleProductResponse(response)
+                _favlistResult.value = handleResponse(response)
             }else{
                 _favlistResult.value = Resource.Error("No internet connection :(")
             }
@@ -190,7 +235,7 @@ class ProductsViewModel(
         try{
             if(hasInternetConnection()){
                 val response = adoreRepository.getCartItems() //Seasonal
-                _cartItems.value = handleCartResponse(response)
+                _cartItems.value = handleResponse(response)
             }else{
                 _cartItems.value = Resource.Error("No internet connection :(")
             }
@@ -202,8 +247,24 @@ class ProductsViewModel(
         }
     }
 
+    private suspend fun safeGetOrdersCall(){
+        _orders.value = Resource.Loading()
+        try{
+            if(hasInternetConnection()){
+                val response = adoreRepository.getOrders()
+                _orders.value = handleResponse(response)
+            }else{
+                _orders.value = Resource.Error("No internet connection :(")
+            }
+        }catch(t: Throwable){
+            when(t){
+                is IOException -> _orders.postValue(Resource.Error("Network Failure!"))
+                else -> _orders.postValue(Resource.Error("Conversion Error!"))
+            }
+        }
+    }
 
-    private fun handleProductResponse(response: Response<ProductResponse>): Resource<ProductResponse> =
+    private fun <T: Any> handleResponse(response: Response<T>): Resource<T> =
         if (response.isSuccessful) {
             when (response.code()) {
                 200 -> {
@@ -216,8 +277,8 @@ class ProductsViewModel(
                 }
             }
         } else {
-            val message = "An error occurred: " + when (response.code()) {
-                404 -> "404! Resource not found"
+            val message = "An Error Occurred: " + when (response.code()) {
+                404 -> "404! Resource Not found"
                 500 -> "Server broken"
                 502 -> "Bad Gateway"
                 else -> "Unknown error"
@@ -226,28 +287,6 @@ class ProductsViewModel(
         }
 
 
-    private fun handleCartResponse(response: Response<CartResponse>): Resource<CartResponse> =
-        if (response.isSuccessful) {
-            when (response.code()) {
-                200 -> {
-                    response.body()!!.let {
-                        Resource.Success(it)
-                    }
-                }
-                else -> {
-                    Log.e("Code", "${response.code()}")
-                    Resource.Error("Add items to your cart!")
-                }
-            }
-        } else {
-            val message = "An error occurred: " + when (response.code()) {
-                404 -> "404! Resource not found"
-                500 -> "Server broken"
-                502 -> "Bad Gateway"
-                else -> "Unknown error"
-            }
-            Resource.Error(message)
-        }
 
     private fun handleApiTransactionResponse(response: Response<ApiTransactionResponse>): Resource<ApiTransactionResponse> =
         if (response.isSuccessful) {

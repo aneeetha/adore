@@ -39,13 +39,14 @@ class FavoFragment : Fragment() {
         viewModel.getFavlist()
 
         favoProductAdapter.setOnItemClickListener {
-            val bundle = Bundle().apply {
-                putSerializable("product", it)
-            }
-            findNavController().navigate(
-                R.id.action_favoFragment_to_productDetailsFragment,
-                bundle
-            )
+//            val bundle = Bundle().apply {
+//                putSerializable("product", it)
+//            }
+//            findNavController().navigate(
+//                R.id.action_favoFragment_to_productDetailsFragment,
+//                bundle
+//            )
+            findNavController().navigate(FavoFragmentDirections.actionFavoFragmentToProductDetailsFragment(it))
         }
 
         viewModel.favoSnackBarMessage.observe(viewLifecycleOwner, { response ->

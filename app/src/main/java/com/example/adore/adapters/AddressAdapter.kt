@@ -12,7 +12,6 @@ import kotlinx.android.synthetic.main.list_text_view.view.*
 
 class AddressAdapter: ListAdapter<Address, AddressAdapter.TextViewHolder>(SizeViewDiffCallback()) {
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = TextViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: TextViewHolder, position: Int) {

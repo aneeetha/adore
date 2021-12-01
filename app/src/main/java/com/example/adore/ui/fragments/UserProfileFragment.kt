@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.adore.R
 import com.example.adore.databinding.FragmentUserProfileBinding
 import com.example.adore.databsae.AdoreDatabase
 import com.example.adore.repository.AdoreRepository
@@ -27,6 +28,9 @@ class UserProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val navBar = activity?.findViewById<View>(R.id.bottom_navigation_view)
+        navBar?.visibility = View.VISIBLE
+
         binding = FragmentUserProfileBinding.inflate(inflater, container, false)
 
         val application = requireNotNull(this.activity).application
@@ -39,9 +43,11 @@ class UserProfileFragment : Fragment() {
             userProfileFragment = this@UserProfileFragment
         }
 
-
-
         return binding.root
+    }
+
+    fun navigateToOrdersFragment(){
+        findNavController().navigate(UserProfileFragmentDirections.actionUserProfileFragmentToOrderFragment())
     }
 
     fun navigateToUserAddressFragment(){
@@ -56,7 +62,16 @@ class UserProfileFragment : Fragment() {
     }
     fun logout(){
         viewModelShared.logoutCurrentUser()
+        showSnackBarWithMessage("Logged Out!")
         findNavController().navigate(UserProfileFragmentDirections.actionUserProfileFragmentToHomeFragment())
+    }
+
+    private fun showSnackBarWithMessage(message: String) {
+        Snackbar.make(
+            requireActivity().findViewById(android.R.id.content),
+            message,
+            Snackbar.LENGTH_SHORT
+        ).show()
     }
 
 

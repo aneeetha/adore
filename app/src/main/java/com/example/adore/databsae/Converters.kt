@@ -93,6 +93,17 @@ class DistrictTypeConverter{
     fun fromString(district: String?): District? = district?.let{Gson().fromJson(district, District::class.java)}
 }
 
+class ListOfOrderProductsTypeConverter{
+    @TypeConverter
+    fun fromList(list: List<OrderProductDetails>): String{
+        val listType = object : TypeToken<List<OrderProductDetails>>(){}.type
+        return Gson().toJson(list, listType)
+    }
+
+    @TypeConverter
+    fun fromString(orderProductDetailsElement: String): List<OrderProductDetails> = Gson().fromJson(orderProductDetailsElement, Array<OrderProductDetails>::class.java).asList()
+}
+
 
 
 //class CategoryTypeConverter{

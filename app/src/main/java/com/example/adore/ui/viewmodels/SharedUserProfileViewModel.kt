@@ -12,12 +12,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.adore.AdoreApplication
 import com.example.adore.models.entities.Address
 import com.example.adore.models.entities.AddressDetailUpdate
+import com.example.adore.models.entities.UserDetailUpdate
+import com.example.adore.models.enums.Gender
 import com.example.adore.models.responses.CurrentUserResponse
 import com.example.adore.repository.AdoreRepository
 import com.example.adore.util.Resource
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
+import java.util.*
 
 class SharedUserProfileViewModel(app: Application, val adoreRepository: AdoreRepository): AndroidViewModel(app) {
 
@@ -25,11 +28,16 @@ class SharedUserProfileViewModel(app: Application, val adoreRepository: AdoreRep
     val currentUser
         get() = _currentUser
 
-    private val _navigateToAddressFragment = MutableLiveData<Boolean?>()
-    val navigateToAddressFragment
-        get() = _navigateToAddressFragment
+    private val _navigateToUserProfile = MutableLiveData<Boolean?>()
+    val navigateToUserProfile
+        get() = _navigateToUserProfile
 
-    var currentAddress: Address? =null
+    private val _showSnackBarMessage = MutableLiveData<String?>()
+    val showSnackBarMessage
+        get() = _showSnackBarMessage
+
+    var dob: Date? = null
+    var gender: Gender? = null
 
     init {
         getCurrentUser()
@@ -43,17 +51,34 @@ class SharedUserProfileViewModel(app: Application, val adoreRepository: AdoreRep
         adoreRepository.addNewAddressToUser(address)
     }
 
+    fun deleteAddress(address: Address) = viewModelScope.launch {
+        adoreRepository.deleteAddress(address)
+    }
+
     fun getLastInsertedAddress() = adoreRepository.getLastInsertedAddress()
 
 
-    fun getAddressesOfCurrentUser(userId: Int) = adoreRepository.getAddressesOfUser(userId)
+    fun getAddressesOfCurrentUser(userId: Long) = adoreRepository.getAddressesOfUser(userId)
 
     fun updateAddress(address: AddressDetailUpdate) = viewModelScope.launch {
         adoreRepository.updateAddress(address)
-        navigateToAddressFragment.value = true
+        navigateToUserProfile.value = true
     }
 
-    private fun getCurrentUser()=viewModelScope.launch{
+
+    fun getUserDetails(userId: Long) = adoreRepository.getUser(userId)
+
+
+    fun saveUserDetails(userId: Long, email: String?)=viewModelScope.launch {
+        adoreRepository.updateUserDetails(UserDetailUpdate(userId, email, dob, gender))
+    }
+
+    fun doneShowingSnackBar(){
+        _showSnackBarMessage.value = null
+    }
+
+
+    fun getCurrentUser() = viewModelScope.launch{
         safeGetCurrentUserCall()
     }
 
@@ -124,8 +149,8 @@ class SharedUserProfileViewModel(app: Application, val adoreRepository: AdoreRep
         return false
     }
 
-    fun doneNavigatingToAddressFragment(){
-        _navigateToAddressFragment.value = null
+    fun doneNavigatingToUserProfile(){
+        _navigateToUserProfile.value = null
     }
 
 }

@@ -45,6 +45,7 @@ class HomeFragment : Fragment() {
         binding.apply {
             homeFragment = this@HomeFragment
         }
+
         val navBar = activity?.findViewById<View>(R.id.bottom_navigation_view)
         navBar?.visibility = View.VISIBLE
 
@@ -91,7 +92,7 @@ class HomeFragment : Fragment() {
                 is Resource.Success -> {
                     hideProgressBar()
                     response.data?.let { currentUserResponse ->
-                        if(currentUserResponse.userId==0){
+                        if(currentUserResponse.userId==0L){
                             Log.e("Home", "${currentUserResponse.userId}")
                             LoginDialog(requireContext(), object: LoginDialogListener {
                                 override fun onLoginButtonClicked(
@@ -134,14 +135,15 @@ class HomeFragment : Fragment() {
         })
 
         homeSliderAdapter.setOnItemClickListener {
-            val bundle = Bundle().apply {
-                putSerializable("product", it)
-            }
+//            val bundle = Bundle().apply {
+//                putSerializable("product", it)
+//            }
             Log.e("Navigation", "${findNavController().currentDestination}")
-            findNavController().navigate(
-                R.id.action_homeFragment_to_productDetailsFragment,
-                bundle
-            )
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(it))
+//            findNavController().navigate(
+//                R.id.action_homeFragment_to_productDetailsFragment,
+//                bundle
+//            )
         }
         return binding.root
     }

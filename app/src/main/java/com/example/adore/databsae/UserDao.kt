@@ -37,7 +37,7 @@ interface UserDao {
     suspend fun updateAddress(obj: AddressDetailUpdate)
 
     @Query("Select * from user where user_id = :userId")
-    fun getUser(userId: Int): LiveData<User>
+    fun getUser(userId: Long): LiveData<User>
 
     @Transaction
     @Query("Select * from user where mobile_no = :mobileNo limit 1")
@@ -47,6 +47,6 @@ interface UserDao {
     fun getAllUsers(): LiveData<List<User>>
 
     @Query("Select * from user where user_id = :userId")
-    fun getUserWithAddresses(userId: Int): LiveData<UserWithAddresses>
+    fun getUserWithAddresses(userId: Long): LiveData<UserWithAddresses>
 
 }

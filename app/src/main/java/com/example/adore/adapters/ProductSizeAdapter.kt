@@ -33,8 +33,10 @@ class ProductSizeAdapter() : ListAdapter<Stock, ProductSizeAdapter.TextViewHolde
                     }
                 }
             }else{
-                currentList.remove(currentItem)
-                submitList(currentList)
+                itemView.setBackgroundResource(R.drawable.faded_text_view_bg)
+                itemView.isEnabled=false
+                //val newList = currentList.subList(0, position) + currentList.subList(position+1, currentList.size)
+                //submitList(newList)
             }
 
         }

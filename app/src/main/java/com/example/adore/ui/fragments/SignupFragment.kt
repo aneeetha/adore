@@ -16,7 +16,9 @@ import com.example.adore.models.entities.User
 import com.example.adore.repository.AdoreRepository
 import com.example.adore.ui.viewmodels.SignupViewModel
 import com.example.adore.ui.viewmodels.factory.SignupViewModelProviderFactory
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_signup.*
+import java.util.*
 
 
 class SignupFragment : Fragment() {
@@ -39,24 +41,53 @@ class SignupFragment : Fragment() {
 
         binding.apply {
             btnSignup.setOnClickListener {
-                if(validateName() && validateMobileNo() && validatePassword() && validateConfirmPassword()){
-                    val user = User(ftilEtName.editText?.text.toString(), ftilEtMobileNo.editText?.text.toString(), ftilEtPassword.editText?.text.toString())
+                if (validateName() && validateMobileNo() && validatePassword() && validateConfirmPassword()) {
+                    val user = User(
+                        ftilEtName.editText?.text.toString(),
+                        ftilEtMobileNo.editText?.text.toString(),
+                        ftilEtPassword.editText?.text.toString(),
+                        Calendar.getInstance().timeInMillis * (1 until 50).random()
+                    )
                     Log.e("Activity", user.password)
                     viewModel.insertNewUser(user)
-                    viewModel.setCurrentUser(user.userId)
-                    findNavController().navigate(SignupFragmentDirections.actionSignupFragmentToHomeFragment())
                 }
             }
 
-            binding.ivBackIcon.setOnClickListener {
+            ivBackIcon.setOnClickListener {
                 Log.e("Navigation", "${findNavController().currentDestination}")
                 findNavController().navigateUp()
             }
 
-            return binding.root
         }
+        viewModel.apply {
+            navigateToHomeFragment.observe(viewLifecycleOwner, {
+                it?.let{
+                    findNavController().navigate(SignupFragmentDirections.actionSignupFragmentToHomeFragment())
+                    doneNavigatingToHomeFragment()
+                }
+            })
+
+            showSnackBarMessage.observe(viewLifecycleOwner, {
+                it?.let{
+                    showSnackBarWithMessage(it)
+                    doneShowingSnackBar()
+                }
+            })
+        }
+
+
+
+        return binding.root
+
     }
 
+    private fun showSnackBarWithMessage(message: String) {
+        Snackbar.make(
+            requireActivity().findViewById(android.R.id.content),
+            message,
+            Snackbar.LENGTH_SHORT
+        ).show()
+    }
 
 
     private fun validateName() = with(binding.ftilEtName) {
@@ -79,11 +110,11 @@ class SignupFragment : Fragment() {
                 error = "Field cannot be empty"
                 false
             }
-            editText?.text.toString().length!=10 ->{
+            editText?.text.toString().length != 10 -> {
                 error = "Field must contain exactly 10 values"
                 false
             }
-            editText?.text.toString().matches(whiteSpace)->{
+            editText?.text.toString().matches(whiteSpace) -> {
                 error = "White Spaces are not allowed"
                 false
             }
@@ -96,12 +127,12 @@ class SignupFragment : Fragment() {
 
     private fun validatePassword() = with(binding.ftilEtPassword) {
         val passwordVal = Regex("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{4,}$")
-        when{
+        when {
             editText?.text.toString().isEmpty() -> {
                 error = "Field cannot be empty"
                 false
             }
-            editText?.text.toString().length<5 -> {
+            editText?.text.toString().length < 5 -> {
                 error = "Password too weak"
                 false
             }
@@ -118,7 +149,7 @@ class SignupFragment : Fragment() {
                 error = "Field cannot be empty"
                 false
             }
-            editText?.text.toString()!=binding.ftilEtPassword.editText?.text.toString() -> {
+            editText?.text.toString() != binding.ftilEtPassword.editText?.text.toString() -> {
                 error = "Password does not match"
                 false
             }
@@ -129,19 +160,19 @@ class SignupFragment : Fragment() {
         }
     }
 
-    private fun validateEmail()= with(binding.ftilEtConfirmPassword){
+    private fun validateEmail() = with(binding.ftilEtConfirmPassword) {
         val emailPattern = Regex("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+")
-        when{
-            editText?.text.toString().isEmpty()->{
+        when {
+            editText?.text.toString().isEmpty() -> {
                 error = "Field cannot be empty"
                 false
             }
-            editText?.text.toString().matches(emailPattern)->{
+            editText?.text.toString().matches(emailPattern) -> {
                 error = "Enter valid email"
                 false
             }
-            else->{
-                error=null
+            else -> {
+                error = null
                 true
             }
         }

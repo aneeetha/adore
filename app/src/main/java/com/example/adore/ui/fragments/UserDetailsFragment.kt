@@ -15,9 +15,10 @@ import com.example.adore.databsae.AdoreDatabase
 import com.example.adore.models.entities.User
 import com.example.adore.models.enums.Gender
 import com.example.adore.repository.AdoreRepository
-import com.example.adore.ui.viewmodels.UserDetailsViewModel
-import com.example.adore.ui.viewmodels.factory.UserDetailsViewModelProviderFactory
+import com.example.adore.ui.viewmodels.SharedUserProfileViewModel
+import com.example.adore.ui.viewmodels.factory.UserProfileViewModelProviderFactory
 import com.example.adore.util.Resource
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import java.text.DateFormat
 import java.util.*
@@ -26,7 +27,7 @@ import java.util.*
 class UserDetailsFragment : Fragment() {
 
     lateinit var binding: FragmentUserDetailsBinding
-    lateinit var viewModel: UserDetailsViewModel
+    lateinit var viewModelShared: SharedUserProfileViewModel
     private lateinit var currentUser: User
 
     override fun onCreateView(
@@ -35,18 +36,27 @@ class UserDetailsFragment : Fragment() {
     ): View? {
         binding = FragmentUserDetailsBinding.inflate(inflater, container, false)
 
+        val navBar = activity?.findViewById<View>(R.id.bottom_navigation_view)
+        navBar?.visibility = View.GONE
+
         val application = requireNotNull(this.activity).application
         val adoreRepository = AdoreRepository(AdoreDatabase(application))
 
-        val viewModelFactory = UserDetailsViewModelProviderFactory(application, adoreRepository)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(UserDetailsViewModel::class.java)
+        val viewModelFactory = UserProfileViewModelProviderFactory(application, adoreRepository)
+        viewModelShared = ViewModelProvider(
+            requireActivity(),
+            viewModelFactory
+        ).get(SharedUserProfileViewModel::class.java)
+
+
+        viewModelShared.getCurrentUser()
 
         binding.apply {
             ivBackIcon.setOnClickListener {
-                Log.e("Navigation", "${findNavController().currentDestination}")
-                findNavController().navigateUp()
+                showAlertDialogToSave()
             }
 
+            etDob.keyListener = null
             etDob.setOnFocusChangeListener { view, b ->
                 if (b) {
                     showDatePickerDialog()
@@ -58,24 +68,27 @@ class UserDetailsFragment : Fragment() {
                     else -> Gender.Women
                 }
                 Log.e("User Gender", "$gender")
-                viewModel.gender = gender
+                viewModelShared.gender = gender
             }
             btnSaveDetails.setOnClickListener {
-                if(validateEmail()){
-                    Log.e("saveClicked", "saveClicked")
-                    val email = if(tilEtEmailId.editText?.text.toString().isEmpty()) null else tilEtEmailId.editText?.text.toString()
-                    viewModel.saveUserDetails(currentUser.userId, email)
-                }
+                saveDetails()
             }
         }
 
+        viewModelShared.showSnackBarMessage.observe(viewLifecycleOwner, {
+            it?.let{
+                showSnackBarWithMessage(it)
+                viewModelShared.doneShowingSnackBar()
+            }
+        })
 
-        viewModel.currentUser.observe(viewLifecycleOwner, { response ->
+
+        viewModelShared.currentUser.observe(viewLifecycleOwner, { response ->
             when (response) {
                 is Resource.Success -> {
                     hideProgressBar()
                     response.data?.let { data->
-                        viewModel.getUserDetails(data.userId).observe(viewLifecycleOwner, { user ->
+                        viewModelShared.getUserDetails(data.userId).observe(viewLifecycleOwner, { user ->
                             if(user!=null) {
                                 currentUser = user
                                 binding.apply {
@@ -107,6 +120,28 @@ class UserDetailsFragment : Fragment() {
         return binding.root
     }
 
+    private fun saveDetails(){
+        binding.apply {
+            if(validateEmail()){
+                val email = if(tilEtEmailId.editText?.text.toString().isEmpty()) null else tilEtEmailId.editText?.text.toString()
+                viewModelShared.saveUserDetails(currentUser.userId, email)
+                showSnackBarWithMessage("Details saved successfully!")
+                findNavController().navigateUp()
+            }
+        }
+    }
+
+    private fun showAlertDialogToSave(){
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Wanna save changes?")
+            .setPositiveButton("Yes"){ _, _ ->
+                saveDetails()
+            }
+            .setNeutralButton("No"){ _, _ ->
+                showSnackBarWithMessage("Changes not saved!")
+                findNavController().navigateUp()
+            }.show()
+    }
 
     private fun showDatePickerDialog() {
         DatePickerDialog(
@@ -114,13 +149,17 @@ class UserDetailsFragment : Fragment() {
             { p0, year, month, day ->
                 val newDate: Calendar = Calendar.getInstance()
                 newDate.set(year, month , day)
-                viewModel.dob = newDate.time
+                viewModelShared.dob = newDate.time
                 binding.etDob.setText(getDateFormatted(newDate.time))
             },
             Calendar.getInstance().get(Calendar.YEAR),
             Calendar.getInstance().get(Calendar.MONTH),
             Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-        ).show()
+        ).run {
+            datePicker.minDate = -631171800000
+            datePicker.maxDate = System.currentTimeMillis()-1000
+            show()
+        }
     }
 
     private fun getDateFormatted(date: Date) = DateFormat.getDateInstance().format(date)
