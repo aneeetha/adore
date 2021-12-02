@@ -40,10 +40,10 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         binding.apply {
             homeFragment = this@HomeFragment
+            tvLabel.setText(R.string.seasonal_collections)
         }
 
         val navBar = activity?.findViewById<View>(R.id.bottom_navigation_view)
@@ -61,89 +61,80 @@ class HomeFragment : Fragment() {
         sliderHandler = Handler(Looper.getMainLooper())
         setUpViewPager()
 
-        viewModel.productsWithLabel.observe(viewLifecycleOwner, { response ->
-            when(response) {
-                is Resource.Success -> {
-                    hideProgressBar()
-                    response.data?.let { productsResponse ->
-                        productsResponse.products.forEach {
-                            sliderItems.add(HomeSliderItem(it))
-                        }
-                        homeSliderAdapter.differ.submitList(sliderItems)
-                        //homeSliderAdapter.submitList(productsResponse.products)
-                    }
-                }
-                is Resource.Error -> {
-                    hideProgressBar()
-                    response.message?.let { message ->
-                        showSnackBarWithMessage(message)
-                        Log.e("ProductsFragment", "An error occurred: $message")
-                    }
-                }
-                is Resource.Loading -> {
-                    showProgressBar()
-                }
-            }
-
-        })
-
-        viewModel.currentUser.observe(viewLifecycleOwner, {response->
-            when(response) {
-                is Resource.Success -> {
-                    hideProgressBar()
-                    response.data?.let { currentUserResponse ->
-                        if(currentUserResponse.userId==0L){
-                            Log.e("Home", "${currentUserResponse.userId}")
-                            LoginDialog(requireContext(), object: LoginDialogListener {
-                                override fun onLoginButtonClicked(
-                                    mobileNo: String,
-                                    password: String
-                                ) {
-                                    viewModel.validateUser(mobileNo, password)
-                                }
-                                override fun onCreateNewAccountClicked() {
-                                    findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSignupFragment())
-                                }
-                            }).show()
-                        }else{
-                            viewModel.getProductsWithCustomLabel()
+        viewModel.apply {
+            productsWithLabel.observe(viewLifecycleOwner, { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        response.data?.let { productsResponse ->
+                            productsResponse.products.forEach {
+                                sliderItems.add(HomeSliderItem(it))
+                            }
+                            homeSliderAdapter.differ.submitList(sliderItems)
                         }
                     }
-                }
-                is Resource.Error -> {
-                    hideProgressBar()
-                    response.message?.let { message ->
-                        showSnackBarWithMessage(message)
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        response.message?.let { message ->
+                            showSnackBarWithMessage(message)
+                            Log.e("ProductsFragment", "An error occurred: $message")
+                        }
+                    }
+                    is Resource.Loading -> {
+                        showProgressBar()
                     }
                 }
-                is Resource.Loading -> {
-                    showProgressBar()
+
+            })
+
+            currentUser.observe(viewLifecycleOwner, { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        response.data?.let { currentUserResponse ->
+                            if (currentUserResponse.userId == 0L) {
+                                Log.e("Home", "${currentUserResponse.userId}")
+                                LoginDialog(requireContext(), object : LoginDialogListener {
+                                    override fun onLoginButtonClicked(
+                                        mobileNo: String,
+                                        password: String
+                                    ) {
+                                        validateUser(mobileNo, password)
+                                    }
+
+                                    override fun onCreateNewAccountClicked() {
+                                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSignupFragment())
+                                    }
+                                }).show()
+                            } else {
+                               getProductsWithCustomLabel()
+                            }
+                        }
+                    }
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        response.message?.let { message ->
+                            showSnackBarWithMessage(message)
+                        }
+                    }
+                    is Resource.Loading -> {
+                        showProgressBar()
+                    }
                 }
-            }
 
-        })
+            })
 
-        viewModel.showSnackBarMessage.observe(viewLifecycleOwner, {
-            it?.let{
-                Snackbar.make(
-                    requireActivity().findViewById(android.R.id.content),
-                    it,
-                    Snackbar.LENGTH_SHORT // How long to display the message.
-                ).show()
-                viewModel.doneShowingSnackBarMessage()
-            }
-        })
+            showSnackBarMessage.observe(viewLifecycleOwner, {
+                it?.let {
+                    showSnackBarWithMessage(it)
+                    doneShowingSnackBarMessage()
+                }
+            })
+        }
 
         homeSliderAdapter.setOnItemClickListener {
-//            val bundle = Bundle().apply {
-//                putSerializable("product", it)
-//            }
             Log.e("Navigation", "${findNavController().currentDestination}")
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(it))
-//            findNavController().navigate(
-//                R.id.action_homeFragment_to_productDetailsFragment,
-//                bundle
-//            )
         }
         return binding.root
     }
@@ -164,7 +155,7 @@ class HomeFragment : Fragment() {
         Snackbar.make(
             requireActivity().findViewById(android.R.id.content),
             message,
-            Snackbar.LENGTH_SHORT // How long to display the message.
+            Snackbar.LENGTH_SHORT
         ).show()
     }
 
@@ -177,13 +168,6 @@ class HomeFragment : Fragment() {
             offscreenPageLimit = 3
             getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
-            val compositePageTransformer = CompositePageTransformer()
-            compositePageTransformer.addTransformer(MarginPageTransformer(40))
-            compositePageTransformer.addTransformer{ page, position ->
-                page.scaleY = 0.85f + (1- abs(position))*0.15f
-            }
-
-            setPageTransformer(compositePageTransformer)
 
             registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
                 override fun onPageSelected(position: Int) {

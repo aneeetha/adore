@@ -2,6 +2,7 @@ package com.example.adore.databsae
 
 import androidx.room.TypeConverter
 import com.example.adore.models.*
+import com.example.adore.models.dataClasses.Stock
 import com.example.adore.models.enums.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -93,16 +94,16 @@ class DistrictTypeConverter{
     fun fromString(district: String?): District? = district?.let{Gson().fromJson(district, District::class.java)}
 }
 
-class ListOfOrderProductsTypeConverter{
-    @TypeConverter
-    fun fromList(list: List<OrderProductDetails>): String{
-        val listType = object : TypeToken<List<OrderProductDetails>>(){}.type
-        return Gson().toJson(list, listType)
-    }
-
-    @TypeConverter
-    fun fromString(orderProductDetailsElement: String): List<OrderProductDetails> = Gson().fromJson(orderProductDetailsElement, Array<OrderProductDetails>::class.java).asList()
-}
+//class ListOfOrderProductsTypeConverter{
+//    @TypeConverter
+//    fun fromList(list: List<OrderProductDetails>): String{
+//        val listType = object : TypeToken<List<OrderProductDetails>>(){}.type
+//        return Gson().toJson(list, listType)
+//    }
+//
+//    @TypeConverter
+//    fun fromString(orderProductDetailsElement: String): List<OrderProductDetails> = Gson().fromJson(orderProductDetailsElement, Array<OrderProductDetails>::class.java).asList()
+//}
 
 
 

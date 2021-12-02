@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adore.R
 import com.example.adore.models.enums.DressSize
-import com.example.adore.models.Stock
+import com.example.adore.models.dataClasses.Stock
 import kotlinx.android.synthetic.main.size_item.view.*
 
 class ProductSizeAdapter() : ListAdapter<Stock, ProductSizeAdapter.TextViewHolder>(SizeViewDiffCallback()){
@@ -22,10 +22,10 @@ class ProductSizeAdapter() : ListAdapter<Stock, ProductSizeAdapter.TextViewHolde
         holder.apply {
             itemView.tv_size_item.text = currentItem.size.name
             if(currentItem.availableCount>1){
-                if(selectedSizePosition != bindingAdapterPosition)  unCheckSizeView(itemView)
+                if(selectedSizePosition != bindingAdapterPosition)  itemView.unCheckSizeView()
                 itemView.setOnClickListener {
                     onItemClickListener?.let{
-                        setSizeViewChecked(itemView)
+                        itemView.setSizeViewChecked()
                         selectedSizePosition = bindingAdapterPosition
                         it(currentItem.size)
                         notifyItemRangeChanged(0, position)
@@ -33,8 +33,7 @@ class ProductSizeAdapter() : ListAdapter<Stock, ProductSizeAdapter.TextViewHolde
                     }
                 }
             }else{
-                itemView.setBackgroundResource(R.drawable.faded_text_view_bg)
-                itemView.isEnabled=false
+                itemView.setSizeNotAvailable()
                 //val newList = currentList.subList(0, position) + currentList.subList(position+1, currentList.size)
                 //submitList(newList)
             }
@@ -64,15 +63,16 @@ class ProductSizeAdapter() : ListAdapter<Stock, ProductSizeAdapter.TextViewHolde
         override fun areContentsTheSame(oldItem: Stock, newItem: Stock): Boolean = oldItem==newItem
     }
 
-    private fun setSizeViewChecked(view: View){
-        view.setBackgroundResource(R.drawable.highlight_text_view_bg)
+    private fun View.setSizeViewChecked(){
+        setBackgroundResource(R.drawable.highlight_text_view_bg)
     }
 
-    private fun unCheckSizeView(view: View){
-        view.setBackgroundResource(R.drawable.text_view_bg)
+    private fun View.unCheckSizeView(){
+        setBackgroundResource(R.drawable.text_view_bg)
     }
 
-    private fun setSizeNotAvailable(view: View){
-        view.setBackgroundResource(R.drawable.faded_text_view_bg)
+    private fun View.setSizeNotAvailable(){
+        setBackgroundResource(R.drawable.faded_text_view_bg)
+        isEnabled = false
     }
 }

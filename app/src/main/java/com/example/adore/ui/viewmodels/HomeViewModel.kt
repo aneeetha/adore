@@ -35,9 +35,6 @@ class HomeViewModel(
     val showSnackBarMessage
         get() = _showSnackBarMessage
 
-    private var user: User? = null
-
-
     init {
         getCurrentUser()
     }
@@ -135,10 +132,6 @@ class HomeViewModel(
     }
 
     fun validateUser(mobileNo:String, password:String) = viewModelScope.launch {
-        user = adoreRepository.getUserWithMobileNo(mobileNo)
-        val all = adoreRepository.getAllUsers()
-        Log.e("Home", "$user")
-        Log.e("Home", "${all.value}")
         adoreRepository.getUserWithMobileNo(mobileNo)?.let {
             if (it.password == password) {
                 _showSnackBarMessage.value = "Logged in!"

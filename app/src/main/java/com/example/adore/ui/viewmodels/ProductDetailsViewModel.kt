@@ -6,12 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.adore.models.enums.DressSize
-import com.example.adore.models.entities.Product
-import com.example.adore.models.enums.CustomLabel
+import com.example.adore.models.dataClasses.Product
 import com.example.adore.models.responses.ApiTransactionResponse
 import com.example.adore.repository.AdoreRepository
 import com.example.adore.util.AdoreLogic
-import com.example.adore.util.Constants
 import com.example.adore.util.Resource
 import kotlinx.coroutines.launch
 import retrofit2.Response
@@ -19,23 +17,15 @@ import retrofit2.Response
 class ProductDetailsViewModel(val product: Product, private val repository: AdoreRepository) :
     ViewModel() {
 
-
-
     private var chosenSize: DressSize? = null
     fun setChosenProductSize(size: DressSize) {
         chosenSize = size
         _addToCartClicked.value = false
-
     }
-
 
     private var _addToCartClicked = MutableLiveData<Boolean?>()
     val addToCartClicked
         get() = _addToCartClicked
-
-    private var _goBackPressed = MutableLiveData<Boolean>()
-    val goBackPressed
-        get() = _goBackPressed
 
     private var _navigateToFavoFragment = MutableLiveData<Boolean>()
     val navigateToFavoFragment
@@ -62,18 +52,12 @@ class ProductDetailsViewModel(val product: Product, private val repository: Ador
         get() = _snackBarMessage
 
 
-//    private val _showSnackBarWithMessage = MutableLiveData<Boolean>()
-//    val showSnackBarWithMessage
-//        get() = _showSnackBarWithMessage
-
-
     fun addToFavlistClicked() {
         viewModelScope.launch {
             _addedToFavlist.value = true
             _snackBarMessage.value = handleApiTransactionResponse(repository.addProductToFav(product._id))
         }
     }
-
 
     fun onAddToCartClicked() {
         chosenSize?.let {
@@ -104,9 +88,6 @@ class ProductDetailsViewModel(val product: Product, private val repository: Ador
         addedToFavlist.value = null
     }
 
-    fun goBackAction() {
-        _goBackPressed.value = true
-    }
 
     fun goToCartFragmentClicked() {
         _navigateToCartFragment.value = true

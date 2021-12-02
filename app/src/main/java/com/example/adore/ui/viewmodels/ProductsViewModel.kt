@@ -5,10 +5,9 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.adore.AdoreApplication
-import com.example.adore.models.CartItem
+import com.example.adore.models.dataClasses.CartItem
 import com.example.adore.models.enums.Category
 import com.example.adore.models.enums.Gender
 import com.example.adore.models.enums.ProductType
@@ -28,14 +27,13 @@ class ProductsViewModel(
     val currentUser: LiveData<Resource<CurrentUserResponse>>
         get() = _currentUser
 
-    private val _allProducts: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
-    val allProducts: LiveData<Resource<ProductResponse>>
-        get() = _allProducts
+    private val _productsOfType: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
+    val productsOfType: LiveData<Resource<ProductResponse>>
+        get() = _productsOfType
 
     private val _productsOfCategory: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
     val productsOfCategory: LiveData<Resource<ProductResponse>>
         get() = _productsOfCategory
-
 
     private val _searchResult: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
     val searchResult: LiveData<Resource<ProductResponse>>
@@ -74,29 +72,20 @@ class ProductsViewModel(
         get() = _favoSnackBarMessage
 
 
-    fun onProductClicked(id: String) {
-        _navigateToProductDetails.value = id
-    }
-
-//    fun onProductDetailsNavigated(){
-//        _navigateToProductDetails.value = null
-//    }
 
     init {
         getCurrentUser()
-        //getAllProducts()
-        //getProductsWithCustomLabel()
     }
 
-    fun getCurrentUser() = viewModelScope.launch {
+    private fun getCurrentUser() = viewModelScope.launch {
         val response = adoreRepository.getCurrentUser()
         _currentUser.value = handleResponse(response)
     }
 
     fun getAddressesOfCurrentUser(userId: Long) = adoreRepository.getAddressesOfUser(userId)
 
-    private fun getAllProducts() = viewModelScope.launch {
-        safeGetAllProductsCall()
+    fun getProductsOfType(gender: Gender, productType: ProductType) = viewModelScope.launch {
+        safeGetProductsWithTypeCall(gender, productType)
     }
 
     fun getSearchResult(searchQuery: String) = viewModelScope.launch {
@@ -196,19 +185,19 @@ class ProductsViewModel(
         }
     }
 
-    private suspend fun safeGetAllProductsCall(){
-        _allProducts.value = Resource.Loading()
+    private suspend fun safeGetProductsWithTypeCall(gender: Gender, productType: ProductType){
+        _productsOfType.value = Resource.Loading()
         try{
             if(hasInternetConnection()){
-                val response = adoreRepository.getProducts() //Seasonal
-                _allProducts.value = handleResponse(response)
+                val response = adoreRepository.getProductsOfType(gender, productType)
+                _productsOfType.value = handleResponse(response)
             }else{
-                _allProducts.value = Resource.Error("No internet connection :(")
+                _productsOfType.value = Resource.Error("No internet connection :(")
             }
         }catch(t: Throwable){
             when(t){
-                is IOException -> _allProducts.postValue(Resource.Error("Network Failure!"))
-                else -> _allProducts.postValue(Resource.Error("Conversion Error!"))
+                is IOException -> _productsOfType.postValue(Resource.Error("Network Failure!"))
+                else -> _productsOfType.postValue(Resource.Error("Conversion Error!"))
             }
         }
     }
@@ -331,20 +320,3 @@ class ProductsViewModel(
     }
 
 }
-
-
-//
-//    fun setDoneShowingSnackBarWithMessageInCart(){
-//        _showSnackBarWithMessageInCart?.value = null
-//    }
-//
-//    fun setDoneShowingSnackBarWithMessageInFavo(){
-//        _showSnackBarWithMessageInFavo?.value = null
-//    }
-//private val _showSnackBarWithMessageInCart: MutableLiveData<Boolean>? = null
-//val showSnackBarWithMessageInCart
-//    get() = _showSnackBarWithMessageInCart
-//
-//private val _showSnackBarWithMessageInFavo: MutableLiveData<Boolean>? = null
-//val showSnackBarWithMessageInFavo
-//    get() = _showSnackBarWithMessageInFavo

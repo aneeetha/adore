@@ -33,6 +33,7 @@
 
     <!--Category-->
     <string name="heading_shop">Shop</string>
+    <string name="heading_search">Search</string>
     <string name="heading_category">Categories</string>
     <string name="heading_category_men">Men\'s Collection</string>
     <string name="heading_category_women">Women\'s Collection</string>
@@ -49,6 +50,7 @@
     <string name="inner_wear">Inner Wear</string>
 
     <!--Slide-->
+    <string name="seasonal_collections">Seasonal Collections with 10% off!</string>
     <string name="festive_collections">Festive Collections</string>
     <string name="casuals">Tops &amp; Tees | Jeans </string>
     <string name="Dresses_and_jumpsuits">Dresses | Jumpsuits</string>
@@ -128,12 +130,14 @@
 
     <!--Order-->
     <string name="order_success">SUCCESS</string>
-    <string name="orders">View order</string>
+    <string name="view_orders">Click to View Order</string>
     <string name="heading_orders">Orders</string>
     <string name="heading_orders_details">Order Details</string>
     <string name="order_id">TRACK ORDER: %s </string>
     <string name="order_status"><![CDATA[<font color="black"><small>Order Status: </small></font><big>%s</big>]]></string>
     <string name="product_type">Product type</string>
+    <string name="none">None</string>
+    <string name="search_hint">Search..</string>
 
 
 </resources>

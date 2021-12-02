@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="homeFragment"
             type="com.example.adore.ui.fragments.HomeFragment" />
@@ -15,70 +16,61 @@
         android:layout_height="match_parent"
         tools:context=".ui.fragments.HomeFragment">
 
-                <com.google.android.material.appbar.AppBarLayout
-                    android:id="@+id/appBarLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-
-                    <androidx.appcompat.widget.Toolbar
-                        android:id="@+id/toolbar"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/white"
-                        android:minHeight="?actionBarSize">
-
-
-                        <!--                <ImageView-->
-                        <!--                    android:id="@+id/small_logo"-->
-                        <!--                    android:layout_width="30dp"-->
-                        <!--                    android:layout_height="30dp"-->
-                        <!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-                        <!--                    app:layout_constraintStart_toStartOf="@+id/toolbar"-->
-                        <!--                    app:layout_constraintTop_toTopOf="parent"-->
-                        <!--                    app:srcCompat="@drawable/small_adorable_logo" />-->
-
-                        <TextView
-                            android:id="@+id/app_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/fredoka_one"
-                            android:layout_marginStart="20dp"
-                            android:gravity="center_vertical"
-                            android:text="@string/app_name"
-                            android:textColor="@color/black"
-                            android:textSize="30sp" />
-
-                        <ImageView
-                            android:id="@+id/searchIcon"
-                            android:layout_width="@dimen/toolbar_icon_size"
-                            android:layout_height="@dimen/toolbar_icon_size"
-                            android:onClick="@{()-> homeFragment.navigateToSearchFragment()}"
-                            android:layout_gravity="end"
-                            android:layout_marginEnd="10dp"
-                            app:srcCompat="@drawable/general_search_icon" />
-
-                    </androidx.appcompat.widget.Toolbar>
-
-                </com.google.android.material.appbar.AppBarLayout>
-
         <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/appBarLayout">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/home_view_pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+            <TextView
+                android:id="@+id/app_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:fontFamily="@font/fredoka_one"
+                android:text="@string/app_name"
+                android:textColor="@color/black"
+                android:textSize="30sp" />
+
+            <ImageView
+                android:id="@+id/searchIcon"
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
+                android:layout_alignParentEnd="true"
+                android:onClick="@{()-> homeFragment.navigateToSearchFragment()}"
+                app:srcCompat="@drawable/general_search_icon" />
 
         </RelativeLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/home_view_pager"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+
+        <TextView
+            android:id="@+id/tv_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/navy"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:padding="20dp"
+            android:text="@string/festive_collections"
+            app:layout_constraintTop_toBottomOf="@id/home_view_pager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -87,7 +79,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/tv_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 

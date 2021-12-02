@@ -1,12 +1,8 @@
-package com.example.adore.models.entities
+package com.example.adore.models.dataClasses
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.adore.models.Stock
-import com.example.adore.models.enums.Category
-import com.example.adore.models.enums.Color
-import com.example.adore.models.enums.Gender
-import com.example.adore.models.enums.ProductType
+import com.example.adore.models.enums.*
 import java.io.Serializable
 
 @Entity(

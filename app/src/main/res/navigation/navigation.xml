@@ -65,9 +65,6 @@
         <argument
             android:name="productType"
             app:argType="com.example.adore.models.enums.ProductType" />
-        <argument
-            android:name="category"
-            app:argType="com.example.adore.models.enums.Category" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -85,7 +82,7 @@
         tools:layout="@layout/fragment_product_details" >
         <argument
             android:name="product"
-            app:argType="com.example.adore.models.entities.Product" />
+            app:argType="com.example.adore.models.dataClasses.Product" />
         <action
             android:id="@+id/action_productDetailsFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
@@ -124,6 +121,9 @@
         <action
             android:id="@+id/action_userProfileFragment_to_orderFragment"
             app:destination="@id/orderFragment" />
+        <action
+            android:id="@+id/action_userProfileFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
     </fragment>
     <fragment
         android:id="@+id/userDetailsFragment"
@@ -149,29 +149,6 @@
             app:destination="@id/addressDetailsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/categoriesFragment"
-        android:name="com.example.adore.ui.fragments.CategoriesFragment"
-        android:label="CategoriesFragment" >
-        <argument
-            android:name="gender"
-            app:argType="com.example.adore.models.enums.Gender" />
-        <argument
-            android:name="productType"
-            app:argType="com.example.adore.models.enums.ProductType" />
-        <action
-            android:id="@+id/action_categoriesFragment_to_searchFragment"
-            app:destination="@id/searchFragment" />
-        <action
-            android:id="@+id/action_categoriesFragment_to_cartFragment"
-            app:destination="@id/cartFragment" />
-        <action
-            android:id="@+id/action_categoriesFragment_to_favoFragment"
-            app:destination="@id/favoFragment" />
-        <action
-            android:id="@+id/action_categoriesFragment_to_productsFragment"
-            app:destination="@id/productsFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/genderCategoryFragment"
         android:name="com.example.adore.ui.fragments.GenderCategoryFragment"
         android:label="@string/categories">
@@ -186,12 +163,12 @@
         android:id="@+id/productTypeFragment"
         android:name="com.example.adore.ui.fragments.ProductTypeFragment"
         android:label="ProductTypeFragment" >
-        <action
-            android:id="@+id/action_productTypeFragment_to_categoriesFragment"
-            app:destination="@id/categoriesFragment" />
         <argument
             android:name="gender"
             app:argType="com.example.adore.models.enums.Gender" />
+        <action
+            android:id="@+id/action_productTypeFragment_to_productsFragment"
+            app:destination="@id/productsFragment" />
     </fragment>
     <fragment
         android:id="@+id/orderFragment"
@@ -208,7 +185,7 @@
         android:label="OrderDetailsFragment" >
         <argument
             android:name="order"
-            app:argType="com.example.adore.models.Order" />
+            app:argType="com.example.adore.models.dataClasses.Order" />
     </fragment>
     <fragment
         android:id="@+id/orderSuccessFragment"

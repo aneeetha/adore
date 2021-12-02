@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.adore.R
 import com.example.adore.databinding.CartItemPreviewBinding
-import com.example.adore.models.CartItem
+import com.example.adore.models.dataClasses.CartItem
 import com.example.adore.ui.viewmodels.ProductsViewModel
 import com.example.adore.util.Constants
 

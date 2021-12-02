@@ -5,7 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.example.adore.models.Stock
+import com.example.adore.models.dataClasses.Stock
 
 @BindingAdapter("productImage")
 fun ImageView.setProductImage(imageUrl: String){

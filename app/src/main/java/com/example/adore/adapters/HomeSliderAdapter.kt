@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.adore.databinding.HomeSlideContainerBinding
-import com.example.adore.models.entities.Product
+import com.example.adore.models.dataClasses.Product
 import com.example.adore.util.HomeSliderItem
 import kotlinx.android.synthetic.main.home_slide_container.view.*
 
@@ -67,9 +67,5 @@ class HomeSliderAdapter(private val viewPager: ViewPager2):
 
     override fun getItemCount()=differ.currentList.size
 
-//    class HomeSliderDiffCallback: DiffUtil.ItemCallback<Product>() {
-//        override fun areItemsTheSame(oldItem: Product, newItem: Product): Boolean = oldItem._id==newItem._id
-//
-//        override fun areContentsTheSame(oldItem: Product, newItem: Product): Boolean = oldItem==newItem
-//    }
+
 }

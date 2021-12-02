@@ -112,6 +112,10 @@ class AddressDetailsFragment : Fragment() {
             error = "Field cannot be empty"
             false
         }
+        editText?.text.toString().length<5 ->{
+            error = "Field's value is too short!"
+            false
+        }
         else -> {
             error = null
             true
@@ -122,7 +126,7 @@ class AddressDetailsFragment : Fragment() {
         Snackbar.make(
             requireActivity().findViewById(android.R.id.content),
             message,
-            Snackbar.LENGTH_SHORT // How long to display the message.
+            Snackbar.LENGTH_SHORT
         ).show()
     }
 

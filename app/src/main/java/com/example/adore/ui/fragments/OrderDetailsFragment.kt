@@ -27,9 +27,11 @@ class OrderDetailsFragment: Fragment() {
     ): View? {
         binding = FragmentOrderDetailsBinding.inflate(inflater, container, false)
         viewModel = (activity as AdorableActivity).viewModel
+
         val order = OrderDetailsFragmentArgs.fromBundle(requireArguments()).order
-        Log.e("OrderDetailsFragment", "$order")
+
         orderDetailsAdapter = OrderAdapter(viewModel)
+
         binding.apply {
             rvOrders.adapter = orderDetailsAdapter
             rvOrders.layoutManager = LinearLayoutManager(activity)

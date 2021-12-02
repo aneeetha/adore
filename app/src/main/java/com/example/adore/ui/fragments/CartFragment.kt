@@ -43,61 +43,66 @@ class CartFragment : Fragment() {
         viewModel.getCartItem()
 
 
-        viewModel.cartItems.observe(viewLifecycleOwner, { response ->
-            when (response) {
-                is Resource.Success -> {
-                    hideProgressBar()
-                    response.data?.let { cartResponse ->
-                        cartAdapter.submitList(cartResponse.cartItems)
-                        viewModel.getTotalPrice(cartResponse.cartItems)
+        viewModel.apply {
+            cartItems.observe(viewLifecycleOwner, { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        response.data?.let { cartResponse ->
+                            cartAdapter.submitList(cartResponse.cartItems)
+                            getTotalPrice(cartResponse.cartItems)
+                        }
+                    }
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        hideViewsAndActions()
+                        response.message?.let { message ->
+                            showSnackBarWithMessage(message)
+                        }
+                    }
+                    is Resource.Loading -> {
+                        showProgressBar()
                     }
                 }
-                is Resource.Error -> {
-                    hideProgressBar()
-                    hideViewsAndActions()
-                    response.message?.let { message ->
-                        showSnackBarWithMessage(message)
-                    }
-                }
-                is Resource.Loading -> {
-                    showProgressBar()
-                }
-            }
 
-        })
+            })
 
-        viewModel.cartSnackBarMessage.observe(viewLifecycleOwner, { response ->
-            response?.data?.let {
-                Snackbar.make(
-                    requireActivity().findViewById(android.R.id.content),
-                    it.message,
-                    Snackbar.LENGTH_SHORT // How long to display the message.
-                ).show()
-                viewModel.doneShowingSnackBarInCart()
-            }
-        })
+            cartSnackBarMessage.observe(viewLifecycleOwner, { response ->
+                response?.data?.let {
+                    showSnackBarWithMessage(it.message)
+                    doneShowingSnackBarInCart()
+                }
+            })
+
+            navigateToOrderSuccessPage.observe(viewLifecycleOwner, {
+                it?.let {
+                    findNavController().navigate(CartFragmentDirections.actionCartFragmentToOrderSuccessFragment())
+                    doneNavigatingToOrderSuccessPage()
+                }
+            })
+        }
 
         binding.apply {
 
-        viewModel.totalPrice.observe(viewLifecycleOwner, {
-            val deliveryCharge = AdoreLogic.getDeliveryCharge(it)
+            viewModel.totalPrice.observe(viewLifecycleOwner, {
+                val deliveryCharge = AdoreLogic.getDeliveryCharge(it)
 
-            context?.getString(R.string.delivery_charge, deliveryCharge.toString())?.let { text->
-                tvDeliveryCharge.text = HtmlCompat.fromHtml(String.format(text, "placeholder1"), HtmlCompat.FROM_HTML_MODE_COMPACT)
-            }
+                context?.getString(R.string.delivery_charge, deliveryCharge.toString())
+                    ?.let { text ->
+                        tvDeliveryCharge.text = HtmlCompat.fromHtml(
+                            String.format(text, "placeholder1"),
+                            HtmlCompat.FROM_HTML_MODE_COMPACT
+                        )
+                    }
 
-            context?.getString(R.string.total_price, it.plus(deliveryCharge).toString())?.let { text ->
-                tvTotalPrice.text = HtmlCompat.fromHtml(String.format(text, "placeholder1"), HtmlCompat.FROM_HTML_MODE_COMPACT)
-            }
-        })
-
-        viewModel.navigateToOrderSuccessPage.observe(viewLifecycleOwner,{
-            it?.let {
-                findNavController().navigate(CartFragmentDirections.actionCartFragmentToOrderSuccessFragment())
-                viewModel.doneNavigatingToOrderSuccessPage()
-            }
-        })
-
+                context?.getString(R.string.total_price, it.plus(deliveryCharge).toString())
+                    ?.let { text ->
+                        tvTotalPrice.text = HtmlCompat.fromHtml(
+                            String.format(text, "placeholder1"),
+                            HtmlCompat.FROM_HTML_MODE_COMPACT
+                        )
+                    }
+            })
 
             btnCheckout.setOnClickListener {
                 getAddress()
@@ -123,7 +128,7 @@ class CartFragment : Fragment() {
         }
     }
 
-    private fun hideViewsAndActions(){
+    private fun hideViewsAndActions() {
         binding.apply {
             btnCheckout.visibility = View.INVISIBLE
             tvTotalPrice.visibility = View.INVISIBLE
@@ -132,7 +137,7 @@ class CartFragment : Fragment() {
         }
     }
 
-    private fun showViewsAndActions(){
+    private fun showViewsAndActions() {
         binding.apply {
             btnCheckout.visibility = View.VISIBLE
             tvTotalPrice.visibility = View.VISIBLE
@@ -149,7 +154,7 @@ class CartFragment : Fragment() {
         }
     }
 
-    private fun getAddress(){
+    private fun getAddress() {
         viewModel.currentUser.observe(viewLifecycleOwner, { response ->
             when (response) {
                 is Resource.Success -> {
@@ -158,14 +163,14 @@ class CartFragment : Fragment() {
                         if (currentUserResponse.userId != 0L) {
                             viewModel.getAddressesOfCurrentUser(currentUserResponse.userId)
                                 .observe(viewLifecycleOwner, {
-                                    it?.let{
+                                    it?.let {
                                         val addressList = it.addresses.map { address ->
                                             address.addressType
                                         }
-                                        showConfirmationDialog(addressList.toTypedArray(), it.addresses)
-                                        //if(position!=-1){
-                                          //  viewModel.placeOrder(it.addresses[position].addressId!!)
-                                        //}
+                                        showConfirmationDialog(
+                                            addressList.toTypedArray(),
+                                            it.addresses
+                                        )
                                     }
                                 })
                         }
@@ -185,20 +190,23 @@ class CartFragment : Fragment() {
         })
     }
 
-    private fun showConfirmationDialog(addressTypes: Array<String>, address: List<Address>):Int{
+    private fun showConfirmationDialog(addressTypes: Array<String>, address: List<Address>): Int {
         var selectedAddressIndex = 0
-        MaterialAlertDialogBuilder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle("Select Delivery Address")
-            .setSingleChoiceItems(addressTypes, selectedAddressIndex){ _, which ->
+            .setSingleChoiceItems(addressTypes, selectedAddressIndex) { _, which ->
                 selectedAddressIndex = which
             }
-            .setPositiveButton("Confirm"){ _, _ ->
+            .setNeutralButton("Add New") { _, _ ->
+                findNavController().navigate(CartFragmentDirections.actionCartFragmentToAddressFragment())
+            }
+        dialog.show()
+        if (addressTypes.isNotEmpty()) {
+            dialog.setPositiveButton("Confirm") { _, _ ->
                 showSnackBarWithMessage("Address chosen!")
                 viewModel.placeOrder(address[selectedAddressIndex].addressId!!)
             }
-            .setNeutralButton("Add New"){ _, _ ->
-                findNavController().navigate(CartFragmentDirections.actionCartFragmentToAddressFragment())
-            }.show()
+        }
         return selectedAddressIndex
     }
 
@@ -206,7 +214,7 @@ class CartFragment : Fragment() {
         Snackbar.make(
             requireActivity().findViewById(android.R.id.content),
             message,
-            Snackbar.LENGTH_SHORT // How long to display the message.
+            Snackbar.LENGTH_SHORT
         ).show()
     }
 }

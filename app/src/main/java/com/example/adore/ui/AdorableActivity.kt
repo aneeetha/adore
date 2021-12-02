@@ -35,43 +35,19 @@ class AdorableActivity : AppCompatActivity() {
         )
 
         val adoreRepository = AdoreRepository(AdoreDatabase(this))
-        val viewModelProviderFactory = ProductsViewModelProviderFactory(application, adoreRepository)
+        val viewModelProviderFactory =
+            ProductsViewModelProviderFactory(application, adoreRepository)
 
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(ProductsViewModel::class.java)
 
 
         val bottomNavigationView = binding.bottomNavigationView
         navController = findNavController(R.id.adoreNavHostFragment)
-
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
-        findViewById<Toolbar>(R.id.toolbar).setupWithNavController(navController, appBarConfiguration)
         bottomNavigationView.setupWithNavController(navController)
+    }
+
+        //val appBarConfiguration = AppBarConfiguration(navController.graph)
+        //findViewById<Toolbar>(R.id.toolbar).setupWithNavController(navController, appBarConfiguration)
         //setupActionBarWithNavController(navController)
 
-//        viewModel.getCurrentUser()
-//        viewModel.currentUser.observe(this, {response ->
-//            when(response){
-//                is Resource.Success -> {
-//                    if(response.data?.userId == 0){
-//                        //showLoginDialogBox()
-//                    }
-//                }
-//                else -> {}
-//            }
-//        })
-    }
-
-//    override fun onBackPressed() {
-//        val fm  = supportFragmentManager
-//        if(fm.backStackEntryCount>0){
-//            Log.i("MainActivity", "popping backstack")
-//            fm.popBackStack()
-//        }else {
-//            Log.i("MainActivity", "nothing on backstack, calling super");
-//            super.onBackPressed()
-//        }
-//    }
-
-    fun showLoginDialogBox(){
-    }
 }

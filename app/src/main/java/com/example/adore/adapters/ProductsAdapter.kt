@@ -10,11 +10,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.adore.databinding.ProductPreviewBinding
-import com.example.adore.models.entities.Product
-import com.example.adore.models.enums.CustomLabel
+import com.example.adore.models.dataClasses.Product
 import com.example.adore.util.AdoreLogic
 import com.example.adore.util.Constants
-import kotlinx.android.synthetic.main.product_preview.view.*
 
 class ProductsAdapter(): RecyclerView.Adapter<ProductsAdapter.ProductViewHolder>(){
 

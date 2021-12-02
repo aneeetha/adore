@@ -31,7 +31,6 @@ class AddressFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var userId: Long? = null
         val navBar = activity?.findViewById<View>(R.id.bottom_navigation_view)
         navBar?.visibility = View.GONE
 
@@ -63,55 +62,53 @@ class AddressFragment : Fragment() {
             }
         }
 
-        viewModelShared.currentUser.observe(viewLifecycleOwner, { response ->
-            when (response) {
-                is Resource.Success -> {
-                    hideProgressBar()
-                    response.data?.let { currentUserResponse ->
-                        if (currentUserResponse.userId != 0L) {
-                            userId = currentUserResponse.userId
-                            binding.btnAddNewAddress.setOnClickListener {
-                                Log.e("AddressFragment", "${currentUserResponse.userId}")
-                                viewModelShared.insertNewAddress(
-                                    Address(
-                                        currentUserResponse.userId,
-                                        "address ${(0 until 10).random()}"
+        viewModelShared.apply {
+            currentUser.observe(viewLifecycleOwner, { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        response.data?.let { currentUserResponse ->
+                            if (currentUserResponse.userId != 0L) {
+                                binding.btnAddNewAddress.setOnClickListener {
+                                    insertNewAddress(
+                                        Address(
+                                            currentUserResponse.userId,
+                                            "address ${(0 until 10).random()}"
+                                        )
                                     )
-                                )
 
-                                viewModelShared.getLastInsertedAddress()
-                                    .observe(viewLifecycleOwner, { data ->
-                                        Log.e("AddressFragment", "current  $data")
-                                        data?.let { address ->
-                                            findNavController().navigate(
-                                                AddressFragmentDirections.actionAddressFragmentToAddressDetailsFragment(
-                                                    address
+                                    getLastInsertedAddress()
+                                        .observe(viewLifecycleOwner, { data ->
+                                            data?.let { address ->
+                                                findNavController().navigate(
+                                                    AddressFragmentDirections.actionAddressFragmentToAddressDetailsFragment(
+                                                        address
+                                                    )
                                                 )
-                                            )
-                                        }
+                                            }
+                                        })
+                                }
+                                getAddressesOfCurrentUser(currentUserResponse.userId)
+                                    .observe(viewLifecycleOwner, {
+                                        it?.let { addressesAdapter.submitList(it.addresses) }
+                                            ?: Log.e("AddressFragment", "0")
                                     })
                             }
-                            viewModelShared.getAddressesOfCurrentUser(currentUserResponse.userId)
-                                .observe(viewLifecycleOwner, {
-                                    Log.e("AddressFragment", "${it.user.userId}")
-                                    it?.let { addressesAdapter.submitList(it.addresses) }
-                                        ?: Log.e("AddressFragment", "0")
-                                })
                         }
                     }
-                }
-                is Resource.Error -> {
-                    hideProgressBar()
-                    response.message?.let { message ->
-                        showSnackBarWithMessage(message)
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        response.message?.let { message ->
+                            showSnackBarWithMessage(message)
+                        }
+                    }
+                    is Resource.Loading -> {
+                        showProgressBar()
                     }
                 }
-                is Resource.Loading -> {
-                    showProgressBar()
-                }
-            }
 
-        })
+            })
+        }
 
         return binding.root
     }

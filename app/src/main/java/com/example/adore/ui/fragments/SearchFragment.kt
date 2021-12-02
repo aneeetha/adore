@@ -33,41 +33,30 @@ class SearchFragment : Fragment() {
     ): View? {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
 
-
         viewModel = (activity as AdorableActivity).viewModel
         setUpRecyclerView()
 
-//        viewModel.navigateToProductDetails.observe(viewLifecycleOwner, {id ->
-//            id?.let {
-//                findNavController().navigate(
-//                    ProductsFragmentDirections.actionProductsFragmentToProductDetailsFragment(it)
-//                )
-//               // viewModel.onProductDetailsNavigated()
-//            }
-//        })
-
         productsAdapter.setOnItemClickListener {
-//            val bundle = Bundle().apply {
-//                putSerializable("product", it)
-//            }
-//            findNavController().navigate(
-//                R.id.action_searchFragment_to_productDetailsFragment,
-//                bundle
-//            )
             findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToProductDetailsFragment(it))
         }
 
         var job: Job? = null
 
-        binding.etSearchBar.addTextChangedListener { editable ->
-            job?.cancel()
-            job = MainScope().launch {
-                delay(SEARCH_TIME_DELAY)
-                editable?.let {
-                    if(editable.toString().isNotEmpty()) {
-                        viewModel.getSearchResult(editable.toString())
+        binding.apply {
+            etSearchBar.addTextChangedListener { editable ->
+                job?.cancel()
+                job = MainScope().launch {
+                    delay(SEARCH_TIME_DELAY)
+                    editable?.let {
+                        if (editable.toString().isNotEmpty()) {
+                            viewModel.getSearchResult(editable.toString())
+                        }
                     }
                 }
+            }
+
+            ivBackIcon.setOnClickListener {
+                findNavController().navigateUp()
             }
         }
 
@@ -118,7 +107,7 @@ class SearchFragment : Fragment() {
         Snackbar.make(
             requireActivity().findViewById(android.R.id.content),
             message,
-            Snackbar.LENGTH_SHORT // How long to display the message.
+            Snackbar.LENGTH_SHORT
         ).show()
     }
 

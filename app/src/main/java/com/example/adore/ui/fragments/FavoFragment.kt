@@ -39,43 +39,37 @@ class FavoFragment : Fragment() {
         viewModel.getFavlist()
 
         favoProductAdapter.setOnItemClickListener {
-//            val bundle = Bundle().apply {
-//                putSerializable("product", it)
-//            }
-//            findNavController().navigate(
-//                R.id.action_favoFragment_to_productDetailsFragment,
-//                bundle
-//            )
             findNavController().navigate(FavoFragmentDirections.actionFavoFragmentToProductDetailsFragment(it))
         }
 
-        viewModel.favoSnackBarMessage.observe(viewLifecycleOwner, { response ->
-            response?.data?.let {
-                showSnackBarWithMessage(it.message)
-                viewModel.doneShowingSnackBarInFavo()
-            }
-        })
+        viewModel.apply {
+            favoSnackBarMessage.observe(viewLifecycleOwner, { response ->
+                response?.data?.let {
+                    showSnackBarWithMessage(it.message)
+                    doneShowingSnackBarInFavo()
+                }
+            })
 
-        viewModel.favlistResult.observe(viewLifecycleOwner, { response ->
-            when (response) {
-                is Resource.Success -> {
-                    hideProgressBar()
-                    response.data?.let { productsResponse ->
-                        favoProductAdapter.differ.submitList(productsResponse.products)
+            favlistResult.observe(viewLifecycleOwner, { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        response.data?.let { productsResponse ->
+                            favoProductAdapter.differ.submitList(productsResponse.products)
+                        }
+                    }
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        response.message?.let { message ->
+                            showSnackBarWithMessage(message)
+                        }
+                    }
+                    is Resource.Loading -> {
+                        showProgressBar()
                     }
                 }
-                is Resource.Error -> {
-                    hideProgressBar()
-                    response.message?.let { message ->
-                        showSnackBarWithMessage(message)
-                        Log.e("SearchFragment", "An error occurred: $message")
-                    }
-                }
-                is Resource.Loading -> {
-                    showProgressBar()
-                }
-            }
-        })
+            })
+        }
 
         return binding.root
     }
@@ -101,7 +95,7 @@ class FavoFragment : Fragment() {
         Snackbar.make(
             requireActivity().findViewById(android.R.id.content),
             message,
-            Snackbar.LENGTH_SHORT // How long to display the message.
+            Snackbar.LENGTH_SHORT
         ).show()
     }
 

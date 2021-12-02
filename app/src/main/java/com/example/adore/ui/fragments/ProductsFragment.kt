@@ -6,22 +6,19 @@ import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.adore.R
 import com.example.adore.adapters.ProductsAdapter
 import com.example.adore.databinding.FragmentProductsBinding
+import com.example.adore.models.enums.Category
+import com.example.adore.models.enums.Gender
 import com.example.adore.ui.AdorableActivity
 import com.example.adore.ui.viewmodels.ProductsViewModel
 import com.example.adore.util.Resource
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_product_details.*
-import kotlinx.android.synthetic.main.fragment_products.*
-import kotlinx.android.synthetic.main.fragment_products.iv_back_icon
-import kotlinx.android.synthetic.main.fragment_products.iv_cart_icon
-import kotlinx.android.synthetic.main.fragment_products.iv_favo_icon
-import kotlinx.android.synthetic.main.fragment_products.iv_search_icon
 
 class ProductsFragment : Fragment() {
 
@@ -44,24 +41,20 @@ class ProductsFragment : Fragment() {
         setUpRecyclerView()
 
         val arguments = ProductsFragmentArgs.fromBundle(requireArguments())
-        viewModel.getProductWithCategories(arguments.gender, arguments.productType, arguments.category)
+        viewModel.getProductsOfType(arguments.gender, arguments.productType)
+
+
+        val categories= Category.values().filter { (it.gender == arguments.gender || it.gender== Gender.Unisex) && it.type.contains(arguments.productType) }.map { it.headingValue }.toMutableList()
+        categories.add(0, "None")
+        val categoriesAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, categories)
 
         productsAdapter.setOnItemClickListener {
-//            val bundle = Bundle().apply {
-//                putSerializable("product", it)
-//            }
-//            Log.e("Navigation", "${findNavController().currentDestination}")
-//            findNavController().navigate(
-//                R.id.action_productsFragment_to_productDetailsFragment,
-//                bundle
-//            )
             findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToProductDetailsFragment(it))
         }
 
 
         binding.apply {
             ivBackIcon.setOnClickListener {
-                Log.e("Navigation", "${findNavController().currentDestination}")
                 findNavController().navigateUp()
                 //requireActivity().onBackPressed()
                 //findNavController().backStack.pop()
@@ -80,30 +73,66 @@ class ProductsFragment : Fragment() {
             ivSearchIcon.setOnClickListener {
                 findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToSearchFragment())
             }
-        }
 
-        viewModel.productsOfCategory.observe(viewLifecycleOwner, { response ->
-            when (response) {
-                is Resource.Success -> {
-                    hideProgressBar()
-                    response.data?.let { productsResponse ->
-                        productsAdapter.differ.submitList(productsResponse.products)
-                        //Log.i("ProductsFragment", productsResponse.products.toString())
-                    }
-                }
-                is Resource.Error -> {
-                    hideProgressBar()
-                    response.message?.let { message ->
-                        showSnackBarWithMessage(message)
-                        Log.e("ProductsFragment", "An error occurred: $message")
-                    }
-                }
-                is Resource.Loading -> {
-                    showProgressBar()
+            (tilCategories.editText as AutoCompleteTextView).setAdapter(categoriesAdapter)
+            autoTvCategories.setOnItemClickListener { adapterView, _, i, _ ->
+                val selectedCategory = adapterView.getItemAtPosition(i).toString()
+                Log.e("ProductsFragment", selectedCategory)
+                if(selectedCategory!="None") {
+                    viewModel.getProductWithCategories(
+                        arguments.gender,
+                        arguments.productType,
+                        Category.values().first{it.headingValue==selectedCategory}
+                    )
+                }else{
+                    viewModel.getProductsOfType(arguments.gender, arguments.productType)
                 }
             }
+        }
 
-        })
+        viewModel.apply {
+            productsOfType.observe(viewLifecycleOwner, { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        response.data?.let { productsResponse ->
+                            productsAdapter.differ.submitList(productsResponse.products)
+                        }
+                    }
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        response.message?.let { message ->
+                            showSnackBarWithMessage(message)
+                        }
+                    }
+                    is Resource.Loading -> {
+                        showProgressBar()
+                    }
+                }
+
+            })
+
+            productsOfCategory.observe(viewLifecycleOwner, { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        hideProgressBar()
+                        response.data?.let { productsResponse ->
+                            productsAdapter.differ.submitList(productsResponse.products)
+                        }
+                    }
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        response.message?.let { message ->
+                            showSnackBarWithMessage(message)
+                        }
+                    }
+                    is Resource.Loading -> {
+                        showProgressBar()
+                    }
+                }
+
+            })
+        }
 
         return binding.root
     }
@@ -129,7 +158,7 @@ class ProductsFragment : Fragment() {
         Snackbar.make(
             requireActivity().findViewById(android.R.id.content),
             message,
-            Snackbar.LENGTH_SHORT // How long to display the message.
+            Snackbar.LENGTH_SHORT
         ).show()
     }
 }

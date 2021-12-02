@@ -52,8 +52,10 @@ class ProductDetailsFragment : Fragment() {
         arguments = ProductDetailsFragmentArgs.fromBundle(requireArguments())
         val viewModelFactory =
             ProductDetailsViewModelProviderFactory(arguments.product, adoreRepository)
+
         viewModel =
             ViewModelProvider(this, viewModelFactory).get(ProductDetailsViewModel::class.java)
+
         setupRecyclerView()
 
         binding.productDetailsViewModel = viewModel
@@ -83,65 +85,58 @@ class ProductDetailsFragment : Fragment() {
 
 
 
-        viewModel.addedToFavlist.observe(viewLifecycleOwner, {
-            if (it == true) {
-                binding.tvAddToFavo.setText(R.string.added_to_favo)
-                viewModel.doneAddingItemToFavo()
-            }
-        })
+        viewModel.apply {
 
-        viewModel.addToCartClicked.observe(viewLifecycleOwner, {
-            if (it == true) {
-                binding.btnAddToCart.text = context?.getString(R.string.go_to_cart)
-            } else {
-                binding.btnAddToCart.text = context?.getString(R.string.add_to_cart)
-            }
-        })
+            addedToFavlist.observe(viewLifecycleOwner, {
+                it?.let{
+                    binding.tvAddToFavo.setText(R.string.added_to_favo)
+                    doneAddingItemToFavo()
+                }
+            })
 
-        viewModel.navigateToCartFragment.observe(viewLifecycleOwner, Observer {
-            if (it == true) {
-                findNavController().navigate(ProductDetailsFragmentDirections.actionProductDetailsFragmentToCartFragment())
-                viewModel.setNavigatedToCartFragment()
-            }
-        })
+            addToCartClicked.observe(viewLifecycleOwner, {
+                if (it == true) {
+                    binding.btnAddToCart.text = context?.getString(R.string.go_to_cart)
+                } else {
+                    binding.btnAddToCart.text = context?.getString(R.string.add_to_cart)
+                }
+            })
 
-        viewModel.navigateToFavoFragment.observe(viewLifecycleOwner, {
-            if (it == true) {
-                findNavController().navigate(ProductDetailsFragmentDirections.actionProductDetailsFragmentToFavoFragment())
-                viewModel.setNavigatedToFavoFragment()
-            }
-        })
+            navigateToCartFragment.observe(viewLifecycleOwner, Observer {
+                if (it == true) {
+                    findNavController().navigate(ProductDetailsFragmentDirections.actionProductDetailsFragmentToCartFragment())
+                    setNavigatedToCartFragment()
+                }
+            })
 
-        viewModel.navigateToSearchFragment.observe(viewLifecycleOwner, {
-            if (it == true) {
-                findNavController().navigate(ProductDetailsFragmentDirections.actionProductDetailsFragmentToSearchFragment())
-                viewModel.setNavigatedToSearchFragment()
-            }
-        })
+            navigateToFavoFragment.observe(viewLifecycleOwner, {
+                if (it == true) {
+                    findNavController().navigate(ProductDetailsFragmentDirections.actionProductDetailsFragmentToFavoFragment())
+                    setNavigatedToFavoFragment()
+                }
+            })
 
+            navigateToSearchFragment.observe(viewLifecycleOwner, {
+                if (it == true) {
+                    findNavController().navigate(ProductDetailsFragmentDirections.actionProductDetailsFragmentToSearchFragment())
+                    setNavigatedToSearchFragment()
+                }
+            })
 
-        viewModel.snackBarMessage.observe(viewLifecycleOwner, { response ->
-            response?.data?.let { data ->
-                Snackbar.make(
-                    requireActivity().findViewById(android.R.id.content),
-                    data.message,
-                    Snackbar.LENGTH_SHORT // How long to display the message.
-                ).show()
-                viewModel.doneShowingSnackBarWithMessage()
-            }
-        })
+            snackBarMessage.observe(viewLifecycleOwner, { response ->
+                response?.data?.let { data ->
+                    showSnackBarMessage(data.message)
+                    doneShowingSnackBarWithMessage()
+                }
+            })
 
-        viewModel.showSnackBar.observe(viewLifecycleOwner, Observer {
-            if (it == true) {
-                Snackbar.make(
-                    requireActivity().findViewById(android.R.id.content),
-                    getString(R.string.size_not_chosen_message),
-                    Snackbar.LENGTH_SHORT // How long to display the message.
-                ).show()
-
-                viewModel.doneShowingSnackBar()
-            }
-        })
+            viewModel.showSnackBar.observe(viewLifecycleOwner, Observer {
+                it?.let{
+                    showSnackBarMessage(getString(R.string.size_not_chosen_message))
+                    doneShowingSnackBar()
+                }
+            })
+        }
 
         return binding.root
     }
@@ -153,5 +148,13 @@ class ProductDetailsFragment : Fragment() {
             adapter = productSizeAdapter
             layoutManager = GridLayoutManager(activity, 5)
         }
+    }
+
+    private fun showSnackBarMessage(message: String){
+        Snackbar.make(
+            requireActivity().findViewById(android.R.id.content),
+            message,
+            Snackbar.LENGTH_SHORT
+        ).show()
     }
 }

@@ -1,4 +1,4 @@
-package com.example.adore.models
+package com.example.adore.models.dataClasses
 
 import androidx.room.Embedded
 import androidx.room.PrimaryKey

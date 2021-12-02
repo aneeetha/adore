@@ -10,7 +10,7 @@ import com.example.adore.databinding.ProductTypeListItemBinding
 import com.example.adore.models.enums.ProductType
 
 class GenderBasedProductTypeAdapter(
-    private val productTypes: List<ProductType>,
+    private val productTypes: List<String>,
     private val colorsList: List<String>
     ): RecyclerView.Adapter<GenderBasedProductTypeAdapter.ProductTypeViewHolder>() {
 
@@ -20,10 +20,10 @@ class GenderBasedProductTypeAdapter(
         val currentItem = productTypes[position]
         holder.binding.apply {
             layoutProductType.setBackgroundColor(Color.parseColor(colorsList[position]))
-            tvProductType.text = currentItem.name
+            tvProductType.text = currentItem
             tvProductType.setOnClickListener {
                 onItemClickListener?.let {
-                    it(currentItem) }
+                    it(ProductType.values().first { it.headingValue==currentItem }) }
             }
         }
     }
@@ -46,14 +46,4 @@ class GenderBasedProductTypeAdapter(
         }
     }
 
-    private fun View.toggleVisibility(){
-        visibility = if(this.isVisible){
-            View.GONE
-        }else{
-            View.VISIBLE
-        }
-    }
 }
-
-
-//val arrayAdapter = ArrayAdapter(context, R.layout.dropdown_item, categories)

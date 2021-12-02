@@ -2,7 +2,6 @@ package com.example.adore.repository
 
 import com.example.adore.api.RetrofitInstance
 import com.example.adore.databsae.AdoreDatabase
-import com.example.adore.models.Favo
 import com.example.adore.models.entities.Address
 import com.example.adore.models.entities.AddressDetailUpdate
 import com.example.adore.models.entities.User
@@ -23,6 +22,8 @@ class AdoreRepository(
     suspend fun getProductsWithLabel(labelId: String) = RetrofitInstance.api.getProductsWithLabel(labelId)
 
     suspend fun getProductsOfCategory(gender: Gender, productType: ProductType, category: Category) = RetrofitInstance.api.getProductsOfCategory(gender.name, productType.name, category.name)
+
+    suspend fun getProductsOfType(gender: Gender, productType: ProductType) = RetrofitInstance.api.getProductsOfType(gender.name, productType.name)
 
     suspend fun searchForProducts(searchQuery: String) = RetrofitInstance.api.searchForProducts(searchQuery)
 

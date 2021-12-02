@@ -75,7 +75,7 @@ interface AdoreApi {
         @Path("id")
         labelId: String): Response<ProductResponse>
 
-    @GET("api/filter")
+    @GET("api/filter/sub")
     suspend fun getProductsOfCategory(
         @Query("gender")
         gender: String,
@@ -83,5 +83,13 @@ interface AdoreApi {
         productType: String,
         @Query("category")
         category: String
+    ): Response<ProductResponse>
+
+    @GET("api/filter/main")
+    suspend fun getProductsOfType(
+        @Query("gender")
+        gender: String,
+        @Query("productType")
+        productType: String
     ): Response<ProductResponse>
 }

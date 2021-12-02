@@ -1,6 +1,5 @@
 package com.example.adore.adapters
 
-import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.text.HtmlCompat
@@ -10,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.adore.R
 import com.example.adore.databinding.OrderItemBinding
-import com.example.adore.models.OrderProductDetails
+import com.example.adore.models.dataClasses.OrderProductDetails
 import com.example.adore.models.enums.OrderStatus
 import com.example.adore.ui.viewmodels.ProductsViewModel
 import com.example.adore.util.Constants

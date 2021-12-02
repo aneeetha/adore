@@ -1,4 +1,4 @@
-package com.example.adore.models
+package com.example.adore.models.dataClasses
 
 import com.example.adore.models.enums.DressSize
 

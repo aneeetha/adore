@@ -1,5 +1,4 @@
 package com.example.adore.util
-
 class Constants {
     companion object{
         const val BASE_URL = "https://still-sierra-33802.herokuapp.com/"

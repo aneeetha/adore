@@ -5,18 +5,15 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.text.toSpannable
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.adore.databinding.FavoProductBinding
-import com.example.adore.models.entities.Product
-import com.example.adore.models.enums.CustomLabel
+import com.example.adore.models.dataClasses.Product
 import com.example.adore.ui.viewmodels.ProductsViewModel
 import com.example.adore.util.AdoreLogic
 import com.example.adore.util.Constants
-import kotlinx.android.synthetic.main.favo_product.view.*
 
 class FavoProductAdapter(
     val viewModel: ProductsViewModel
