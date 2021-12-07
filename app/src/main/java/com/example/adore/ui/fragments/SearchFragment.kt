@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -26,6 +27,7 @@ class SearchFragment : Fragment() {
     private lateinit var productsAdapter: ProductsAdapter
     lateinit var binding: FragmentSearchBinding
 
+    var job: Job? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,7 +42,6 @@ class SearchFragment : Fragment() {
             findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToProductDetailsFragment(it))
         }
 
-        var job: Job? = null
 
         binding.apply {
             etSearchBar.addTextChangedListener { editable ->
@@ -54,40 +55,43 @@ class SearchFragment : Fragment() {
                     }
                 }
             }
-
             ivBackIcon.setOnClickListener {
-                findNavController().navigateUp()
+                requireActivity().onBackPressed()
+               // findNavController().navigateUp()
             }
         }
 
-        viewModel.searchResult.observe(viewLifecycleOwner, { response ->
-            when(response) {
-                is Resource.Success -> {
-                    hideProgressBar()
-                    hideNoResultFound()
-                    response.data?.let { productsResponse ->
-                        productsAdapter.differ.submitList(productsResponse.products)
+        viewModel.apply {
+            searchResult.observe(viewLifecycleOwner, {
+                it?.let { response ->
+                    when (response) {
+                        is Resource.Success -> {
+                            hideProgressBar()
+                            hideNoResultFound()
+                            response.data?.let { productsResponse ->
+                                productsAdapter.differ.submitList(productsResponse.products)
+                                doneShowingSearchResults()
+                            }
+                        }
+                        is Resource.Empty -> showNoResultFound()
+                        is Resource.Error -> {
+                            hideProgressBar()
+                            response.message?.let { message ->
+                                showSnackBarWithMessage(message)
+                                Log.e("SearchFragment", "An error occurred: $message")
+                            }
+                        }
+                        is Resource.Loading -> {
+                            showProgressBar()
+                        }
                     }
                 }
-                is Resource.Empty ->showNoResultFound()
-                is Resource.Error -> {
-                    hideProgressBar()
-                    response.message?.let { message ->
-                        showSnackBarWithMessage(message)
-                        Log.e("SearchFragment", "An error occurred: $message")
-                    }
-                }
-                is Resource.Loading -> {
-                    showProgressBar()
-                }
-            }
 
-        })
+            })
+        }
 
         return binding.root
     }
-
-
 
     private fun hideProgressBar(){
         binding.progressBar.visibility = View.INVISIBLE

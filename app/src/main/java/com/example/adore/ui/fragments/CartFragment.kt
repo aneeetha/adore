@@ -113,55 +113,26 @@ class CartFragment : Fragment() {
             }
         }
 
-
         return binding.root
     }
 
     private fun getAddress() {
         viewModel.apply {
-            currentUser.observe(viewLifecycleOwner, { response ->
-                when (response) {
-                    is Resource.Success -> {
-                        showViewsAndActions()
-                        response.data?.let { currentUserResponse ->
-                            val userId = currentUserResponse.userId
-                            Log.e("CartFragment", "currentUser $userId")
-                            if (userId != 0L && !userExists(userId)) {
-                                getAddressesOfCurrentUser(currentUserResponse.userId)
-                                    .observe(viewLifecycleOwner, {
-                                        it?.let {
-                                            val addressList = it.addresses.map { address ->
-                                                address.addressType
-                                            } as MutableList<String>
-                                            addressList.add(0, "None")
-                                            Log.e(
-                                                "CartFragment",
-                                                "addresses with none $addressList"
-                                            )
-                                            showConfirmationDialog(
-                                                addressList.toTypedArray(),
-                                                it.addresses
-                                            )
-                                        }
-                                    })
-                            }
-                        }
-                    }
-                    is Resource.Empty -> {
-                        showNoResultFound()
-                    }
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        hideViewsAndActions()
-                        response.message?.let { message ->
-                            showSnackBarWithMessage(message)
-                        }
-                    }
-                    is Resource.Loading -> {
-                        showProgressBar()
-                    }
+            getAddressesOfCurrentUser().observe(viewLifecycleOwner, {
+                it?.let {
+                    val addressList = it.addresses.map { address ->
+                            address.addressType
+                    } as MutableList<String>
+                    addressList.add(0, "None")
+                    Log.e(
+                            "CartFragment",
+                            "addresses with none $addressList"
+                    )
+                    showConfirmationDialog(
+                            addressList.toTypedArray(),
+                            it.addresses
+                    )
                 }
-
             })
         }
     }

@@ -76,19 +76,7 @@
                 android:onClick="@{()->userProfileFragment.navigateToOrdersFragment()}"
                 />
 
-            <TextView
-                android:id="@+id/tv_account_favlists"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_margin="5dp"
-                android:background="@drawable/text_view_bg"
-                android:padding="5dp"
-                android:textAlignment="viewEnd"
-                android:text="@string/favourites"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:onClick="@{()->userProfileFragment.navigateToFavoFragment()}"/>
+
         </LinearLayout>
 
         <ProgressBar

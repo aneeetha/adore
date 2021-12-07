@@ -8,6 +8,7 @@ import android.os.Build
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.adore.AdoreApplication
+import com.example.adore.databsae.SessionManager
 import com.example.adore.models.dataClasses.CartItem
 import com.example.adore.models.enums.Category
 import com.example.adore.models.enums.Gender
@@ -24,20 +25,17 @@ class ProductsViewModel(
     private val adoreRepository: AdoreRepository
 ) : AndroidViewModel(app) {
 
-    private val _currentUser: MutableLiveData<Resource<CurrentUserResponse>> = MutableLiveData()
-    val currentUser: LiveData<Resource<CurrentUserResponse>>
-        get() = _currentUser
 
     private val _productsOfType: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
-    val productsOfType: LiveData<Resource<ProductResponse>>
+    val productsOfType
         get() = _productsOfType
 
     private val _productsOfCategory: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
-    val productsOfCategory: LiveData<Resource<ProductResponse>>
+    val productsOfCategory
         get() = _productsOfCategory
 
-    private val _searchResult: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
-    val searchResult: LiveData<Resource<ProductResponse>>
+    private val _searchResult: MutableLiveData<Resource<ProductResponse>?> = MutableLiveData()
+    val searchResult
         get() = _searchResult
 
     private val _favlistResult: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
@@ -60,10 +58,6 @@ class ProductsViewModel(
     val navigateToOrderSuccessPage
         get() = _navigateToOrderSuccessPage
 
-    private val _navigateToProductDetails = MutableLiveData<String>()
-    val navigateToProductDetails
-        get() = _navigateToProductDetails
-
     private val _cartSnackBarMessage = MutableLiveData<Resource<ApiTransactionResponse>?>()
     val cartSnackBarMessage
         get() = _cartSnackBarMessage
@@ -72,18 +66,10 @@ class ProductsViewModel(
     val favoSnackBarMessage
         get() = _favoSnackBarMessage
 
+    private val sessionManager = SessionManager(app)
 
 
-    init {
-        getCurrentUser()
-    }
-
-    private fun getCurrentUser() = viewModelScope.launch {
-        val response = adoreRepository.getCurrentUser()
-        _currentUser.value = handleResponse(response)
-    }
-
-    fun getAddressesOfCurrentUser(userId: Long) = adoreRepository.getAddressesOfUser(userId)
+    fun getAddressesOfCurrentUser() = adoreRepository.getAddressesOfUser(sessionManager.getUserId())
 
     fun getProductsOfType(gender: Gender, productType: ProductType) = viewModelScope.launch {
         safeGetProductsWithTypeCall(gender, productType)
@@ -111,24 +97,24 @@ class ProductsViewModel(
 
     fun cartItemQuantityChanged(quantity: Int, cartItemId: String) = viewModelScope.launch {
         _cartSnackBarMessage.value =
-            handleApiTransactionResponse(adoreRepository.updateCart(cartItemId, quantity))
+            handleApiTransactionResponse(adoreRepository.updateCart(cartItemId, quantity, sessionManager.getUserId()))
         getCartItem()
     }
 
     fun removeCartItem(cartItemId: String) = viewModelScope.launch {
         _cartSnackBarMessage.value =
-            handleApiTransactionResponse(adoreRepository.removeCartItem(cartItemId))
+            handleApiTransactionResponse(adoreRepository.removeCartItem(cartItemId, sessionManager.getUserId()))
         getCartItem()
     }
 
     fun placeOrder(addressId: Int) = viewModelScope.launch {
-        _cartSnackBarMessage.value = handleApiTransactionResponse(adoreRepository.placeOrder(addressId))
+        _cartSnackBarMessage.value = handleApiTransactionResponse(adoreRepository.placeOrder(addressId, sessionManager.getUserId()))
         _navigateToOrderSuccessPage.value = true
     }
 
     fun removeFavoItem(productId: String) = viewModelScope.launch {
         _favoSnackBarMessage.value =
-            handleApiTransactionResponse(adoreRepository.removeFavoItem(productId))
+            handleApiTransactionResponse(adoreRepository.removeFavoItem(productId, sessionManager.getUserId()))
         getFavlist()
     }
 
@@ -152,8 +138,9 @@ class ProductsViewModel(
         _navigateToOrderSuccessPage.value = null
     }
 
-    fun userExists(userId: Long) = adoreRepository.getUser(userId).value!=null
-
+    fun doneShowingSearchResults(){
+        _searchResult.value = null
+    }
 
     private suspend fun safeSearchForProductsCall(searchQuery: String){
         _searchResult.value = Resource.Loading()
@@ -210,7 +197,7 @@ class ProductsViewModel(
         _favlistResult.value = Resource.Loading()
         try{
             if(hasInternetConnection()){
-                val response = adoreRepository.getFavlist() //Seasonal
+                val response = adoreRepository.getFavlist(sessionManager.getUserId())
                 _favlistResult.value = handleResponse(response)
             }else{
                 _favlistResult.value = Resource.Error("No internet connection :(")
@@ -227,7 +214,7 @@ class ProductsViewModel(
         _cartItems.value = Resource.Loading()
         try{
             if(hasInternetConnection()){
-                val response = adoreRepository.getCartItems()
+                val response = adoreRepository.getCartItems(sessionManager.getUserId())
                 _cartItems.value = handleResponse(response)
             }else{
                 _cartItems.value = Resource.Error("No internet connection :(")
@@ -244,7 +231,7 @@ class ProductsViewModel(
         _orders.value = Resource.Loading()
         try{
             if(hasInternetConnection()){
-                val response = adoreRepository.getOrders()
+                val response = adoreRepository.getOrders(sessionManager.getUserId())
                 _orders.value = handleResponse(response)
             }else{
                 _orders.value = Resource.Error("No internet connection :(")

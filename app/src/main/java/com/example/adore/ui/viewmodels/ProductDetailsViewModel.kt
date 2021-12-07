@@ -8,6 +8,7 @@ import android.os.Build
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.adore.AdoreApplication
+import com.example.adore.databsae.SessionManager
 import com.example.adore.models.enums.DressSize
 import com.example.adore.models.dataClasses.Product
 import com.example.adore.models.responses.ApiTransactionResponse
@@ -30,8 +31,10 @@ class ProductDetailsViewModel(
     val favlistResult
         get() = _favlistResult
 
+    private val sessionManager = SessionManager(app)
+
     init {
-        getFavlist()
+        getFavlist(sessionManager.getUserId())
     }
 
     private var chosenSize: DressSize? = null
@@ -76,7 +79,7 @@ class ProductDetailsViewModel(
     fun addToFavlist() {
         viewModelScope.launch {
             _snackBarMessage.value =
-                handleApiTransactionResponse(repository.addProductToFav(product._id))
+                handleApiTransactionResponse(repository.addProductToFav(product._id, sessionManager.getUserId()))
             doneActionForFavoButton()
         }
     }
@@ -93,7 +96,8 @@ class ProductDetailsViewModel(
                             product._id,
                             it.name,
                             1,
-                            AdoreLogic.getDiscount(product.customLabels)
+                            AdoreLogic.getDiscount(product.customLabels),
+                            sessionManager.getUserId()
                         )
                     )
                 }
@@ -162,15 +166,15 @@ class ProductDetailsViewModel(
             Resource.Error(message)
         }
 
-    fun getFavlist() = viewModelScope.launch {
-        safeGetFavlistCall()
+    fun getFavlist(userId: Long) = viewModelScope.launch {
+        safeGetFavlistCall(userId)
     }
 
-    private suspend fun safeGetFavlistCall() {
+    private suspend fun safeGetFavlistCall(userId: Long) {
         _favlistResult.value = Resource.Loading()
         try {
             if (hasInternetConnection()) {
-                val response = repository.getFavlist()
+                val response = repository.getFavlist(userId)
                 _favlistResult.value = handleResponse(response)
             } else {
                 _favlistResult.value = Resource.Error("No internet connection :(")
@@ -185,7 +189,7 @@ class ProductDetailsViewModel(
 
     fun removeFavoItem() = viewModelScope.launch {
         _snackBarMessage.value =
-            handleApiTransactionResponse(repository.removeFavoItem(product._id))
+            handleApiTransactionResponse(repository.removeFavoItem(product._id, sessionManager.getUserId()))
         doneActionForFavoButton()
     }
 

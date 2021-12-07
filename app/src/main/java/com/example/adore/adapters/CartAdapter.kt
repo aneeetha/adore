@@ -39,7 +39,8 @@ class CartAdapter(
         holder.binding.apply {
             val price = Constants.CURRENCY + currentItem.productDetails.price.toString()
             val sellingPrice = Constants.CURRENCY + currentItem.sellingPrice.toString()
-            val quantity = Array(currentItem.productDetails.availableCount) { "${it + 1}" }
+            val count = if(currentItem.productDetails.availableCount>5) 5 else currentItem.productDetails.availableCount
+            val quantity = Array(count) { "${it + 1}" }
             val arrayAdapter = ArrayAdapter(holder.itemView.context, R.layout.dropdown_item, quantity)
             tvAutoComplete.setAdapter(arrayAdapter)
             Glide.with(holder.itemView).load(currentItem.productDetails.imageUrl).into(ivProductImage)

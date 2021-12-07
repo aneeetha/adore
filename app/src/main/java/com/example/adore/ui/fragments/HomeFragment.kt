@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +16,7 @@ import com.example.adore.R
 import com.example.adore.adapters.HomeSliderAdapter
 import com.example.adore.databinding.FragmentHomeBinding
 import com.example.adore.databsae.AdoreDatabase
+import com.example.adore.databsae.SessionManager
 import com.example.adore.repository.AdoreRepository
 import com.example.adore.ui.dialog.LoginDialog
 import com.example.adore.ui.dialogListener.LoginDialogListener
@@ -48,11 +50,10 @@ class HomeFragment : Fragment() {
 
         val application = requireNotNull(this.activity).application
         val adoreRepository = AdoreRepository(AdoreDatabase(application))
+        val sessionManager = SessionManager(application)
 
         val viewModelFactory = HomeViewModelProviderFactory(application, adoreRepository)
         viewModel = ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
-
-
 
         val sliderItems = mutableListOf<HomeSliderItem>()
         sliderHandler = Handler(Looper.getMainLooper())
@@ -82,49 +83,30 @@ class HomeFragment : Fragment() {
                         showProgressBar()
                     }
                 }
-
             })
 
-            currentUser.observe(viewLifecycleOwner, { response ->
-                when (response) {
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        response.data?.let { currentUserResponse ->
-                            val userId = currentUserResponse.userId
-                            Log.e("HomeFragment", "${getUser(userId)}")
-                            getUser(userId).observe(viewLifecycleOwner, {
-                                if(it==null || userId==0L){
-                                    val dialog =  LoginDialog(requireContext(), object : LoginDialogListener {
-                                        override fun onLoginButtonClicked(
-                                            mobileNo: String,
-                                            password: String
-                                        ) {
-                                            validateUser(mobileNo, password)
-                                        }
-                                        override fun onCreateNewAccountClicked() {
-                                            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSignupFragment())
-                                        }
-                                    })
-                                    dialog.setCancelable(false)
-                                    dialog.show()
-                                }else {
-                                    getProductsWithCustomLabel()
-                                }
-                            })
-                        }
-                    }
-                    is Resource.Empty ->hideProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        response.message?.let { message ->
-                            showSnackBarWithMessage(message)
-                        }
-                    }
-                    is Resource.Loading -> {
-                        showProgressBar()
+            Log.e("HomeFragment", "${sessionManager.getUserId()}")
+            Log.e("HomeFragment", "${sessionManager.checkLogin()}")
+
+            showLoginDialog.observe(viewLifecycleOwner, {
+                it?.let {
+                    if (!sessionManager.checkLogin()) {
+                        val dialog = LoginDialog(requireContext(), object : LoginDialogListener {
+                            override fun onLoginButtonClicked(
+                                mobileNo: String,
+                                password: String
+                            ) {
+                                validateUser(mobileNo, password)
+                            }
+
+                            override fun onCreateNewAccountClicked() {
+                                findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSignupFragment())
+                            }
+                        })
+                        dialog.setCancelable(false)
+                        dialog.show()
                     }
                 }
-
             })
 
             showSnackBarMessage.observe(viewLifecycleOwner, {

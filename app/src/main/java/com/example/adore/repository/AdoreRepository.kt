@@ -1,7 +1,9 @@
 package com.example.adore.repository
 
+import android.content.Context
 import com.example.adore.api.RetrofitInstance
 import com.example.adore.databsae.AdoreDatabase
+import com.example.adore.databsae.SessionManager
 import com.example.adore.models.entities.Address
 import com.example.adore.models.entities.AddressDetailUpdate
 import com.example.adore.models.entities.User
@@ -11,11 +13,13 @@ import com.example.adore.models.enums.Gender
 import com.example.adore.models.enums.ProductType
 
 class AdoreRepository(
-    private val db: AdoreDatabase
+    private val db: AdoreDatabase,
 ) {
-    suspend fun setCurrentUser(userId: Long) = RetrofitInstance.api.setCurrentUser(userId)
+    //SessionManager(context).getUserDetailsFromSession()[SessionManager.KEY_USER_ID] as Long
 
-    suspend fun getCurrentUser() = RetrofitInstance.api.getCurrentUser()
+    //suspend fun setCurrentUser(userId: Long) = RetrofitInstance.api.setCurrentUser(userId)
+
+    //suspend fun getCurrentUser() = RetrofitInstance.api.getCurrentUser()
 
     suspend fun getProducts() = RetrofitInstance.api.getProducts()
 
@@ -27,23 +31,23 @@ class AdoreRepository(
 
     suspend fun searchForProducts(searchQuery: String) = RetrofitInstance.api.searchForProducts(searchQuery)
 
-    suspend fun getFavlist() = RetrofitInstance.api.getFavlist()
+    suspend fun getFavlist(userId: Long) = RetrofitInstance.api.getFavlist(userId)
 
-    suspend fun addProductToFav(id: String) = RetrofitInstance.api.addProductToFav(id)
+    suspend fun addProductToFav(id: String, userId: Long) = RetrofitInstance.api.addProductToFav(id, userId)
 
-    suspend fun removeFavoItem(productId: String) = RetrofitInstance.api.removeFavoItem(productId)
+    suspend fun removeFavoItem(productId: String, userId: Long) = RetrofitInstance.api.removeFavoItem(productId, userId)
 
-    suspend fun getCartItems() = RetrofitInstance.api.getCartItems()
+    suspend fun getCartItems(userId: Long) = RetrofitInstance.api.getCartItems(userId)
 
-    suspend fun placeOrder(addressId: Int) = RetrofitInstance.api.placeOrder(addressId)
+    suspend fun placeOrder(addressId: Int, userId: Long) = RetrofitInstance.api.placeOrder(addressId, userId)
 
-    suspend fun getOrders() = RetrofitInstance.api.getOrders()
+    suspend fun getOrders(userId: Long) = RetrofitInstance.api.getOrders(userId)
 
-    suspend fun addItemToCart(id: String, size: String, quantity: Int, discount: Int) = RetrofitInstance.api.addItemToCart(id, size, quantity, discount)
+    suspend fun addItemToCart(id: String, size: String, quantity: Int, discount: Int, userId: Long) = RetrofitInstance.api.addItemToCart(id, size, quantity, discount, userId)
 
-    suspend fun updateCart(cartItemId: String, quantity:Int) = RetrofitInstance.api.updateQuantityInCart(cartItemId, quantity)
+    suspend fun updateCart(cartItemId: String, quantity:Int, userId: Long) = RetrofitInstance.api.updateQuantityInCart(cartItemId, quantity, userId)
 
-    suspend fun removeCartItem(cartItemId: String) = RetrofitInstance.api.removeCartItem(cartItemId)
+    suspend fun removeCartItem(cartItemId: String, userId: Long) = RetrofitInstance.api.removeCartItem(cartItemId, userId)
 
     suspend fun addNewUser(user: User) = db.getUserDao().insertUser(user)
 

@@ -9,7 +9,7 @@ import android.os.Build
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.adore.AdoreApplication
-import com.example.adore.models.entities.User
+import com.example.adore.databsae.SessionManager
 import com.example.adore.models.responses.CurrentUserResponse
 import com.example.adore.models.responses.ProductResponse
 import com.example.adore.repository.AdoreRepository
@@ -27,65 +27,41 @@ class HomeViewModel(
     val productsWithLabel: LiveData<Resource<ProductResponse>>
         get() = _productsWithLabel
 
-    private val _currentUser = MutableLiveData<Resource<CurrentUserResponse>>()
-    val currentUser
-        get() = _currentUser
+    private val _showLoginDialog = MutableLiveData<Boolean?>()
+    val showLoginDialog
+        get() = _showLoginDialog
 
     private val _showSnackBarMessage = MutableLiveData<String?>()
     val showSnackBarMessage
         get() = _showSnackBarMessage
 
     init {
-        getCurrentUser()
         getProductsWithCustomLabel()
+        _showLoginDialog.value = true
     }
 
-    fun getProductsWithCustomLabel() = viewModelScope.launch {
+    private fun getProductsWithCustomLabel() = viewModelScope.launch {
         safeProductsWithLabelCall("100")
     }
 
-    private suspend fun safeProductsWithLabelCall(labelId: String){
+    private suspend fun safeProductsWithLabelCall(labelId: String) {
         _productsWithLabel.value = Resource.Loading()
-        try{
-            if(hasInternetConnection()){
+        try {
+            if (hasInternetConnection()) {
                 val response = adoreRepository.getProductsWithLabel(labelId) //Seasonal
                 _productsWithLabel.value = handleResponse(response)
-            }else{
+            } else {
                 _productsWithLabel.value = Resource.Error("No internet connection :(")
             }
-        }catch(t: Throwable){
-            when(t){
+        } catch (t: Throwable) {
+            when (t) {
                 is IOException -> _productsWithLabel.postValue(Resource.Error("Network Failure!"))
                 else -> _productsWithLabel.postValue(Resource.Error("Conversion Error!"))
             }
         }
     }
 
-    fun getUser(userId: Long)= adoreRepository.getUser(userId)
-
-    private fun getCurrentUser() = viewModelScope.launch {
-        safeGetCurrentUserCall()
-    }
-
-    private suspend fun safeGetCurrentUserCall(){
-        _currentUser.value = Resource.Loading()
-        try{
-            if(hasInternetConnection()){
-                val response = adoreRepository.getCurrentUser()
-                _currentUser.value = handleResponse(response)
-                Log.e("Homee", "${currentUser.value?.data?.userId}")
-            }else{
-                _currentUser.value = Resource.Error("No internet connection :(")
-            }
-        }catch(t: Throwable){
-            when(t){
-                is IOException -> _currentUser.postValue(Resource.Error("Network Failure!"))
-                else -> _currentUser.postValue(Resource.Error("Conversion Error!"))
-            }
-        }
-    }
-
-    private fun <T: Any> handleResponse(response: Response<T>): Resource<T> =
+    private fun <T : Any> handleResponse(response: Response<T>): Resource<T> =
         if (response.isSuccessful) {
             when (response.code()) {
                 200 -> {
@@ -108,53 +84,63 @@ class HomeViewModel(
         }
 
 
-    private fun hasInternetConnection(): Boolean{
+    private fun hasInternetConnection(): Boolean {
         val connectivityManager = getApplication<AdoreApplication>().getSystemService(
             Context.CONNECTIVITY_SERVICE
         ) as ConnectivityManager
-       if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-           val activeNetwork = connectivityManager.activeNetwork?: return false
-           val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
-           return when{
-               capabilities.hasTransport(TRANSPORT_WIFI) -> true
-               capabilities.hasTransport(TRANSPORT_CELLULAR) -> true
-               capabilities.hasTransport(TRANSPORT_ETHERNET) -> true
-               else -> false
-           }
-       }else{
-           connectivityManager.activeNetworkInfo?.run {
-               return when(type){
-                   TYPE_WIFI -> true
-                   TYPE_MOBILE -> true
-                   TYPE_ETHERNET -> true
-                   else -> false
-               }
-           }
-       }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val activeNetwork = connectivityManager.activeNetwork ?: return false
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+            return when {
+                capabilities.hasTransport(TRANSPORT_WIFI) -> true
+                capabilities.hasTransport(TRANSPORT_CELLULAR) -> true
+                capabilities.hasTransport(TRANSPORT_ETHERNET) -> true
+                else -> false
+            }
+        } else {
+            connectivityManager.activeNetworkInfo?.run {
+                return when (type) {
+                    TYPE_WIFI -> true
+                    TYPE_MOBILE -> true
+                    TYPE_ETHERNET -> true
+                    else -> false
+                }
+            }
+        }
         return false
     }
 
-    fun validateUser(mobileNo:String, password:String) = viewModelScope.launch {
+    fun validateUser(mobileNo: String, password: String) = viewModelScope.launch {
         adoreRepository.getUserWithMobileNo(mobileNo)?.let {
             if (it.password == password) {
                 _showSnackBarMessage.value = "Logged in!"
-                setCurrentUser(it.userId)
-            }else{
+                it.apply {
+                    val sessionManager = SessionManager(getApplication())
+                    sessionManager.createLoginSession(
+                        userName,
+                        mobileNo,
+                        password,
+                        userId
+                    )
+                    doneShowingLoginDialog()
+                    Log.e("HomeViewModel", "${sessionManager.getUserDetailsFromSession()}")
+                }
+            } else {
                 _showSnackBarMessage.value = "Incorrect password!"
-                getCurrentUser()
+                _showLoginDialog.value = true
             }
-        }?:run{
+        } ?: run {
             _showSnackBarMessage.postValue("Mobile no is not registered!")
-            getCurrentUser()
+            _showLoginDialog.value = true
         }
     }
 
-    private fun setCurrentUser(userId: Long) = viewModelScope.launch {
-        adoreRepository.setCurrentUser(userId)
-        getCurrentUser()
+    private fun doneShowingLoginDialog() {
+        _showLoginDialog.value = null
     }
 
-    fun doneShowingSnackBarMessage(){
+    fun doneShowingSnackBarMessage() {
         _showSnackBarMessage.value = null
     }
 }

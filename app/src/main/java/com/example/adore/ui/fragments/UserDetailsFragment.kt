@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.adore.R
@@ -49,13 +50,10 @@ class UserDetailsFragment : Fragment() {
         ).get(SharedUserProfileViewModel::class.java)
 
 
-        viewModelShared.getCurrentUser()
-
         binding.apply {
             ivBackIcon.setOnClickListener {
                 showAlertDialogToSave()
             }
-
             etDob.keyListener = null
             etDob.setOnFocusChangeListener { view, b ->
                 if (b) {
@@ -75,6 +73,12 @@ class UserDetailsFragment : Fragment() {
             }
         }
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object: OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                showAlertDialogToSave()
+            }
+        })
+
         viewModelShared.apply {
             showSnackBarMessage.observe(viewLifecycleOwner, {
                 it?.let {
@@ -83,45 +87,25 @@ class UserDetailsFragment : Fragment() {
                 }
             })
 
-            currentUser.observe(viewLifecycleOwner, { response ->
-                when (response) {
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        response.data?.let { data ->
-                            getUserDetails(data.userId).observe(viewLifecycleOwner, { user ->
-                                this@UserDetailsFragment.currentUser = user
-                                if (user != null){
-                                    binding.apply {
-                                        etName.setText(user.userName)
-                                        etMobileNo.setText(user.mobileNo)
-                                        user.apply {
-                                            dob?.let { etDob.setText(getDateFormatted(it)) }
-                                            gender?.let {
-                                                if (it.name == "Women") rbFemale.isChecked =
-                                                    true else rbMale.isChecked = true
-                                            }
-                                            email?.let { etEmailId.setText(it) }
-                                        }
-                                    }
-                                }else{
-                                    showSnackBarWithMessage("Error loading data!")
-                                    findNavController().navigateUp()
-                                }
-                            })
+            getUserDetails().observe(viewLifecycleOwner, { user ->
+                this@UserDetailsFragment.currentUser = user
+                if (user != null){
+                    binding.apply {
+                        etName.setText(user.userName)
+                        etMobileNo.setText(user.mobileNo)
+                        user.apply {
+                            dob?.let { etDob.setText(getDateFormatted(it)) }
+                            gender?.let {
+                                if (it.name == "Women") rbFemale.isChecked =
+                                    true else rbMale.isChecked = true
+                            }
+                            email?.let { etEmailId.setText(it) }
                         }
                     }
-                    is Resource.Empty->hideProgressBar()
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        response.message?.let { message ->
-                            showSnackBarWithMessage(message)
-                        }
-                    }
-                    is Resource.Loading -> {
-                        showProgressBar()
-                    }
+                }else{
+                    showSnackBarWithMessage("Error loading data!")
+                    findNavController().navigateUp()
                 }
-
             })
         }
 
@@ -141,11 +125,11 @@ class UserDetailsFragment : Fragment() {
 
     private fun showAlertDialogToSave() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Wanna save changes?")
-            .setPositiveButton("Yes") { _, _ ->
+            .setTitle("Action Required!")
+            .setPositiveButton("Save") { _, _ ->
                 saveDetails()
             }
-            .setNeutralButton("No") { _, _ ->
+            .setNeutralButton("Don't Save") { _, _ ->
                 showSnackBarWithMessage("Changes not saved!")
                 findNavController().navigateUp()
             }.show()
@@ -166,23 +150,12 @@ class UserDetailsFragment : Fragment() {
         ).run {
             datePicker.minDate = -631171800000
             datePicker.maxDate = System.currentTimeMillis() - 1000
+            setCancelable(false)
             show()
         }
     }
 
     private fun getDateFormatted(date: Date) = DateFormat.getDateInstance().format(date)
-
-    private fun hideProgressBar() {
-        binding.progressBar.visibility = View.INVISIBLE
-        binding.llUserDetails.visibility = View.VISIBLE
-        binding.btnSaveDetails.visibility = View.VISIBLE
-    }
-
-    private fun showProgressBar() {
-        binding.progressBar.visibility = View.VISIBLE
-        binding.llUserDetails.visibility = View.INVISIBLE
-        binding.btnSaveDetails.visibility = View.INVISIBLE
-    }
 
     private fun showSnackBarWithMessage(message: String) {
         Snackbar.make(

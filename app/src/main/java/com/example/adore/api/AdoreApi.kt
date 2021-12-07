@@ -22,29 +22,42 @@ interface AdoreApi {
     ):Response<ProductResponse>
 
     @GET("/api/favo")
-    suspend fun getFavlist():Response<ProductResponse>
+    suspend fun getFavlist(
+        @Query("userId")
+        userId: Long
+    ):Response<ProductResponse>
 
     @POST("/api/favo/")
     suspend fun addProductToFav(
         @Query("id")
-        id: String
+        id: String,
+        @Query("userId")
+        userId: Long
     ):Response<ApiTransactionResponse>
 
     @DELETE("api/favo/{id}")
     suspend fun removeFavoItem(
-        @Path("id")id: String
+        @Path("id")id: String,
+        @Query("userId")
+        userId: Long
     ): Response<ApiTransactionResponse>
 
     @GET("api/cart")
-    suspend fun getCartItems(): Response<CartResponse>
+    suspend fun getCartItems(
+        @Query("userId")
+        userId: Long): Response<CartResponse>
 
     @GET("api/orders")
-    suspend fun getOrders(): Response<OrderResponse>
+    suspend fun getOrders(
+        @Query("userId")
+        userId: Long): Response<OrderResponse>
 
     @POST("api/placeorder")
     suspend fun placeOrder(
         @Query("addressId")
-        addressId: Int
+        addressId: Int,
+        @Query("userId")
+        userId: Long
     ): Response<ApiTransactionResponse>
 
     @POST("api/cart")
@@ -56,24 +69,31 @@ interface AdoreApi {
         @Query("quantity")
         quantity: Int,
         @Query("discount")
-        discount: Int
+        discount: Int,
+        @Query("userId")
+        userId: Long
     ):Response<ApiTransactionResponse>
 
     @PATCH("api/cart/{id}")
     suspend fun updateQuantityInCart(
         @Path("id") id: String,
-        @Query("quantity")quantity: Int
+        @Query("quantity")quantity: Int,
+        @Query("userId")
+        userId: Long
     ): Response<ApiTransactionResponse>
 
     @DELETE("api/cart/{id}")
     suspend fun removeCartItem(
-        @Path("id")id: String
+        @Path("id")id: String,
+        @Query("userId")
+        userId: Long
     ): Response<ApiTransactionResponse>
 
     @GET("api/products/customlabels/{id}")
     suspend fun getProductsWithLabel(
         @Path("id")
-        labelId: String): Response<ProductResponse>
+        labelId: String
+    ): Response<ProductResponse>
 
     @GET("api/filter/sub")
     suspend fun getProductsOfCategory(

@@ -55,9 +55,7 @@ class UserProfileFragment : Fragment() {
     fun navigateToUserDetails(){
         findNavController().navigate(UserProfileFragmentDirections.actionUserProfileFragmentToUserDetailsFragment())
     }
-    fun navigateToFavoFragment(){
-        findNavController().navigate(UserProfileFragmentDirections.actionUserProfileFragmentToFavoFragment())
-    }
+
     fun logout(){
         viewModelShared.logoutCurrentUser()
         showSnackBarWithMessage("Logged Out!")
@@ -72,17 +70,4 @@ class UserProfileFragment : Fragment() {
         ).show()
     }
 
-//    private fun hideActionViews(){
-//        binding.apply {
-//            layoutProfileActions.visibility = View.INVISIBLE
-//            btnLogout.visibility = View.INVISIBLE
-//        }
-//    }
-//
-//    private fun showActionViews(){
-//        binding.apply {
-//            layoutProfileActions.visibility = View.VISIBLE
-//            btnLogout.visibility = View.VISIBLE
-//        }
-//    }
 }

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -28,6 +29,7 @@ class AddressDetailsFragment : Fragment() {
     lateinit var binding: FragmentAddressDetailsBinding
     lateinit var viewModelShared: SharedUserProfileViewModel
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,14 +38,13 @@ class AddressDetailsFragment : Fragment() {
         binding = FragmentAddressDetailsBinding.inflate(inflater, container, false)
         val cityAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, District.values())
 
-        val currentAddress = AddressDetailsFragmentArgs.fromBundle(requireArguments()).address
-
         val application = requireNotNull(this.activity).application
         val adoreRepository = AdoreRepository(AdoreDatabase(application))
 
         val viewModelFactory = UserProfileViewModelProviderFactory(application, adoreRepository)
         viewModelShared = ViewModelProvider(requireActivity(), viewModelFactory).get(SharedUserProfileViewModel::class.java)
 
+        val currentAddress = AddressDetailsFragmentArgs.fromBundle(requireArguments()).address
 
         binding.apply {
             currentAddress.addressType?.let { etAddressType.setText(it) }
@@ -66,16 +67,13 @@ class AddressDetailsFragment : Fragment() {
             }
 
             ivBackIcon.setOnClickListener {
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Wanna save changes?")
-                    .setPositiveButton("Yes"){ _, _ ->
-                        saveDetails(currentAddress)
-                    }
-                    .setNeutralButton("No"){ _, _ ->
-                        showSnackBarWithMessage("Changes not saved!")
-                        findNavController().navigate(AddressDetailsFragmentDirections.actionAddressDetailsFragmentToUserProfileFragment())
-                    }.show()
+                showAlertDialogToSave(currentAddress)
             }
+            requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object: OnBackPressedCallback(true){
+                override fun handleOnBackPressed() {
+                    showAlertDialogToSave(currentAddress)
+                }
+            })
         }
 
         viewModelShared.navigateToUserProfile.observe(viewLifecycleOwner, {
@@ -86,6 +84,19 @@ class AddressDetailsFragment : Fragment() {
         })
 
         return binding.root
+    }
+
+    private fun showAlertDialogToSave(currentAddress: Address){
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Action Required!")
+            .setPositiveButton("Save"){ _, _ ->
+                saveDetails(currentAddress)
+            }
+            .setNeutralButton("Discard"){ _, _ ->
+                viewModelShared.deleteAddress(currentAddress)
+                showSnackBarWithMessage("Address discarded!")
+                findNavController().navigate(AddressDetailsFragmentDirections.actionAddressDetailsFragmentToUserProfileFragment())
+            }.show()
     }
 
     private fun allFieldsValid(): Boolean {

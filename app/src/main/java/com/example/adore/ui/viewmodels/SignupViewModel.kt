@@ -21,14 +21,12 @@ class SignupViewModel(val repository: AdoreRepository): ViewModel() {
 
     fun insertNewUser(user: User) = viewModelScope.launch {
         val a = repository.addNewUser(user)
-        setCurrentUser(user.userId)
         Log.e("Activity", a.toString())
 
         _showSnackBarMessage.value = "SignUp Successful :)"
         _navigateToHomeFragment.value = true
     }
 
-    private fun setCurrentUser(userId: Long) = viewModelScope.launch { repository.setCurrentUser(userId) }
 
     fun doneNavigatingToHomeFragment(){
         _navigateToHomeFragment.value = null
