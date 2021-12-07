@@ -101,7 +101,7 @@
     <!--product preview-->
     <string name="product_preview_name">Product name</string>
     <string name="product_preview_description">Product description provided here</string>
-    <string name="product_preview_price">Rs.799</string>
+    <string name="product_preview_price">Rs.2799</string>
 
 
     <!-- Size -->
@@ -111,7 +111,7 @@
 
     <!-- Cart -->
     <string name="checkout">CHECKOUT NOW</string>
-    <string name="delivery_charge"><![CDATA[<font color="black"><small>Delivery Charge: </small></font><big>%s</big>]]></string>
+    <string name="delivery_charge"><![CDATA[<font color="black"><small>Delivery Charge: Rs. </small></font><big>%s</big>]]></string>
     <string name="total_price"><![CDATA[<font color="black"><small>Total: Rs.</small></font><big>%s</big>]]></string>
     <string name="order_placed">Your order is placed!</string>
 

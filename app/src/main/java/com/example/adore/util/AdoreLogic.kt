@@ -12,6 +12,7 @@ class AdoreLogic {
         }?:0
 
         fun getDeliveryCharge(price: Float): Int = when{
+            price<1 -> 0
             price<500 -> 50
             price<1000 -> 30
             else -> 0

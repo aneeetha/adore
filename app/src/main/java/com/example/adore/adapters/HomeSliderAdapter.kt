@@ -30,7 +30,6 @@ class HomeSliderAdapter(private val viewPager: ViewPager2):
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SliderViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: SliderViewHolder, position: Int) {
-        Log.e("Activity", "${differ.currentList.size}")
         val currentItem = differ.currentList[position]
         holder.itemView.apply {
            Glide.with(this).load(currentItem.product.imageUrl).into(iv_image_slide)

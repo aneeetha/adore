@@ -83,7 +83,6 @@ class UserDetailsFragment : Fragment() {
                 }
             })
 
-
             currentUser.observe(viewLifecycleOwner, { response ->
                 when (response) {
                     is Resource.Success -> {
@@ -91,7 +90,7 @@ class UserDetailsFragment : Fragment() {
                         response.data?.let { data ->
                             getUserDetails(data.userId).observe(viewLifecycleOwner, { user ->
                                 this@UserDetailsFragment.currentUser = user
-                                if (user != null) {
+                                if (user != null){
                                     binding.apply {
                                         etName.setText(user.userName)
                                         etMobileNo.setText(user.mobileNo)
@@ -104,10 +103,14 @@ class UserDetailsFragment : Fragment() {
                                             email?.let { etEmailId.setText(it) }
                                         }
                                     }
+                                }else{
+                                    showSnackBarWithMessage("Error loading data!")
+                                    findNavController().navigateUp()
                                 }
                             })
                         }
                     }
+                    is Resource.Empty->hideProgressBar()
                     is Resource.Error -> {
                         hideProgressBar()
                         response.message?.let { message ->

@@ -53,11 +53,13 @@ class FavoFragment : Fragment() {
             favlistResult.observe(viewLifecycleOwner, { response ->
                 when (response) {
                     is Resource.Success -> {
-                        hideProgressBar()
+                        showRecyclerView()
                         response.data?.let { productsResponse ->
                             favoProductAdapter.differ.submitList(productsResponse.products)
                         }
                     }
+                    is Resource.Empty -> showNoResultFound()
+
                     is Resource.Error -> {
                         hideProgressBar()
                         response.message?.let { message ->
@@ -74,6 +76,10 @@ class FavoFragment : Fragment() {
         return binding.root
     }
 
+    private fun showRecyclerView() {
+        hideProgressBar()
+        hideNoResultFound()
+    }
 
     private fun hideProgressBar() {
         binding.progressBar.visibility = View.INVISIBLE
@@ -99,5 +105,19 @@ class FavoFragment : Fragment() {
         ).show()
     }
 
+    private fun showNoResultFound(){
+        hideProgressBar()
+        binding.apply {
+            rvFavoProducts.visibility = View.INVISIBLE
+            imgNotFound.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideNoResultFound(){
+        binding.apply {
+            rvFavoProducts.visibility = View.VISIBLE
+            imgNotFound.visibility = View.GONE
+        }
+    }
 
 }

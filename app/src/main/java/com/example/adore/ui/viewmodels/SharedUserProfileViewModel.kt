@@ -37,10 +37,6 @@ class SharedUserProfileViewModel(app: Application, val adoreRepository: AdoreRep
     val showSnackBarMessage
         get() = _showSnackBarMessage
 
-    private val _showActionViews = MutableLiveData<Boolean?>()
-    val showActionViews
-        get() = _showActionViews
-
     var dob: Date? = null
     var gender: Gender? = null
 
@@ -82,9 +78,6 @@ class SharedUserProfileViewModel(app: Application, val adoreRepository: AdoreRep
         _showSnackBarMessage.value = null
     }
 
-    fun doneShowingActionViews(){
-        _showActionViews.value = null
-    }
 
 
     fun getCurrentUser() = viewModelScope.launch{
@@ -118,7 +111,7 @@ class SharedUserProfileViewModel(app: Application, val adoreRepository: AdoreRep
                     }
                 }
                 else -> {
-                    Resource.Error("Sorry! No result found :(")
+                    Resource.Empty()
                 }
             }
         } else {
@@ -156,27 +149,6 @@ class SharedUserProfileViewModel(app: Application, val adoreRepository: AdoreRep
             }
         }
         return false
-    }
-
-    fun validateUser(mobileNo:String, password:String) = viewModelScope.launch {
-        adoreRepository.getUserWithMobileNo(mobileNo)?.let {
-            if (it.password == password) {
-                _showSnackBarMessage.value = "Logged in!"
-                _showActionViews.value = true
-                setCurrentUser(it.userId)
-            }else{
-                _showSnackBarMessage.value = "Incorrect password!"
-                getCurrentUser()
-            }
-            Log.e("AA", "${it.userId}")
-        }?:run{
-            _showSnackBarMessage.postValue("Mobile no is not registered!")
-            getCurrentUser()
-        }
-    }
-
-    private fun setCurrentUser(userId: Long) = viewModelScope.launch {
-        adoreRepository.setCurrentUser(userId)
     }
 
 

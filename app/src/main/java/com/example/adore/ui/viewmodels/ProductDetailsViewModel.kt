@@ -1,21 +1,38 @@
 package com.example.adore.ui.viewmodels
 
+import android.app.Application
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import com.example.adore.AdoreApplication
 import com.example.adore.models.enums.DressSize
 import com.example.adore.models.dataClasses.Product
 import com.example.adore.models.responses.ApiTransactionResponse
+import com.example.adore.models.responses.ProductResponse
 import com.example.adore.repository.AdoreRepository
 import com.example.adore.util.AdoreLogic
 import com.example.adore.util.Resource
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import java.io.IOException
 
-class ProductDetailsViewModel(val product: Product, private val repository: AdoreRepository) :
-    ViewModel() {
+class ProductDetailsViewModel(
+    app: Application,
+    val product: Product,
+    private val repository: AdoreRepository
+) :
+    AndroidViewModel(app) {
+
+    private val _favlistResult: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
+    val favlistResult
+        get() = _favlistResult
+
+    init {
+        getFavlist()
+    }
 
     private var chosenSize: DressSize? = null
     fun setChosenProductSize(size: DressSize) {
@@ -31,9 +48,9 @@ class ProductDetailsViewModel(val product: Product, private val repository: Ador
     val navigateToFavoFragment
         get() = _navigateToFavoFragment
 
-    private var _addedToFavlist = MutableLiveData<Boolean?>()
-    val addedToFavlist
-        get() = _addedToFavlist
+    private var _favoButtonClicked = MutableLiveData<Boolean?>()
+    val favoButtonClicked
+        get() = _favoButtonClicked
 
     private var _navigateToCartFragment = MutableLiveData<Boolean>()
     val navigateToCartFragment
@@ -43,19 +60,24 @@ class ProductDetailsViewModel(val product: Product, private val repository: Ador
     val navigateToSearchFragment
         get() = _navigateToSearchFragment
 
-    private var _showSnackBar = MutableLiveData<Boolean>()
+    private var _showSnackBar = MutableLiveData<Boolean?>()
     val showSnackBar
         get() = _showSnackBar
 
     private var _snackBarMessage = MutableLiveData<Resource<ApiTransactionResponse>?>()
-    val snackBarMessage:LiveData<Resource<ApiTransactionResponse>?>
+    val snackBarMessage: LiveData<Resource<ApiTransactionResponse>?>
         get() = _snackBarMessage
 
 
     fun addToFavlistClicked() {
+        _favoButtonClicked.value = true
+    }
+
+    fun addToFavlist() {
         viewModelScope.launch {
-            _addedToFavlist.value = true
-            _snackBarMessage.value = handleApiTransactionResponse(repository.addProductToFav(product._id))
+            _snackBarMessage.value =
+                handleApiTransactionResponse(repository.addProductToFav(product._id))
+            doneActionForFavoButton()
         }
     }
 
@@ -80,12 +102,12 @@ class ProductDetailsViewModel(val product: Product, private val repository: Ador
     }
 
 
-    fun doneShowingSnackBarWithMessage(){
+    fun doneShowingSnackBarWithMessage() {
         _snackBarMessage.value = null
     }
 
-    fun doneAddingItemToFavo(){
-        addedToFavlist.value = null
+    private fun doneActionForFavoButton() {
+        favoButtonClicked.value = null
     }
 
 
@@ -121,7 +143,7 @@ class ProductDetailsViewModel(val product: Product, private val repository: Ador
     }
 
     fun doneShowingSnackBar() {
-        _showSnackBar.value = false
+        _showSnackBar.value = null
     }
 
 
@@ -131,7 +153,7 @@ class ProductDetailsViewModel(val product: Product, private val repository: Ador
                 Resource.Success(it)
             }
         } else {
-            val message = "Error: " + when(response.code()){
+            val message = "Error: " + when (response.code()) {
                 404 -> "Not found"
                 500 -> "Server broken"
                 502 -> "Bad Gateway"
@@ -139,5 +161,81 @@ class ProductDetailsViewModel(val product: Product, private val repository: Ador
             }
             Resource.Error(message)
         }
+
+    fun getFavlist() = viewModelScope.launch {
+        safeGetFavlistCall()
+    }
+
+    private suspend fun safeGetFavlistCall() {
+        _favlistResult.value = Resource.Loading()
+        try {
+            if (hasInternetConnection()) {
+                val response = repository.getFavlist()
+                _favlistResult.value = handleResponse(response)
+            } else {
+                _favlistResult.value = Resource.Error("No internet connection :(")
+            }
+        } catch (t: Throwable) {
+            when (t) {
+                is IOException -> _favlistResult.postValue(Resource.Error("Network Failure!"))
+                else -> _favlistResult.postValue(Resource.Error("Conversion Error!"))
+            }
+        }
+    }
+
+    fun removeFavoItem() = viewModelScope.launch {
+        _snackBarMessage.value =
+            handleApiTransactionResponse(repository.removeFavoItem(product._id))
+        doneActionForFavoButton()
+    }
+
+    private fun <T : Any> handleResponse(response: Response<T>): Resource<T> =
+        if (response.isSuccessful) {
+            when (response.code()) {
+                200 -> {
+                    response.body()!!.let {
+                        Resource.Success(it)
+                    }
+                }
+                else -> {
+                    Resource.Empty()
+                }
+            }
+        } else {
+            val message = "An Error Occurred: " + when (response.code()) {
+                404 -> "404! Resource Not found"
+                500 -> "Server broken"
+                502 -> "Bad Gateway"
+                else -> "Unknown error"
+            }
+            Resource.Error(message)
+        }
+
+    private fun hasInternetConnection(): Boolean {
+        val connectivityManager = getApplication<AdoreApplication>().getSystemService(
+            Context.CONNECTIVITY_SERVICE
+        ) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val activeNetwork = connectivityManager.activeNetwork ?: return false
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+            return when {
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                else -> false
+            }
+        } else {
+            connectivityManager.activeNetworkInfo?.run {
+                return when (type) {
+                    ConnectivityManager.TYPE_WIFI -> true
+                    ConnectivityManager.TYPE_MOBILE -> true
+                    ConnectivityManager.TYPE_ETHERNET -> true
+                    else -> false
+                }
+            }
+        }
+        return false
+    }
 
 }

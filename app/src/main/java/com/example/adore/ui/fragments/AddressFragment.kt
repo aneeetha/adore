@@ -96,6 +96,7 @@ class AddressFragment : Fragment() {
                             }
                         }
                     }
+                    is Resource.Empty ->hideProgressBar()
                     is Resource.Error -> {
                         hideProgressBar()
                         response.message?.let { message ->

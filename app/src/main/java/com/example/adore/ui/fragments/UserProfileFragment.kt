@@ -12,11 +12,8 @@ import com.example.adore.R
 import com.example.adore.databinding.FragmentUserProfileBinding
 import com.example.adore.databsae.AdoreDatabase
 import com.example.adore.repository.AdoreRepository
-import com.example.adore.ui.dialog.LoginDialog
-import com.example.adore.ui.dialogListener.LoginDialogListener
 import com.example.adore.ui.viewmodels.SharedUserProfileViewModel
 import com.example.adore.ui.viewmodels.factory.UserProfileViewModelProviderFactory
-import com.example.adore.util.Resource
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -43,56 +40,6 @@ class UserProfileFragment : Fragment() {
         binding.apply {
             userProfileFragment = this@UserProfileFragment
         }
-        viewModelShared.apply{
-            currentUser.observe(viewLifecycleOwner, { response ->
-                when (response) {
-                    is Resource.Success -> {
-                        response.data?.let { currentUserResponse ->
-                            if (currentUserResponse.userId == 0L) {
-                                Log.e("UserProfileFragment", "${currentUserResponse.userId}")
-                                hideActionViews()
-                                LoginDialog(requireContext(), object : LoginDialogListener {
-                                    override fun onLoginButtonClicked(
-                                        mobileNo: String,
-                                        password: String
-                                    ) {
-                                        validateUser(mobileNo, password)
-                                    }
-                                    override fun onCreateNewAccountClicked() {
-                                        findNavController().navigate(UserProfileFragmentDirections.actionUserProfileFragmentToSignupFragment())
-                                    }
-                                }).show()
-                            } else{
-                                showActionViews()
-                            }
-                        }
-                    }
-                    is Resource.Error -> {
-                        response.message?.let { message ->
-                            showSnackBarWithMessage(message)
-                        }
-                    }
-                    is Resource.Loading -> {
-                        hideActionViews()
-                    }
-                }
-
-            })
-            showActionViews.observe(viewLifecycleOwner, {
-                it?.let {
-                    showActionViews()
-                    doneShowingActionViews()
-                }
-            })
-
-            showSnackBarMessage.observe(viewLifecycleOwner, {
-                it?.let {
-                    showSnackBarWithMessage(it)
-                    doneShowingSnackBar()
-                }
-            })
-        }
-
         return binding.root
 
     }
@@ -125,17 +72,17 @@ class UserProfileFragment : Fragment() {
         ).show()
     }
 
-    private fun hideActionViews(){
-        binding.apply {
-            layoutProfileActions.visibility = View.INVISIBLE
-            btnLogout.visibility = View.INVISIBLE
-        }
-    }
-
-    private fun showActionViews(){
-        binding.apply {
-            layoutProfileActions.visibility = View.VISIBLE
-            btnLogout.visibility = View.VISIBLE
-        }
-    }
+//    private fun hideActionViews(){
+//        binding.apply {
+//            layoutProfileActions.visibility = View.INVISIBLE
+//            btnLogout.visibility = View.INVISIBLE
+//        }
+//    }
+//
+//    private fun showActionViews(){
+//        binding.apply {
+//            layoutProfileActions.visibility = View.VISIBLE
+//            btnLogout.visibility = View.VISIBLE
+//        }
+//    }
 }

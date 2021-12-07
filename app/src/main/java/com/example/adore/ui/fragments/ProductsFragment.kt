@@ -95,10 +95,13 @@ class ProductsFragment : Fragment() {
                 when (response) {
                     is Resource.Success -> {
                         hideProgressBar()
+                        hideNoResultFound()
                         response.data?.let { productsResponse ->
                             productsAdapter.differ.submitList(productsResponse.products)
                         }
                     }
+                    is Resource.Empty -> showNoResultFound()
+
                     is Resource.Error -> {
                         hideProgressBar()
                         response.message?.let { message ->
@@ -116,10 +119,13 @@ class ProductsFragment : Fragment() {
                 when (response) {
                     is Resource.Success -> {
                         hideProgressBar()
+                        hideNoResultFound()
                         response.data?.let { productsResponse ->
                             productsAdapter.differ.submitList(productsResponse.products)
                         }
                     }
+                    is Resource.Empty-> showNoResultFound()
+
                     is Resource.Error -> {
                         hideProgressBar()
                         response.message?.let { message ->
@@ -143,7 +149,25 @@ class ProductsFragment : Fragment() {
     }
 
     private fun showProgressBar() {
-        binding.progressBar.visibility = View.VISIBLE
+        binding.apply {
+            progressBar.visibility = View.VISIBLE
+            imgNotFound.visibility = View.GONE
+        }
+    }
+
+    private fun showNoResultFound(){
+        hideProgressBar()
+        binding.apply {
+            rvProducts.visibility = View.INVISIBLE
+            imgNotFound.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideNoResultFound(){
+        binding.apply {
+            rvProducts.visibility = View.VISIBLE
+            imgNotFound.visibility = View.GONE
+        }
     }
 
     private fun setUpRecyclerView() {

@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.adore.AdoreApplication
 import com.example.adore.models.dataClasses.CartItem
@@ -151,6 +152,9 @@ class ProductsViewModel(
         _navigateToOrderSuccessPage.value = null
     }
 
+    fun userExists(userId: Long) = adoreRepository.getUser(userId).value!=null
+
+
     private suspend fun safeSearchForProductsCall(searchQuery: String){
         _searchResult.value = Resource.Loading()
         try{
@@ -223,7 +227,7 @@ class ProductsViewModel(
         _cartItems.value = Resource.Loading()
         try{
             if(hasInternetConnection()){
-                val response = adoreRepository.getCartItems() //Seasonal
+                val response = adoreRepository.getCartItems()
                 _cartItems.value = handleResponse(response)
             }else{
                 _cartItems.value = Resource.Error("No internet connection :(")
@@ -257,12 +261,13 @@ class ProductsViewModel(
         if (response.isSuccessful) {
             when (response.code()) {
                 200 -> {
+                    Log.e("ViewModel", "${response.code()}")
                     response.body()!!.let {
                         Resource.Success(it)
                     }
                 }
                 else -> {
-                    Resource.Error("Sorry! No result found :(")
+                    Resource.Empty()
                 }
             }
         } else {

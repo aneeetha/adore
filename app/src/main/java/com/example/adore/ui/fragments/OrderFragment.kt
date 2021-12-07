@@ -46,11 +46,11 @@ class OrderFragment : Fragment() {
             }
         }
 
-
         viewModel.orders.observe(viewLifecycleOwner, {response->
             when (response) {
                 is Resource.Success -> {
                     hideProgressBar()
+                    hideNoResultFound()
                     response.data?.let { orderResponse ->
                         val ordersId: List<String> = orderResponse.orders.map { order ->
                             requireContext().getString(
@@ -68,6 +68,7 @@ class OrderFragment : Fragment() {
                         }
                     }
                 }
+                is Resource.Empty->showNoResultFound()
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let { message ->
@@ -90,10 +91,27 @@ class OrderFragment : Fragment() {
     }
 
     private fun showProgressBar() {
+        hideNoResultFound()
         binding.apply {
             progressBar.visibility = View.VISIBLE
         }
     }
+
+    private fun showNoResultFound(){
+        hideProgressBar()
+        binding.apply {
+            lvOrders.visibility = View.INVISIBLE
+            imgNotFound.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideNoResultFound(){
+        binding.apply {
+            lvOrders.visibility = View.VISIBLE
+            imgNotFound.visibility = View.GONE
+        }
+    }
+
 
     private fun showSnackBarWithMessage(message: String) {
         Snackbar.make(

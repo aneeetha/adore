@@ -7,4 +7,4 @@
     android:background="@drawable/text_view_bg"
     android:ellipsize="end"
     android:text="@string/order_id"
-    style="@style/list_style"/>
+    style="@style/ListStyle"/>

@@ -10,8 +10,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.CompositePageTransformer
-import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import com.example.adore.R
 import com.example.adore.adapters.HomeSliderAdapter
@@ -26,7 +24,6 @@ import com.example.adore.util.HomeSliderItem
 import com.example.adore.util.Resource
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlin.math.abs
 
 
 class HomeFragment : Fragment() {
@@ -73,6 +70,7 @@ class HomeFragment : Fragment() {
                             homeSliderAdapter.differ.submitList(sliderItems)
                         }
                     }
+                    is Resource.Empty ->hideProgressBar()
                     is Resource.Error -> {
                         hideProgressBar()
                         response.message?.let { message ->
@@ -92,25 +90,30 @@ class HomeFragment : Fragment() {
                     is Resource.Success -> {
                         hideProgressBar()
                         response.data?.let { currentUserResponse ->
-                            if (currentUserResponse.userId == 0L) {
-                                Log.e("Home", "${currentUserResponse.userId}")
-                                LoginDialog(requireContext(), object : LoginDialogListener {
-                                    override fun onLoginButtonClicked(
-                                        mobileNo: String,
-                                        password: String
-                                    ) {
-                                        validateUser(mobileNo, password)
-                                    }
-
-                                    override fun onCreateNewAccountClicked() {
-                                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSignupFragment())
-                                    }
-                                }).show()
-                            } else {
-                               getProductsWithCustomLabel()
-                            }
+                            val userId = currentUserResponse.userId
+                            Log.e("HomeFragment", "${getUser(userId)}")
+                            getUser(userId).observe(viewLifecycleOwner, {
+                                if(it==null || userId==0L){
+                                    val dialog =  LoginDialog(requireContext(), object : LoginDialogListener {
+                                        override fun onLoginButtonClicked(
+                                            mobileNo: String,
+                                            password: String
+                                        ) {
+                                            validateUser(mobileNo, password)
+                                        }
+                                        override fun onCreateNewAccountClicked() {
+                                            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSignupFragment())
+                                        }
+                                    })
+                                    dialog.setCancelable(false)
+                                    dialog.show()
+                                }else {
+                                    getProductsWithCustomLabel()
+                                }
+                            })
                         }
                     }
+                    is Resource.Empty ->hideProgressBar()
                     is Resource.Error -> {
                         hideProgressBar()
                         response.message?.let { message ->
@@ -133,7 +136,6 @@ class HomeFragment : Fragment() {
         }
 
         homeSliderAdapter.setOnItemClickListener {
-            Log.e("Navigation", "${findNavController().currentDestination}")
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(it))
         }
         return binding.root
@@ -144,11 +146,17 @@ class HomeFragment : Fragment() {
     }
 
     private fun hideProgressBar(){
-        binding.progressBar.visibility = View.INVISIBLE
+        binding.apply {
+            progressBar.visibility = View.INVISIBLE
+            tvLabel.visibility = View.VISIBLE
+        }
     }
 
     private fun showProgressBar(){
-        binding.progressBar.visibility = View.VISIBLE
+        binding.apply {
+            progressBar.visibility = View.VISIBLE
+            tvLabel.visibility = View.INVISIBLE
+        }
     }
 
     private fun showSnackBarWithMessage(message: String) {

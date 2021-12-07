@@ -47,11 +47,15 @@ class CartFragment : Fragment() {
             cartItems.observe(viewLifecycleOwner, { response ->
                 when (response) {
                     is Resource.Success -> {
-                        hideProgressBar()
+                        showViewsAndActions()
                         response.data?.let { cartResponse ->
                             cartAdapter.submitList(cartResponse.cartItems)
                             getTotalPrice(cartResponse.cartItems)
                         }
+                    }
+                    is Resource.Empty -> {
+                        Log.e("ViewModel", "empty")
+                        showNoResultFound()
                     }
                     is Resource.Error -> {
                         hideProgressBar()
@@ -113,18 +117,79 @@ class CartFragment : Fragment() {
         return binding.root
     }
 
+    private fun getAddress() {
+        viewModel.apply {
+            currentUser.observe(viewLifecycleOwner, { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        showViewsAndActions()
+                        response.data?.let { currentUserResponse ->
+                            val userId = currentUserResponse.userId
+                            Log.e("CartFragment", "currentUser $userId")
+                            if (userId != 0L && !userExists(userId)) {
+                                getAddressesOfCurrentUser(currentUserResponse.userId)
+                                    .observe(viewLifecycleOwner, {
+                                        it?.let {
+                                            val addressList = it.addresses.map { address ->
+                                                address.addressType
+                                            } as MutableList<String>
+                                            addressList.add(0, "None")
+                                            Log.e(
+                                                "CartFragment",
+                                                "addresses with none $addressList"
+                                            )
+                                            showConfirmationDialog(
+                                                addressList.toTypedArray(),
+                                                it.addresses
+                                            )
+                                        }
+                                    })
+                            }
+                        }
+                    }
+                    is Resource.Empty -> {
+                        showNoResultFound()
+                    }
+                    is Resource.Error -> {
+                        hideProgressBar()
+                        hideViewsAndActions()
+                        response.message?.let { message ->
+                            showSnackBarWithMessage(message)
+                        }
+                    }
+                    is Resource.Loading -> {
+                        showProgressBar()
+                    }
+                }
+
+            })
+        }
+    }
+
+    private fun showNoResultFound() {
+        hideProgressBar()
+        hideViewsAndActions()
+        binding.apply {
+            imgNotFound.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideNoResultFound() {
+        binding.imgNotFound.visibility = View.GONE
+    }
+
 
     private fun hideProgressBar() {
         binding.apply {
             progressBar.visibility = View.INVISIBLE
-            showViewsAndActions()
         }
     }
 
     private fun showProgressBar() {
+        hideNoResultFound()
+        hideViewsAndActions()
         binding.apply {
             progressBar.visibility = View.VISIBLE
-            hideViewsAndActions()
         }
     }
 
@@ -144,6 +209,8 @@ class CartFragment : Fragment() {
             rvCart.visibility = View.VISIBLE
             tvDeliveryCharge.visibility = View.VISIBLE
         }
+        hideProgressBar()
+        hideNoResultFound()
     }
 
     private fun setUpRecyclerView() {
@@ -154,45 +221,9 @@ class CartFragment : Fragment() {
         }
     }
 
-    private fun getAddress() {
-        viewModel.currentUser.observe(viewLifecycleOwner, { response ->
-            when (response) {
-                is Resource.Success -> {
-                    hideProgressBar()
-                    response.data?.let { currentUserResponse ->
-                        if (currentUserResponse.userId != 0L) {
-                            viewModel.getAddressesOfCurrentUser(currentUserResponse.userId)
-                                .observe(viewLifecycleOwner, {
-                                    it?.let {
-                                        val addressList = it.addresses.map { address ->
-                                            address.addressType
-                                        }
-                                        showConfirmationDialog(
-                                            addressList.toTypedArray(),
-                                            it.addresses
-                                        )
-                                    }
-                                })
-                        }
-                    }
-                }
-                is Resource.Error -> {
-                    hideProgressBar()
-                    response.message?.let { message ->
-                        showSnackBarWithMessage(message)
-                    }
-                }
-                is Resource.Loading -> {
-                    showProgressBar()
-                }
-            }
-
-        })
-    }
-
     private fun showConfirmationDialog(addressTypes: Array<String>, address: List<Address>): Int {
         var selectedAddressIndex = 0
-        val dialog = MaterialAlertDialogBuilder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("Select Delivery Address")
             .setSingleChoiceItems(addressTypes, selectedAddressIndex) { _, which ->
                 selectedAddressIndex = which
@@ -200,13 +231,17 @@ class CartFragment : Fragment() {
             .setNeutralButton("Add New") { _, _ ->
                 findNavController().navigate(CartFragmentDirections.actionCartFragmentToAddressFragment())
             }
-        dialog.show()
-        if (addressTypes.isNotEmpty()) {
-            dialog.setPositiveButton("Confirm") { _, _ ->
-                showSnackBarWithMessage("Address chosen!")
-                viewModel.placeOrder(address[selectedAddressIndex].addressId!!)
+            .setPositiveButton("Confirm") { _, _ ->
+                if(selectedAddressIndex>0){
+                    showSnackBarWithMessage("Address chosen!")
+                    viewModel.placeOrder(address[selectedAddressIndex-1].addressId!!)
+                }else{
+                    showConfirmationDialog(addressTypes, address)
+                    showSnackBarWithMessage("Please choose valid address to continue!")
+                }
             }
-        }
+            .show()
+        Log.e("CartFragment", "addresses with none ${addressTypes.size}")
         return selectedAddressIndex
     }
 

@@ -37,6 +37,7 @@ class HomeViewModel(
 
     init {
         getCurrentUser()
+        getProductsWithCustomLabel()
     }
 
     fun getProductsWithCustomLabel() = viewModelScope.launch {
@@ -59,6 +60,8 @@ class HomeViewModel(
             }
         }
     }
+
+    fun getUser(userId: Long)= adoreRepository.getUser(userId)
 
     private fun getCurrentUser() = viewModelScope.launch {
         safeGetCurrentUserCall()
@@ -91,7 +94,7 @@ class HomeViewModel(
                     }
                 }
                 else -> {
-                    Resource.Error("Sorry! No result found :(")
+                    Resource.Empty()
                 }
             }
         } else {
@@ -136,12 +139,10 @@ class HomeViewModel(
             if (it.password == password) {
                 _showSnackBarMessage.value = "Logged in!"
                 setCurrentUser(it.userId)
-                getProductsWithCustomLabel()
             }else{
                 _showSnackBarMessage.value = "Incorrect password!"
                 getCurrentUser()
             }
-            Log.e("AA", "${it.userId}")
         }?:run{
             _showSnackBarMessage.postValue("Mobile no is not registered!")
             getCurrentUser()
@@ -149,7 +150,8 @@ class HomeViewModel(
     }
 
     private fun setCurrentUser(userId: Long) = viewModelScope.launch {
-            adoreRepository.setCurrentUser(userId)
+        adoreRepository.setCurrentUser(userId)
+        getCurrentUser()
     }
 
     fun doneShowingSnackBarMessage(){
