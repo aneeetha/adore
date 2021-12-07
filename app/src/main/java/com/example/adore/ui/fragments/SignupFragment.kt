@@ -33,6 +33,9 @@ class SignupFragment : Fragment() {
     ): View? {
         binding = FragmentSignupBinding.inflate(inflater, container, false)
 
+        val navBar = activity?.findViewById<View>(R.id.bottom_navigation_view)
+        navBar?.visibility = View.GONE
+
         val application = requireNotNull(this.activity).application
         val adoreRepository = AdoreRepository(AdoreDatabase(application))
 
