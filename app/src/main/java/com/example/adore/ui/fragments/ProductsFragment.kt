@@ -91,52 +91,56 @@ class ProductsFragment : Fragment() {
         }
 
         viewModel.apply {
-            productsOfType.observe(viewLifecycleOwner, { response ->
-                when (response) {
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        hideNoResultFound()
-                        response.data?.let { productsResponse ->
-                            productsAdapter.differ.submitList(productsResponse.products)
+            productsOfType.observe(viewLifecycleOwner, {
+                it?.let { response ->
+                    when (response) {
+                        is Resource.Success -> {
+                            hideProgressBar()
+                            hideNoResultFound()
+                            response.data?.let { productsResponse ->
+                                productsAdapter.differ.submitList(productsResponse.products)
+                                doneShowingProductsOfTypeResults()
+                            }
                         }
-                    }
-                    is Resource.Empty -> showNoResultFound()
+                        is Resource.Empty -> showNoResultFound()
 
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        response.message?.let { message ->
-                            showSnackBarWithMessage(message)
+                        is Resource.Error -> {
+                            hideProgressBar()
+                            response.message?.let { message ->
+                                showSnackBarWithMessage(message)
+                            }
                         }
-                    }
-                    is Resource.Loading -> {
-                        showProgressBar()
+                        is Resource.Loading -> {
+                            showProgressBar()
+                        }
                     }
                 }
-
             })
 
-            productsOfCategory.observe(viewLifecycleOwner, { response ->
-                when (response) {
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        hideNoResultFound()
-                        response.data?.let { productsResponse ->
-                            productsAdapter.differ.submitList(productsResponse.products)
+            productsOfCategory.observe(viewLifecycleOwner, {
+                it?.let { response ->
+                    when (response) {
+                        is Resource.Success -> {
+                            hideProgressBar()
+                            hideNoResultFound()
+                            response.data?.let { productsResponse ->
+                                productsAdapter.differ.submitList(productsResponse.products)
+                                doneShowingProductsOfCategoryResults()
+                            }
                         }
-                    }
-                    is Resource.Empty-> showNoResultFound()
+                        is Resource.Empty -> showNoResultFound()
 
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        response.message?.let { message ->
-                            showSnackBarWithMessage(message)
+                        is Resource.Error -> {
+                            hideProgressBar()
+                            response.message?.let { message ->
+                                showSnackBarWithMessage(message)
+                            }
                         }
-                    }
-                    is Resource.Loading -> {
-                        showProgressBar()
+                        is Resource.Loading -> {
+                            showProgressBar()
+                        }
                     }
                 }
-
             })
         }
 

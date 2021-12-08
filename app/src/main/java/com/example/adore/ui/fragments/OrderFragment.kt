@@ -8,14 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListAdapter
-import android.widget.Toast
-import androidx.core.text.HtmlCompat
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.adore.R
-import com.example.adore.adapters.OrderAdapter
 import com.example.adore.databinding.FragmentOrderBinding
-import com.example.adore.models.enums.Category
 import com.example.adore.ui.AdorableActivity
 import com.example.adore.ui.viewmodels.ProductsViewModel
 import com.example.adore.util.Resource

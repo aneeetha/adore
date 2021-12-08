@@ -26,11 +26,11 @@ class ProductsViewModel(
 ) : AndroidViewModel(app) {
 
 
-    private val _productsOfType: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
+    private val _productsOfType: MutableLiveData<Resource<ProductResponse>?> = MutableLiveData()
     val productsOfType
         get() = _productsOfType
 
-    private val _productsOfCategory: MutableLiveData<Resource<ProductResponse>> = MutableLiveData()
+    private val _productsOfCategory: MutableLiveData<Resource<ProductResponse>?> = MutableLiveData()
     val productsOfCategory
         get() = _productsOfCategory
 
@@ -140,6 +140,13 @@ class ProductsViewModel(
 
     fun doneShowingSearchResults(){
         _searchResult.value = null
+    }
+
+    fun doneShowingProductsOfTypeResults(){
+        _productsOfType.value = null
+    }
+    fun doneShowingProductsOfCategoryResults(){
+        _productsOfCategory.value = null
     }
 
     private suspend fun safeSearchForProductsCall(searchQuery: String){

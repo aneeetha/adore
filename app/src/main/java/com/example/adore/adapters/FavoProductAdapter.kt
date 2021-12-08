@@ -52,12 +52,12 @@ class FavoProductAdapter(
             tvProductPrice.text = price
             val discount: Int = AdoreLogic.getDiscount(product.customLabels)
             if(discount!=0){
-                tvProductPriceDiscounted.visibility = View.VISIBLE
                 val discountedPrice = Constants.CURRENCY + (product.price - (product.price.times(discount).div(100))).toString()
                 tvProductPriceDiscounted.text = discountedPrice
                 tvProductPrice.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                 tvProductPrice.typeface = Typeface.DEFAULT
                 tvProductPrice.textSize = 11F
+                tvProductPriceDiscounted.visibility = View.VISIBLE
             }
             tvProductDescription.text = product.description
             holder.itemView.setOnClickListener {
