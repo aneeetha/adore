@@ -12,5 +12,14 @@ enum class Color {
     Green,
     Multi,
     NavyBlue,
-    Peach
+    Peach,
+    Brown,
+    Sandal,
+    GoldenBrown,
+    Golden,
+    Grey,
+    Maroon,
+    OliveGreen,
+    Mustard,
+    Beige
 }

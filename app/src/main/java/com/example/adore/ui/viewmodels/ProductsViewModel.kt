@@ -26,13 +26,9 @@ class ProductsViewModel(
 ) : AndroidViewModel(app) {
 
 
-    private val _productsOfType: MutableLiveData<Resource<ProductResponse>?> = MutableLiveData()
-    val productsOfType
-        get() = _productsOfType
-
-    private val _productsOfCategory: MutableLiveData<Resource<ProductResponse>?> = MutableLiveData()
-    val productsOfCategory
-        get() = _productsOfCategory
+    private val _productsResult: MutableLiveData<Resource<ProductResponse>?> = MutableLiveData()
+    val productsResult
+        get() = _productsResult
 
     private val _searchResult: MutableLiveData<Resource<ProductResponse>?> = MutableLiveData()
     val searchResult
@@ -71,10 +67,6 @@ class ProductsViewModel(
 
     fun getAddressesOfCurrentUser() = adoreRepository.getAddressesOfUser(sessionManager.getUserId())
 
-    fun getProductsOfType(gender: Gender, productType: ProductType) = viewModelScope.launch {
-        safeGetProductsWithTypeCall(gender, productType)
-    }
-
     fun getSearchResult(searchQuery: String) = viewModelScope.launch {
         safeSearchForProductsCall(searchQuery)
     }
@@ -91,30 +83,52 @@ class ProductsViewModel(
         safeGetOrdersCall()
     }
 
-    fun getProductWithCategories(gender: Gender, productType: ProductType, category: Category)= viewModelScope.launch{
-        safeGetProductWithCategoriesCall(gender, productType, category)
-    }
+    fun getProducts(gender: Gender, productType: ProductType, category: Category? = null) =
+        viewModelScope.launch {
+            safeGetProducts(gender, productType, category)
+        }
 
     fun cartItemQuantityChanged(quantity: Int, cartItemId: String) = viewModelScope.launch {
         _cartSnackBarMessage.value =
-            handleApiTransactionResponse(adoreRepository.updateCart(cartItemId, quantity, sessionManager.getUserId()))
+            handleApiTransactionResponse(
+                adoreRepository.updateCart(
+                    cartItemId,
+                    quantity,
+                    sessionManager.getUserId()
+                )
+            )
         getCartItem()
     }
 
     fun removeCartItem(cartItemId: String) = viewModelScope.launch {
         _cartSnackBarMessage.value =
-            handleApiTransactionResponse(adoreRepository.removeCartItem(cartItemId, sessionManager.getUserId()))
+            handleApiTransactionResponse(
+                adoreRepository.removeCartItem(
+                    cartItemId,
+                    sessionManager.getUserId()
+                )
+            )
         getCartItem()
     }
 
     fun placeOrder(addressId: Int) = viewModelScope.launch {
-        _cartSnackBarMessage.value = handleApiTransactionResponse(adoreRepository.placeOrder(addressId, sessionManager.getUserId()))
+        _cartSnackBarMessage.value = handleApiTransactionResponse(
+            adoreRepository.placeOrder(
+                addressId,
+                sessionManager.getUserId()
+            )
+        )
         _navigateToOrderSuccessPage.value = true
     }
 
     fun removeFavoItem(productId: String) = viewModelScope.launch {
         _favoSnackBarMessage.value =
-            handleApiTransactionResponse(adoreRepository.removeFavoItem(productId, sessionManager.getUserId()))
+            handleApiTransactionResponse(
+                adoreRepository.removeFavoItem(
+                    productId,
+                    sessionManager.getUserId()
+                )
+            )
         getFavlist()
     }
 
@@ -126,132 +140,118 @@ class ProductsViewModel(
         _totalPrice.value = sum
     }
 
-    fun doneShowingSnackBarInCart(){
-        _cartSnackBarMessage.value=null
+    fun doneShowingSnackBarInCart() {
+        _cartSnackBarMessage.value = null
     }
 
-    fun doneShowingSnackBarInFavo(){
-        _favoSnackBarMessage.value=null
+    fun doneShowingSnackBarInFavo() {
+        _favoSnackBarMessage.value = null
     }
 
-    fun doneNavigatingToOrderSuccessPage(){
+    fun doneNavigatingToOrderSuccessPage() {
         _navigateToOrderSuccessPage.value = null
     }
 
-    fun doneShowingSearchResults(){
+    fun doneShowingSearchResults() {
         _searchResult.value = null
     }
 
-    fun doneShowingProductsOfTypeResults(){
-        _productsOfType.value = null
-    }
-    fun doneShowingProductsOfCategoryResults(){
-        _productsOfCategory.value = null
+    fun doneShowingProductsResult() {
+        _productsResult.value = null
     }
 
-    private suspend fun safeSearchForProductsCall(searchQuery: String){
+    private suspend fun safeSearchForProductsCall(searchQuery: String) {
         _searchResult.value = Resource.Loading()
-        try{
-            if(hasInternetConnection()){
+        try {
+            if (hasInternetConnection()) {
                 val response = adoreRepository.searchForProducts(searchQuery) //Seasonal
                 _searchResult.value = handleResponse(response)
-            }else{
+            } else {
                 _searchResult.value = Resource.Error("No internet connection :(")
             }
-        }catch(t: Throwable){
-            when(t){
+        } catch (t: Throwable) {
+            when (t) {
                 is IOException -> _searchResult.postValue(Resource.Error("Network Failure!"))
                 else -> _searchResult.postValue(Resource.Error("Conversion Error!"))
             }
         }
     }
 
-    private suspend fun safeGetProductWithCategoriesCall(gender: Gender, productType: ProductType, category: Category){
-        _productsOfCategory.value = Resource.Loading()
-        try{
-            if(hasInternetConnection()){
-                val response = adoreRepository.getProductsOfCategory(gender, productType, category)
-                _productsOfCategory.value = handleResponse(response)
-            }else{
-                _productsOfCategory.value = Resource.Error("No internet connection :(")
+    private suspend fun safeGetProducts(
+        gender: Gender,
+        productType: ProductType,
+        category: Category?
+    ) {
+        _productsResult.value = Resource.Loading()
+        try {
+            if (hasInternetConnection()) {
+                val response = category?.let {
+                    adoreRepository.getProductsOfCategory(gender, productType, it)
+                } ?: adoreRepository.getProductsOfType(gender, productType)
+                _productsResult.value = handleResponse(response)
+            } else {
+                _productsResult.value = Resource.Error("No internet connection :(")
             }
-        }catch(t: Throwable){
-            when(t){
-                is IOException -> _productsOfCategory.postValue(Resource.Error("Network Failure!"))
-                else -> _productsOfCategory.postValue(Resource.Error("Conversion Error!"))
-            }
-        }
-    }
-
-    private suspend fun safeGetProductsWithTypeCall(gender: Gender, productType: ProductType){
-        _productsOfType.value = Resource.Loading()
-        try{
-            if(hasInternetConnection()){
-                val response = adoreRepository.getProductsOfType(gender, productType)
-                _productsOfType.value = handleResponse(response)
-            }else{
-                _productsOfType.value = Resource.Error("No internet connection :(")
-            }
-        }catch(t: Throwable){
-            when(t){
-                is IOException -> _productsOfType.postValue(Resource.Error("Network Failure!"))
-                else -> _productsOfType.postValue(Resource.Error("Conversion Error!"))
+        } catch (t: Throwable) {
+            when (t) {
+                is IOException -> _productsResult.postValue(Resource.Error("Network Failure!"))
+                else -> _productsResult.postValue(Resource.Error("Conversion Error!"))
             }
         }
     }
 
-    private suspend fun safeGetFavlistCall(){
+    private suspend fun safeGetFavlistCall() {
         _favlistResult.value = Resource.Loading()
-        try{
-            if(hasInternetConnection()){
+        try {
+            if (hasInternetConnection()) {
                 val response = adoreRepository.getFavlist(sessionManager.getUserId())
                 _favlistResult.value = handleResponse(response)
-            }else{
+            } else {
                 _favlistResult.value = Resource.Error("No internet connection :(")
             }
-        }catch(t: Throwable){
-            when(t){
+        } catch (t: Throwable) {
+            when (t) {
                 is IOException -> _favlistResult.postValue(Resource.Error("Network Failure!"))
                 else -> _favlistResult.postValue(Resource.Error("Conversion Error!"))
             }
         }
     }
 
-    private suspend fun safeGetCartItemsCall(){
+    private suspend fun safeGetCartItemsCall() {
         _cartItems.value = Resource.Loading()
-        try{
-            if(hasInternetConnection()){
+        try {
+            if (hasInternetConnection()) {
                 val response = adoreRepository.getCartItems(sessionManager.getUserId())
                 _cartItems.value = handleResponse(response)
-            }else{
+            } else {
                 _cartItems.value = Resource.Error("No internet connection :(")
             }
-        }catch(t: Throwable){
-            when(t){
+        } catch (t: Throwable) {
+            when (t) {
                 is IOException -> _cartItems.postValue(Resource.Error("Network Failure!"))
                 else -> _cartItems.postValue(Resource.Error("Conversion Error!"))
             }
         }
     }
 
-    private suspend fun safeGetOrdersCall(){
+    private suspend fun safeGetOrdersCall() {
         _orders.value = Resource.Loading()
-        try{
-            if(hasInternetConnection()){
+        try {
+            if (hasInternetConnection()) {
                 val response = adoreRepository.getOrders(sessionManager.getUserId())
                 _orders.value = handleResponse(response)
-            }else{
+            } else {
                 _orders.value = Resource.Error("No internet connection :(")
             }
-        }catch(t: Throwable){
-            when(t){
+        } catch (t: Throwable) {
+            when (t) {
                 is IOException -> _orders.postValue(Resource.Error("Network Failure!"))
                 else -> _orders.postValue(Resource.Error("Conversion Error!"))
             }
         }
     }
 
-    private fun <T: Any> handleResponse(response: Response<T>): Resource<T> =
+    private fun <T : Any> handleResponse(response: Response<T>): Resource<T> =
         if (response.isSuccessful) {
             when (response.code()) {
                 200 -> {
@@ -275,7 +275,6 @@ class ProductsViewModel(
         }
 
 
-
     private fun handleApiTransactionResponse(response: Response<ApiTransactionResponse>): Resource<ApiTransactionResponse> =
         if (response.isSuccessful) {
             response.body()!!.let {
@@ -292,22 +291,23 @@ class ProductsViewModel(
         }
 
 
-    private fun hasInternetConnection(): Boolean{
+    private fun hasInternetConnection(): Boolean {
         val connectivityManager = getApplication<AdoreApplication>().getSystemService(
             Context.CONNECTIVITY_SERVICE
         ) as ConnectivityManager
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            val activeNetwork = connectivityManager.activeNetwork?: return false
-            val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
-            return when{
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val activeNetwork = connectivityManager.activeNetwork ?: return false
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+            return when {
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
                 else -> false
             }
-        }else{
+        } else {
             connectivityManager.activeNetworkInfo?.run {
-                return when(type){
+                return when (type) {
                     ConnectivityManager.TYPE_WIFI -> true
                     ConnectivityManager.TYPE_MOBILE -> true
                     ConnectivityManager.TYPE_ETHERNET -> true

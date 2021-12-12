@@ -71,9 +71,16 @@ class AddressFragment : Fragment() {
                         "address ${(0 until 10).random()}"
                     )
                 )
+            }
+            getAddressesOfCurrentUser()
+                .observe(viewLifecycleOwner, {
+                    it?.let { addressesAdapter.submitList(it.addresses) }
+                        ?: Log.e("AddressFragment", "0")
+                })
 
-                getLastInsertedAddress()
-                    .observe(viewLifecycleOwner, { data ->
+            callLastInsertedAddress.observe(viewLifecycleOwner, {
+                it?.let {
+                    getLastInsertedAddress().observe(viewLifecycleOwner, { data ->
                         data?.let { address ->
                             findNavController().navigate(
                                 AddressFragmentDirections.actionAddressFragmentToAddressDetailsFragment(
@@ -82,12 +89,9 @@ class AddressFragment : Fragment() {
                             )
                         }
                     })
-            }
-            getAddressesOfCurrentUser()
-                .observe(viewLifecycleOwner, {
-                    it?.let { addressesAdapter.submitList(it.addresses) }
-                        ?: Log.e("AddressFragment", "0")
-                })
+                    doneCallingLastInsertedAddress()
+                }
+            })
         }
 
         return binding.root

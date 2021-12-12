@@ -73,7 +73,7 @@ class CartAdapter(
         }
     }
 
-    private fun quantityCheck(quantity: Int)= quantity < 5
+    private fun quantityCheck(quantity: Int)= quantity <= 5
 
 
     class CartItemDifferCallback : DiffUtil.ItemCallback<CartItem>() {

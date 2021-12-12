@@ -1,16 +1,14 @@
 package com.example.adore.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.adore.R
+import com.example.adore.adapters.NoFilterArrayAdapter
 import com.example.adore.adapters.ProductsAdapter
 import com.example.adore.databinding.FragmentProductsBinding
 import com.example.adore.models.enums.Category
@@ -25,6 +23,8 @@ class ProductsFragment : Fragment() {
     lateinit var viewModel: ProductsViewModel
     lateinit var productsAdapter: ProductsAdapter
     lateinit var binding: FragmentProductsBinding
+
+    private var selectedCategory: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,25 +41,33 @@ class ProductsFragment : Fragment() {
         setUpRecyclerView()
 
         val arguments = ProductsFragmentArgs.fromBundle(requireArguments())
-        viewModel.getProductsOfType(arguments.gender, arguments.productType)
 
-
-        val categories= Category.values().filter { (it.gender == arguments.gender || it.gender== Gender.Unisex) && it.type.contains(arguments.productType) }.map { it.headingValue }.toMutableList()
+        val categories = Category.values().filter {
+            (it.gender == arguments.gender || it.gender == Gender.Unisex) && it.type.contains(
+                arguments.productType
+            )
+        }.map { it.headingValue }.toMutableList()
         categories.add(0, "None")
-        val categoriesAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, categories)
+        val categoriesAdapter =
+            NoFilterArrayAdapter(requireContext(), R.layout.dropdown_item, categories)
 
         productsAdapter.setOnItemClickListener {
-            findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToProductDetailsFragment(it))
+            findNavController().navigate(
+                ProductsFragmentDirections.actionProductsFragmentToProductDetailsFragment(
+                    it
+                )
+            )
         }
 
-
         binding.apply {
+
+            viewModel.getProducts(
+                arguments.gender,
+                arguments.productType,
+                Category.values().firstOrNull { it.headingValue == selectedCategory })
+
             ivBackIcon.setOnClickListener {
                 findNavController().navigateUp()
-                //requireActivity().onBackPressed()
-                //findNavController().backStack.pop()
-//            childFragmentManager.popBackStackImmediate()
-                //parentFragmentManager.popBackStackImmediate()
             }
 
             ivCartIcon.setOnClickListener {
@@ -74,24 +82,22 @@ class ProductsFragment : Fragment() {
                 findNavController().navigate(ProductsFragmentDirections.actionProductsFragmentToSearchFragment())
             }
 
-            (tilCategories.editText as AutoCompleteTextView).setAdapter(categoriesAdapter)
+            (autoTvCategories).setAdapter(categoriesAdapter)
+
             autoTvCategories.setOnItemClickListener { adapterView, _, i, _ ->
-                val selectedCategory = adapterView.getItemAtPosition(i).toString()
-                Log.e("ProductsFragment", selectedCategory)
-                if(selectedCategory!="None") {
-                    viewModel.getProductWithCategories(
-                        arguments.gender,
-                        arguments.productType,
-                        Category.values().first{it.headingValue==selectedCategory}
-                    )
-                }else{
-                    viewModel.getProductsOfType(arguments.gender, arguments.productType)
+                (adapterView.getItemAtPosition(i).toString()).let { value->
+                    if (value != selectedCategory)
+                        selectedCategory = value
+                        viewModel.getProducts(
+                            arguments.gender,
+                            arguments.productType,
+                            Category.values().firstOrNull { it.headingValue == selectedCategory })
                 }
             }
         }
 
         viewModel.apply {
-            productsOfType.observe(viewLifecycleOwner, {
+            productsResult.observe(viewLifecycleOwner, {
                 it?.let { response ->
                     when (response) {
                         is Resource.Success -> {
@@ -99,33 +105,7 @@ class ProductsFragment : Fragment() {
                             hideNoResultFound()
                             response.data?.let { productsResponse ->
                                 productsAdapter.differ.submitList(productsResponse.products)
-                                doneShowingProductsOfTypeResults()
-                            }
-                        }
-                        is Resource.Empty -> showNoResultFound()
-
-                        is Resource.Error -> {
-                            hideProgressBar()
-                            response.message?.let { message ->
-                                showSnackBarWithMessage(message)
-                            }
-                        }
-                        is Resource.Loading -> {
-                            showProgressBar()
-                        }
-                    }
-                }
-            })
-
-            productsOfCategory.observe(viewLifecycleOwner, {
-                it?.let { response ->
-                    when (response) {
-                        is Resource.Success -> {
-                            hideProgressBar()
-                            hideNoResultFound()
-                            response.data?.let { productsResponse ->
-                                productsAdapter.differ.submitList(productsResponse.products)
-                                doneShowingProductsOfCategoryResults()
+                                doneShowingProductsResult()
                             }
                         }
                         is Resource.Empty -> showNoResultFound()
@@ -159,7 +139,7 @@ class ProductsFragment : Fragment() {
         }
     }
 
-    private fun showNoResultFound(){
+    private fun showNoResultFound() {
         hideProgressBar()
         binding.apply {
             rvProducts.visibility = View.INVISIBLE
@@ -167,7 +147,7 @@ class ProductsFragment : Fragment() {
         }
     }
 
-    private fun hideNoResultFound(){
+    private fun hideNoResultFound() {
         binding.apply {
             rvProducts.visibility = View.VISIBLE
             imgNotFound.visibility = View.GONE
@@ -189,4 +169,5 @@ class ProductsFragment : Fragment() {
             Snackbar.LENGTH_SHORT
         ).show()
     }
+
 }

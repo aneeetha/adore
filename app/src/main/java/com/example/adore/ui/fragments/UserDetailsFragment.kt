@@ -55,6 +55,9 @@ class UserDetailsFragment : Fragment() {
                 showAlertDialogToSave()
             }
             etDob.keyListener = null
+            etDob.setOnClickListener {
+                showDatePickerDialog()
+            }
             etDob.setOnFocusChangeListener { view, b ->
                 if (b) {
                     showDatePickerDialog()

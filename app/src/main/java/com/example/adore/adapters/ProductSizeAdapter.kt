@@ -1,5 +1,6 @@
 package com.example.adore.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ class ProductSizeAdapter() : ListAdapter<Stock, ProductSizeAdapter.TextViewHolde
                         itemView.setSizeViewChecked()
                         selectedSizePosition = bindingAdapterPosition
                         it(currentItem.size)
+                        Log.e("SizeAdapter", "${currentItem.size}")
                         notifyItemRangeChanged(0, position)
                         notifyItemRangeChanged(position+1, currentList.size)
                     }

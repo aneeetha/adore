@@ -63,7 +63,7 @@ class AddressDetailsFragment : Fragment() {
             btnDiscard.setOnClickListener {
                 viewModelShared.deleteAddress(currentAddress)
                 showSnackBarWithMessage(getString(R.string.address_deleted))
-                findNavController().navigate(AddressDetailsFragmentDirections.actionAddressDetailsFragmentToUserProfileFragment())
+                findNavController().navigateUp()
             }
 
             ivBackIcon.setOnClickListener {
@@ -75,13 +75,6 @@ class AddressDetailsFragment : Fragment() {
                 }
             })
         }
-
-        viewModelShared.navigateToUserProfile.observe(viewLifecycleOwner, {
-            it?.let {
-                findNavController().navigate(AddressDetailsFragmentDirections.actionAddressDetailsFragmentToUserProfileFragment())
-                viewModelShared.doneNavigatingToUserProfile()
-            }
-        })
 
         return binding.root
     }
@@ -95,7 +88,7 @@ class AddressDetailsFragment : Fragment() {
             .setNeutralButton("Discard"){ _, _ ->
                 viewModelShared.deleteAddress(currentAddress)
                 showSnackBarWithMessage("Address discarded!")
-                findNavController().navigate(AddressDetailsFragmentDirections.actionAddressDetailsFragmentToUserProfileFragment())
+                findNavController().navigateUp()
             }.show()
     }
 
@@ -113,6 +106,7 @@ class AddressDetailsFragment : Fragment() {
                 val address = AddressDetailUpdate(currentAddress.addressId, etAddressType.text.toString(), etAddressLine.text.toString(), etDeliverTo.text.toString(), etContact.text.toString(), etLocality.text.toString(), District.valueOf(tilEtCity.editText?.text.toString()), etPincode.text.toString().toInt())
                 showSnackBarWithMessage(getString(R.string.address_added))
                 viewModelShared.updateAddress(address)
+                findNavController().navigateUp()
             }
         }
     }
