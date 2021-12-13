@@ -1,5 +1,6 @@
 package com.example.adore.ui
 
+import android.app.UiModeManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -29,6 +30,7 @@ class AdorableActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.Theme_Adore)
+
         val binding = DataBindingUtil.setContentView<ActivityAdorableBinding>(
             this,
             R.layout.activity_adorable
@@ -45,9 +47,5 @@ class AdorableActivity : AppCompatActivity() {
         navController = findNavController(R.id.adoreNavHostFragment)
         bottomNavigationView.setupWithNavController(navController)
     }
-
-        //val appBarConfiguration = AppBarConfiguration(navController.graph)
-        //findViewById<Toolbar>(R.id.toolbar).setupWithNavController(navController, appBarConfiguration)
-        //setupActionBarWithNavController(navController)
 
 }
