@@ -50,7 +50,7 @@ class CartFragment : Fragment() {
                         showViewsAndActions()
                         response.data?.let { cartResponse ->
                             cartAdapter.submitList(cartResponse.cartItems)
-                            getTotalPrice(cartResponse.cartItems)
+                            getTotalPriceInCart(cartResponse.cartItems)
                         }
                     }
                     is Resource.Empty -> {

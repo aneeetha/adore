@@ -14,6 +14,7 @@ import com.example.adore.adapters.OrderAdapter
 import com.example.adore.databinding.FragmentOrderDetailsBinding
 import com.example.adore.ui.AdorableActivity
 import com.example.adore.ui.viewmodels.ProductsViewModel
+import com.example.adore.util.AdoreLogic
 
 class OrderDetailsFragment: Fragment() {
     lateinit var viewModel: ProductsViewModel
@@ -29,19 +30,33 @@ class OrderDetailsFragment: Fragment() {
         viewModel = (activity as AdorableActivity).viewModel
 
         val order = OrderDetailsFragmentArgs.fromBundle(requireArguments()).order
+        viewModel.getTotalPriceInOrder(order.products)
 
-        orderDetailsAdapter = OrderAdapter(viewModel)
-
+        orderDetailsAdapter = OrderAdapter()
         binding.apply {
             rvOrders.adapter = orderDetailsAdapter
             rvOrders.layoutManager = LinearLayoutManager(activity)
 
-            context?.getString(R.string.delivery_charge, order.deliveryCharge.toString())?.let {
-                tvDeliveryCharge.text = HtmlCompat.fromHtml(String.format(it, "placeholder1"), HtmlCompat.FROM_HTML_MODE_COMPACT)
-            }
-            context?.getString(R.string.total_price, order.totalPrice.plus(order.deliveryCharge).toString())?.let {
-                tvTotalPrice.text = HtmlCompat.fromHtml(String.format(it, "placeholder1"), HtmlCompat.FROM_HTML_MODE_COMPACT)
-            }
+            viewModel.totalPrice.observe(viewLifecycleOwner, {
+                val deliveryCharge = AdoreLogic.getDeliveryCharge(it)
+
+                context?.getString(R.string.delivery_charge, deliveryCharge.toString())
+                    ?.let { text ->
+                        tvDeliveryCharge.text = HtmlCompat.fromHtml(
+                            String.format(text, "placeholder1"),
+                            HtmlCompat.FROM_HTML_MODE_COMPACT
+                        )
+                    }
+
+                context?.getString(R.string.total_price, it.plus(deliveryCharge).toString())
+                    ?.let { text ->
+                        tvTotalPrice.text = HtmlCompat.fromHtml(
+                            String.format(text, "placeholder1"),
+                            HtmlCompat.FROM_HTML_MODE_COMPACT
+                        )
+                    }
+            })
+
             ivBackIcon.setOnClickListener {
                 findNavController().navigateUp()
             }

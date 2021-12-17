@@ -14,7 +14,7 @@ import com.example.adore.models.enums.OrderStatus
 import com.example.adore.ui.viewmodels.ProductsViewModel
 import com.example.adore.util.Constants
 
-class OrderAdapter(val viewModel: ProductsViewModel) : ListAdapter<OrderProductDetails, OrderAdapter.OrderViewHolder>(OrderItemDifferCallback()) {
+class OrderAdapter() : ListAdapter<OrderProductDetails, OrderAdapter.OrderViewHolder>(OrderItemDifferCallback()) {
 
     class OrderViewHolder(val binding: OrderItemBinding) :
         RecyclerView.ViewHolder(binding.root) {

@@ -136,9 +136,6 @@
         <argument
             android:name="address"
             app:argType="com.example.adore.models.entities.Address" />
-        <action
-            android:id="@+id/action_addressDetailsFragment_to_userProfileFragment"
-            app:destination="@id/userProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/addressFragment"

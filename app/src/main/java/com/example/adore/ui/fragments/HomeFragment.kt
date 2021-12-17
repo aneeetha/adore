@@ -76,7 +76,6 @@ class HomeFragment : Fragment() {
                         hideProgressBar()
                         response.message?.let { message ->
                             showSnackBarWithMessage(message)
-                            Log.e("ProductsFragment", "An error occurred: $message")
                         }
                     }
                     is Resource.Loading -> {
@@ -84,9 +83,6 @@ class HomeFragment : Fragment() {
                     }
                 }
             })
-
-            Log.e("HomeFragment", "${sessionManager.getUserId()}")
-            Log.e("HomeFragment", "${sessionManager.checkLogin()}")
 
             showLoginDialog.observe(viewLifecycleOwner, {
                 it?.let {
@@ -158,12 +154,11 @@ class HomeFragment : Fragment() {
             offscreenPageLimit = 3
             getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
-
             registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     sliderHandler.removeCallbacks(sliderRunnable)
-                    sliderHandler.postDelayed(sliderRunnable, 2000)
+                    sliderHandler.postDelayed(sliderRunnable, 4000)
                 }
             })
         }

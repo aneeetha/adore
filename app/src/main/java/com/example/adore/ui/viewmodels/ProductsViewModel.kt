@@ -10,6 +10,8 @@ import androidx.lifecycle.*
 import com.example.adore.AdoreApplication
 import com.example.adore.databsae.SessionManager
 import com.example.adore.models.dataClasses.CartItem
+import com.example.adore.models.dataClasses.Order
+import com.example.adore.models.dataClasses.OrderProductDetails
 import com.example.adore.models.enums.Category
 import com.example.adore.models.enums.Gender
 import com.example.adore.models.enums.ProductType
@@ -97,7 +99,6 @@ class ProductsViewModel(
                     sessionManager.getUserId()
                 )
             )
-        getCartItem()
     }
 
     fun removeCartItem(cartItemId: String) = viewModelScope.launch {
@@ -132,9 +133,17 @@ class ProductsViewModel(
         getFavlist()
     }
 
-    fun getTotalPrice(cartItems: List<CartItem>) {
+    fun getTotalPriceInCart(cartItems: List<CartItem>){
         var sum = 0F
         cartItems.forEach {
+            sum += it.quantity * it.sellingPrice
+        }
+        _totalPrice.value = sum
+    }
+
+    fun getTotalPriceInOrder(orderItems: List<OrderProductDetails>){
+        var sum = 0F
+        orderItems.forEach {
             sum += it.quantity * it.sellingPrice
         }
         _totalPrice.value = sum

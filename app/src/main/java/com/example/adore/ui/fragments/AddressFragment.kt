@@ -1,11 +1,13 @@
 package com.example.adore.ui.fragments
 
 import android.os.Bundle
+import android.os.Message
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -19,8 +21,7 @@ import com.example.adore.models.entities.Address
 import com.example.adore.repository.AdoreRepository
 import com.example.adore.ui.viewmodels.SharedUserProfileViewModel
 import com.example.adore.ui.viewmodels.factory.UserProfileViewModelProviderFactory
-import com.example.adore.util.Resource
-import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class AddressFragment : Fragment() {
 
@@ -48,53 +49,58 @@ class AddressFragment : Fragment() {
             viewModelFactory
         ).get(SharedUserProfileViewModel::class.java)
 
-        addressesAdapter.setOnItemClickListener {
-            findNavController().navigate(
-                AddressFragmentDirections.actionAddressFragmentToAddressDetailsFragment(
-                    it
+        addressesAdapter.apply {
+            setOnItemClickListener {
+                findNavController().navigate(
+                    AddressFragmentDirections.actionAddressFragmentToAddressDetailsFragment(
+                        it
+                    )
                 )
-            )
+            }
+
+            setOnDeleteIconClickListener {
+                showAlertDialogToDeleteAddress(it)
+            }
         }
 
         binding.apply {
             ivBackIcon.setOnClickListener {
                 findNavController().navigateUp()
             }
-        }
 
-        viewModelShared.apply {
-
-            binding.btnAddNewAddress.setOnClickListener {
-                insertNewAddress(
-                    Address(
-                        sessionManager.getUserId(),
-                        "address ${(0 until 10).random()}"
+            btnAddNewAddress.setOnClickListener {
+                findNavController().navigate(
+                    AddressFragmentDirections.actionAddressFragmentToAddressDetailsFragment(
+                        Address(
+                            sessionManager.getUserId(),
+                            "address ${(0 until 10).random()}"
+                        )
                     )
                 )
             }
-            getAddressesOfCurrentUser()
-                .observe(viewLifecycleOwner, {
-                    it?.let { addressesAdapter.submitList(it.addresses) }
-                        ?: Log.e("AddressFragment", "0")
-                })
-
-            callLastInsertedAddress.observe(viewLifecycleOwner, {
-                it?.let {
-                    getLastInsertedAddress().observe(viewLifecycleOwner, { data ->
-                        data?.let { address ->
-                            findNavController().navigate(
-                                AddressFragmentDirections.actionAddressFragmentToAddressDetailsFragment(
-                                    address
-                                )
-                            )
-                        }
-                    })
-                    doneCallingLastInsertedAddress()
-                }
-            })
         }
 
+        viewModelShared.getAddressesOfCurrentUser()
+            .observe(viewLifecycleOwner, {
+                it?.let { addressesAdapter.submitList(it.addresses) }
+                    ?: Log.e("AddressFragment", "0")
+            })
+
+
         return binding.root
+    }
+
+    private fun showAlertDialogToDeleteAddress(address: Address) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("ALERT!")
+            .setMessage("CONFIRM DELETE?")
+            .setPositiveButton("Yes") { _, _ ->
+                viewModelShared.deleteAddress(address)
+                showToast("Deleted Successfully!")
+            }
+            .setNeutralButton("No") { _, _ ->
+                showToast("Delete cancelled!")
+            }.show()
     }
 
     private fun setupRecyclerView() {
@@ -103,6 +109,10 @@ class AddressFragment : Fragment() {
             adapter = addressesAdapter
             layoutManager = LinearLayoutManager(activity)
         }
+    }
+
+    private fun showToast(message: String){
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
 }

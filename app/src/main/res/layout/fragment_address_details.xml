@@ -169,8 +169,6 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-
-
             </LinearLayout>
 
         </ScrollView>
@@ -178,28 +176,17 @@
         <Button
             android:id="@+id/btn_save_details"
             android:layout_width="0dp"
-            android:layout_height="70dp"
-            android:layout_margin="10dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginBottom="10dp"
             android:text="@string/save_address"
-            android:background="@drawable/button_bg"
             android:textColor="@color/white"
-            android:textSize="15sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_discard"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/btn_discard"
-            android:layout_width="0dp"
-            android:layout_height="70dp"
-            android:layout_margin="10dp"
-            android:text="@string/discard"
-            android:background="@drawable/button_bg"
-            android:textColor="@color/white"
-            android:textSize="15sp"
+            android:textSize="20sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/btn_save_details"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ProgressBar
             android:id="@+id/progress_bar"

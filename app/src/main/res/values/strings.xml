@@ -118,7 +118,7 @@
 
     <!--Address details-->
     <string name="address_deleted">Address discarded</string>
-    <string name="address_added">Address Inserted!</string>
+    <string name="address_saved">Address Saved!</string>
     <string name="deliver_to">Deliver to<font color="red">*</font></string>
     <string name="contact">Contact<font color="red">*</font></string>
     <string name="address_line">Address line<font color="red">*</font></string>

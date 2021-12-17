@@ -6,14 +6,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.adore.R
 import com.example.adore.databinding.FragmentUserProfileBinding
 import com.example.adore.databsae.AdoreDatabase
+import com.example.adore.models.entities.Address
 import com.example.adore.repository.AdoreRepository
 import com.example.adore.ui.viewmodels.SharedUserProfileViewModel
 import com.example.adore.ui.viewmodels.factory.UserProfileViewModelProviderFactory
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -60,6 +63,18 @@ class UserProfileFragment : Fragment() {
         viewModelShared.logoutCurrentUser()
         showSnackBarWithMessage("Logged Out!")
         findNavController().navigate(UserProfileFragmentDirections.actionUserProfileFragmentToHomeFragment())
+    }
+
+    fun showAlertDialogToLogout() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Alert!")
+            .setMessage("CONFIRM LOGOUT?")
+            .setPositiveButton("Yes") { _, _ ->
+                logout()
+            }
+            .setNeutralButton("Cancel") { _, _ ->
+                Toast.makeText(requireContext(), "Logout cancelled!", Toast.LENGTH_SHORT).show()
+            }.show()
     }
 
     private fun showSnackBarWithMessage(message: String) {
