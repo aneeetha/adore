@@ -59,7 +59,7 @@ class CartAdapter(
             tvAutoComplete.setText(currentItem.quantity.toString(), false)
 
 
-            tvAutoComplete.setOnItemClickListener { adapterView, view, i, l ->
+            tvAutoComplete.setOnItemClickListener { _, _, i, _ ->
                 arrayAdapter.getItem(i)?.let { quantity ->
                     if(quantityCheck(quantity.toInt())){
                         viewModel.cartItemQuantityChanged(quantity.toInt(), currentItem._id)

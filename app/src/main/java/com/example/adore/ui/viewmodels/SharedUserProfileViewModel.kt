@@ -26,10 +26,6 @@ import java.util.*
 
 class SharedUserProfileViewModel(app: Application, val adoreRepository: AdoreRepository): AndroidViewModel(app) {
 
-    private val _showSnackBarMessage = MutableLiveData<String?>()
-    val showSnackBarMessage
-        get() = _showSnackBarMessage
-
     var dob: Date? = null
     var gender: Gender? = null
 
@@ -47,10 +43,6 @@ class SharedUserProfileViewModel(app: Application, val adoreRepository: AdoreRep
     fun deleteAddress(address: Address) = viewModelScope.launch {
         adoreRepository.deleteAddress(address)
     }
-
-    fun getLastInsertedAddress() = adoreRepository.getLastInsertedAddress()
-
-
     fun getAddressesOfCurrentUser() = adoreRepository.getAddressesOfUser(sessionManager.getUserId())
 
     fun updateAddress(address: AddressDetailUpdate) = viewModelScope.launch {
@@ -63,10 +55,6 @@ class SharedUserProfileViewModel(app: Application, val adoreRepository: AdoreRep
 
     fun saveUserDetails(userId: Long, email: String?)=viewModelScope.launch {
         adoreRepository.updateUserDetails(UserDetailUpdate(userId, email, dob, gender))
-    }
-
-    fun doneShowingSnackBar(){
-        _showSnackBarMessage.value = null
     }
 
 }

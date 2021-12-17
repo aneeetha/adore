@@ -10,7 +10,6 @@ import androidx.lifecycle.*
 import com.example.adore.AdoreApplication
 import com.example.adore.databsae.SessionManager
 import com.example.adore.models.dataClasses.CartItem
-import com.example.adore.models.dataClasses.Order
 import com.example.adore.models.dataClasses.OrderProductDetails
 import com.example.adore.models.enums.Category
 import com.example.adore.models.enums.Gender
@@ -56,13 +55,13 @@ class ProductsViewModel(
     val navigateToOrderSuccessPage
         get() = _navigateToOrderSuccessPage
 
-    private val _cartSnackBarMessage = MutableLiveData<Resource<ApiTransactionResponse>?>()
-    val cartSnackBarMessage
-        get() = _cartSnackBarMessage
+    private val _cartToastMessage = MutableLiveData<Resource<ApiTransactionResponse>?>()
+    val cartToastMessage
+        get() = _cartToastMessage
 
-    private val _favoSnackBarMessage = MutableLiveData<Resource<ApiTransactionResponse>?>()
-    val favoSnackBarMessage
-        get() = _favoSnackBarMessage
+    private val _favoToastMessage = MutableLiveData<Resource<ApiTransactionResponse>?>()
+    val favoToastMessage
+        get() = _favoToastMessage
 
     private val sessionManager = SessionManager(app)
 
@@ -91,7 +90,7 @@ class ProductsViewModel(
         }
 
     fun cartItemQuantityChanged(quantity: Int, cartItemId: String) = viewModelScope.launch {
-        _cartSnackBarMessage.value =
+        _cartToastMessage.value =
             handleApiTransactionResponse(
                 adoreRepository.updateCart(
                     cartItemId,
@@ -99,10 +98,11 @@ class ProductsViewModel(
                     sessionManager.getUserId()
                 )
             )
+        getCartItem()
     }
 
     fun removeCartItem(cartItemId: String) = viewModelScope.launch {
-        _cartSnackBarMessage.value =
+        _cartToastMessage.value =
             handleApiTransactionResponse(
                 adoreRepository.removeCartItem(
                     cartItemId,
@@ -113,7 +113,7 @@ class ProductsViewModel(
     }
 
     fun placeOrder(addressId: Int) = viewModelScope.launch {
-        _cartSnackBarMessage.value = handleApiTransactionResponse(
+        _cartToastMessage.value = handleApiTransactionResponse(
             adoreRepository.placeOrder(
                 addressId,
                 sessionManager.getUserId()
@@ -123,7 +123,7 @@ class ProductsViewModel(
     }
 
     fun removeFavoItem(productId: String) = viewModelScope.launch {
-        _favoSnackBarMessage.value =
+        _favoToastMessage.value =
             handleApiTransactionResponse(
                 adoreRepository.removeFavoItem(
                     productId,
@@ -150,11 +150,11 @@ class ProductsViewModel(
     }
 
     fun doneShowingSnackBarInCart() {
-        _cartSnackBarMessage.value = null
+        _cartToastMessage.value = null
     }
 
     fun doneShowingSnackBarInFavo() {
-        _favoSnackBarMessage.value = null
+        _favoToastMessage.value = null
     }
 
     fun doneNavigatingToOrderSuccessPage() {

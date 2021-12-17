@@ -1,11 +1,11 @@
 package com.example.adore.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.adore.R
@@ -43,7 +43,7 @@ class FavoFragment : Fragment() {
         }
 
         viewModel.apply {
-            favoSnackBarMessage.observe(viewLifecycleOwner, { response ->
+            favoToastMessage.observe(viewLifecycleOwner, { response ->
                 response?.data?.let {
                     showSnackBarWithMessage(it.message)
                     doneShowingSnackBarInFavo()
@@ -55,7 +55,7 @@ class FavoFragment : Fragment() {
                     is Resource.Success -> {
                         showRecyclerView()
                         response.data?.let { productsResponse ->
-                            favoProductAdapter.differ.submitList(productsResponse.products)
+                            favoProductAdapter.submitList(productsResponse.products)
                         }
                     }
                     is Resource.Empty -> showNoResultFound()
@@ -98,11 +98,7 @@ class FavoFragment : Fragment() {
     }
 
     private fun showSnackBarWithMessage(message: String) {
-        Snackbar.make(
-            requireActivity().findViewById(android.R.id.content),
-            message,
-            Snackbar.LENGTH_SHORT
-        ).show()
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     private fun showNoResultFound(){

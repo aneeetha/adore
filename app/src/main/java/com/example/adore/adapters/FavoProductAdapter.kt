@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.adore.databinding.FavoProductBinding
@@ -17,7 +18,7 @@ import com.example.adore.util.Constants
 
 class FavoProductAdapter(
     val viewModel: ProductsViewModel
-    ): RecyclerView.Adapter<FavoProductAdapter.FavoProductViewHolder>() {
+    ): ListAdapter<Product, FavoProductAdapter.FavoProductViewHolder>(FavoProductDifferCallback()) {
 
     class FavoProductViewHolder(val binding: FavoProductBinding): RecyclerView.ViewHolder(binding.root){
         companion object{
@@ -29,7 +30,7 @@ class FavoProductAdapter(
         }
     }
 
-    private val differCallback = object: DiffUtil.ItemCallback<Product>(){
+    class FavoProductDifferCallback:  DiffUtil.ItemCallback<Product>(){
         override fun areItemsTheSame(
             oldItem: Product,
             newItem: Product
@@ -39,12 +40,10 @@ class FavoProductAdapter(
 
     }
 
-    val differ = AsyncListDiffer(this, differCallback)
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = FavoProductViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: FavoProductViewHolder, position: Int) {
-        val product = differ.currentList[position]
+        val product = getItem(position)
         holder.binding.apply {
             Glide.with(holder.itemView).load(product.imageUrl).into(ivProductImage)
             tvProductName.text = product.name
@@ -76,5 +75,4 @@ class FavoProductAdapter(
         onItemClickListener = listener
     }
 
-    override fun getItemCount() = differ.currentList.size
 }

@@ -4,7 +4,8 @@
     android:id="@+id/tv_address_type_list"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/text_view_bg"
-    android:ellipsize="end"
+    android:layout_margin="10dp"
+    android:textAlignment="center"
+    android:background="@color/white"
     android:text="@string/order_id"
     style="@style/ListStyle"/>

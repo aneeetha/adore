@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -83,12 +84,6 @@ class UserDetailsFragment : Fragment() {
         })
 
         viewModelShared.apply {
-            showSnackBarMessage.observe(viewLifecycleOwner, {
-                it?.let {
-                    showSnackBarWithMessage(it)
-                    doneShowingSnackBar()
-                }
-            })
 
             getUserDetails().observe(viewLifecycleOwner, { user ->
                 this@UserDetailsFragment.currentUser = user
@@ -106,7 +101,7 @@ class UserDetailsFragment : Fragment() {
                         }
                     }
                 }else{
-                    showSnackBarWithMessage("Error loading data!")
+                    showToastMessage("Error loading data!")
                     findNavController().navigateUp()
                 }
             })
@@ -120,20 +115,20 @@ class UserDetailsFragment : Fragment() {
             if (validateEmail()) {
                 val email = if (tilEtEmailId.editText?.text.toString().isEmpty()) null else tilEtEmailId.editText?.text.toString()
                 viewModelShared.saveUserDetails(currentUser.userId, email)
-                showSnackBarWithMessage("Details saved successfully!")
+                showToastMessage("Details saved successfully!")
                 findNavController().navigateUp()
             }
         }
     }
 
-    private fun showAlertDialogToSave() {
+    private fun showAlertDialogToSave(){
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Action Required!")
             .setPositiveButton("Save") { _, _ ->
                 saveDetails()
             }
             .setNeutralButton("Don't Save") { _, _ ->
-                showSnackBarWithMessage("Changes not saved!")
+                showToastMessage("Changes not saved!")
                 findNavController().navigateUp()
             }.show()
     }
@@ -141,7 +136,7 @@ class UserDetailsFragment : Fragment() {
     private fun showDatePickerDialog() {
         DatePickerDialog(
             requireContext(),
-            { p0, year, month, day ->
+            { _, year, month, day ->
                 val newDate: Calendar = Calendar.getInstance()
                 newDate.set(year, month, day)
                 viewModelShared.dob = newDate.time
@@ -160,12 +155,8 @@ class UserDetailsFragment : Fragment() {
 
     private fun getDateFormatted(date: Date) = DateFormat.getDateInstance().format(date)
 
-    private fun showSnackBarWithMessage(message: String) {
-        Snackbar.make(
-            requireActivity().findViewById(android.R.id.content),
-            message,
-            Snackbar.LENGTH_SHORT
-        ).show()
+    private fun showToastMessage(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     private fun validateEmail() = with(binding.tilEtEmailId) {

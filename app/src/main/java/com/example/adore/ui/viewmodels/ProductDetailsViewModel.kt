@@ -63,13 +63,13 @@ class ProductDetailsViewModel(
     val navigateToSearchFragment
         get() = _navigateToSearchFragment
 
-    private var _showSnackBar = MutableLiveData<Boolean?>()
-    val showSnackBar
-        get() = _showSnackBar
+    private var _showToastToChooseSize = MutableLiveData<Boolean?>()
+    val showToastToChooseSize
+        get() = _showToastToChooseSize
 
-    private var _snackBarMessage = MutableLiveData<Resource<ApiTransactionResponse>?>()
-    val snackBarMessage: LiveData<Resource<ApiTransactionResponse>?>
-        get() = _snackBarMessage
+    private var _toastMessage = MutableLiveData<Resource<ApiTransactionResponse>?>()
+    val toastMessage: LiveData<Resource<ApiTransactionResponse>?>
+        get() = _toastMessage
 
 
     fun addToFavlistClicked() {
@@ -78,7 +78,7 @@ class ProductDetailsViewModel(
 
     fun addToFavlist() {
         viewModelScope.launch {
-            _snackBarMessage.value =
+            _toastMessage.value =
                 handleApiTransactionResponse(repository.addProductToFav(product._id, sessionManager.getUserId()))
             doneActionForFavoButton()
         }
@@ -91,7 +91,7 @@ class ProductDetailsViewModel(
             } else {
                 _addToCartClicked.value = true
                 viewModelScope.launch {
-                    _snackBarMessage.value = handleApiTransactionResponse(
+                    _toastMessage.value = handleApiTransactionResponse(
                         repository.addItemToCart(
                             product._id,
                             it.name,
@@ -102,12 +102,12 @@ class ProductDetailsViewModel(
                     )
                 }
             }
-        } ?: setShowSnackBar()
+        } ?: setShowToast()
     }
 
 
-    fun doneShowingSnackBarWithMessage() {
-        _snackBarMessage.value = null
+    fun doneShowingToastMessage() {
+        _toastMessage.value = null
     }
 
     private fun doneActionForFavoButton() {
@@ -142,12 +142,12 @@ class ProductDetailsViewModel(
         _navigateToSearchFragment.value = false
     }
 
-    private fun setShowSnackBar() {
-        _showSnackBar.value = true
+    private fun setShowToast() {
+        _showToastToChooseSize.value = true
     }
 
-    fun doneShowingSnackBar() {
-        _showSnackBar.value = null
+    fun doneShowingToast() {
+        _showToastToChooseSize.value = null
     }
 
 
@@ -166,7 +166,7 @@ class ProductDetailsViewModel(
             Resource.Error(message)
         }
 
-    fun getFavlist(userId: Long) = viewModelScope.launch {
+    private fun getFavlist(userId: Long) = viewModelScope.launch {
         safeGetFavlistCall(userId)
     }
 
@@ -188,7 +188,7 @@ class ProductDetailsViewModel(
     }
 
     fun removeFavoItem() = viewModelScope.launch {
-        _snackBarMessage.value =
+        _toastMessage.value =
             handleApiTransactionResponse(repository.removeFavoItem(product._id, sessionManager.getUserId()))
         doneActionForFavoButton()
     }

@@ -10,7 +10,6 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.adore.AdoreApplication
 import com.example.adore.databsae.SessionManager
-import com.example.adore.models.responses.CurrentUserResponse
 import com.example.adore.models.responses.ProductResponse
 import com.example.adore.repository.AdoreRepository
 import com.example.adore.util.Resource
@@ -31,9 +30,9 @@ class HomeViewModel(
     val showLoginDialog
         get() = _showLoginDialog
 
-    private val _showSnackBarMessage = MutableLiveData<String?>()
-    val showSnackBarMessage
-        get() = _showSnackBarMessage
+    private val _showToastMessage = MutableLiveData<String?>()
+    val showToastMessage
+        get() = _showToastMessage
 
     init {
         getProductsWithCustomLabel()
@@ -114,7 +113,7 @@ class HomeViewModel(
     fun validateUser(mobileNo: String, password: String) = viewModelScope.launch {
         adoreRepository.getUserWithMobileNo(mobileNo)?.let {
             if (it.password == password) {
-                _showSnackBarMessage.value = "Logged in!"
+                _showToastMessage.value = "Logged in!"
                 it.apply {
                     val sessionManager = SessionManager(getApplication())
                     sessionManager.createLoginSession(
@@ -127,11 +126,11 @@ class HomeViewModel(
                     Log.e("HomeViewModel", "${sessionManager.getUserDetailsFromSession()}")
                 }
             } else {
-                _showSnackBarMessage.value = "Incorrect password!"
+                _showToastMessage.value = "Incorrect password!"
                 _showLoginDialog.value = true
             }
         } ?: run {
-            _showSnackBarMessage.postValue("Mobile no is not registered!")
+            _showToastMessage.postValue("Mobile no is not registered!")
             _showLoginDialog.value = true
         }
     }
@@ -140,7 +139,7 @@ class HomeViewModel(
         _showLoginDialog.value = null
     }
 
-    fun doneShowingSnackBarMessage() {
-        _showSnackBarMessage.value = null
+    fun doneShowingToastMessage() {
+        _showToastMessage.value = null
     }
 }

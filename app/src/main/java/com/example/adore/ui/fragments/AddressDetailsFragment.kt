@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -21,7 +22,6 @@ import com.example.adore.repository.AdoreRepository
 import com.example.adore.ui.viewmodels.SharedUserProfileViewModel
 import com.example.adore.ui.viewmodels.factory.UserProfileViewModelProviderFactory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 
 class AddressDetailsFragment : Fragment() {
@@ -69,15 +69,10 @@ class AddressDetailsFragment : Fragment() {
                 saveDetails(currentAddress)
             }
 
-//            btnDiscard.setOnClickListener {
-//                viewModelShared.deleteAddress(currentAddress)
-//                showSnackBarWithMessage(getString(R.string.address_deleted))
-//                findNavController().navigateUp()
-//            }
-
             ivBackIcon.setOnClickListener {
                 showAlertDialogToSave(currentAddress)
             }
+
             requireActivity().onBackPressedDispatcher.addCallback(
                 viewLifecycleOwner,
                 object : OnBackPressedCallback(true) {
@@ -91,16 +86,23 @@ class AddressDetailsFragment : Fragment() {
     }
 
     private fun showAlertDialogToSave(currentAddress: Address) {
-        MaterialAlertDialogBuilder(requireContext())
+        val dialogToSave = MaterialAlertDialogBuilder(requireContext())
             .setTitle("Action Required!")
             .setPositiveButton("Save") { _, _ ->
                 saveDetails(currentAddress)
             }
-            .setNeutralButton("Discard") { _, _ ->
-                viewModelShared.deleteAddress(currentAddress)
-                showSnackBarWithMessage("Address discarded!")
+        currentAddress.addressId?.let {
+            dialogToSave.setNeutralButton("Don't Save") { _, _ ->
+                showToastMessage("Changes not saved")
                 findNavController().navigateUp()
             }.show()
+        } ?: run {
+            dialogToSave.setNeutralButton("Discard") { _, _ ->
+                viewModelShared.deleteAddress(currentAddress)
+                showToastMessage("Address discarded!")
+                findNavController().navigateUp()
+            }.show()
+        }
     }
 
     private fun allFieldsValid(): Boolean {
@@ -157,7 +159,7 @@ class AddressDetailsFragment : Fragment() {
                         etPincode.text.toString().toInt()
                     )
                 )
-                showSnackBarWithMessage(getString(R.string.address_saved))
+                showToastMessage(getString(R.string.address_saved))
                 findNavController().navigateUp()
             }
         }
@@ -179,12 +181,8 @@ class AddressDetailsFragment : Fragment() {
         }
     }
 
-    private fun showSnackBarWithMessage(message: String) {
-        Snackbar.make(
-            requireActivity().findViewById(android.R.id.content),
-            message,
-            Snackbar.LENGTH_SHORT
-        ).show()
+    private fun showToastMessage(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
 

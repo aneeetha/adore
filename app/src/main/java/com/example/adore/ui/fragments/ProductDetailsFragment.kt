@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -130,17 +131,17 @@ class ProductDetailsFragment : Fragment() {
                 }
             })
 
-            snackBarMessage.observe(viewLifecycleOwner, { response ->
+            toastMessage.observe(viewLifecycleOwner, { response ->
                 response?.data?.let { data ->
-                    showSnackBarMessage(data.message)
-                    doneShowingSnackBarWithMessage()
+                    showToastMessage(data.message)
+                    doneShowingToastMessage()
                 }
             })
 
-            viewModel.showSnackBar.observe(viewLifecycleOwner, Observer {
+            viewModel.showToastToChooseSize.observe(viewLifecycleOwner, Observer {
                 it?.let{
-                    showSnackBarMessage(getString(R.string.size_not_chosen_message))
-                    doneShowingSnackBar()
+                    showToastMessage(getString(R.string.size_not_chosen_message))
+                    doneShowingToast()
                 }
             })
 
@@ -158,7 +159,7 @@ class ProductDetailsFragment : Fragment() {
                     is Resource.Error -> {
                         hideProgressBar()
                         response.message?.let { message ->
-                            showSnackBarMessage(message)
+                            showToastMessage(message)
                         }
                     }
                     is Resource.Loading -> {
@@ -180,12 +181,8 @@ class ProductDetailsFragment : Fragment() {
         }
     }
 
-    private fun showSnackBarMessage(message: String){
-        Snackbar.make(
-            requireActivity().findViewById(android.R.id.content),
-            message,
-            Snackbar.LENGTH_SHORT
-        ).show()
+    private fun showToastMessage(message: String){
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     private fun hideProgressBar() {

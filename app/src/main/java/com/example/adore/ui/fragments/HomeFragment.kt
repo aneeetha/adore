@@ -3,7 +3,6 @@ package com.example.adore.ui.fragments
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -71,11 +70,11 @@ class HomeFragment : Fragment() {
                             homeSliderAdapter.differ.submitList(sliderItems)
                         }
                     }
-                    is Resource.Empty ->hideProgressBar()
+                    is Resource.Empty -> hideProgressBar()
                     is Resource.Error -> {
                         hideProgressBar()
                         response.message?.let { message ->
-                            showSnackBarWithMessage(message)
+                            showToastMessage(message)
                         }
                     }
                     is Resource.Loading -> {
@@ -105,16 +104,20 @@ class HomeFragment : Fragment() {
                 }
             })
 
-            showSnackBarMessage.observe(viewLifecycleOwner, {
+            showToastMessage.observe(viewLifecycleOwner, {
                 it?.let {
-                    showSnackBarWithMessage(it)
-                    doneShowingSnackBarMessage()
+                    showToastMessage(it)
+                    doneShowingToastMessage()
                 }
             })
         }
 
         homeSliderAdapter.setOnItemClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(it))
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToProductDetailsFragment(
+                    it
+                )
+            )
         }
         return binding.root
     }
@@ -123,30 +126,26 @@ class HomeFragment : Fragment() {
         findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSearchFragment())
     }
 
-    private fun hideProgressBar(){
+    private fun hideProgressBar() {
         binding.apply {
             progressBar.visibility = View.INVISIBLE
             tvLabel.visibility = View.VISIBLE
         }
     }
 
-    private fun showProgressBar(){
+    private fun showProgressBar() {
         binding.apply {
             progressBar.visibility = View.VISIBLE
             tvLabel.visibility = View.INVISIBLE
         }
     }
 
-    private fun showSnackBarWithMessage(message: String) {
-        Snackbar.make(
-            requireActivity().findViewById(android.R.id.content),
-            message,
-            Snackbar.LENGTH_SHORT
-        ).show()
+    private fun showToastMessage(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun setUpViewPager(){
-        with(binding.homeViewPager){
+    private fun setUpViewPager() {
+        with(binding.homeViewPager) {
             homeSliderAdapter = HomeSliderAdapter(this)
             adapter = homeSliderAdapter
             clipToPadding = false
@@ -154,7 +153,7 @@ class HomeFragment : Fragment() {
             offscreenPageLimit = 3
             getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
-            registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     sliderHandler.removeCallbacks(sliderRunnable)

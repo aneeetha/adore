@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
@@ -61,7 +62,7 @@ class CartFragment : Fragment() {
                         hideProgressBar()
                         hideViewsAndActions()
                         response.message?.let { message ->
-                            showSnackBarWithMessage(message)
+                            showToast(message)
                         }
                     }
                     is Resource.Loading -> {
@@ -71,9 +72,9 @@ class CartFragment : Fragment() {
 
             })
 
-            cartSnackBarMessage.observe(viewLifecycleOwner, { response ->
+            cartToastMessage.observe(viewLifecycleOwner, { response ->
                 response?.data?.let {
-                    showSnackBarWithMessage(it.message)
+                    showToast(it.message)
                     doneShowingSnackBarInCart()
                 }
             })
@@ -120,18 +121,18 @@ class CartFragment : Fragment() {
         viewModel.apply {
             getAddressesOfCurrentUser().observe(viewLifecycleOwner, {
                 it?.let {
-                    val addressList = it.addresses.map { address ->
-                            address.addressType
-                    } as MutableList<String>
-                    addressList.add(0, "None")
-                    Log.e(
-                            "CartFragment",
-                            "addresses with none $addressList"
-                    )
-                    showConfirmationDialog(
-                            addressList.toTypedArray(),
-                            it.addresses
-                    )
+                    it.addresses.map { address ->
+                        address.addressType
+                    }.apply {
+                        if (size > 0) {
+                            showConfirmationDialog(
+                                this.toTypedArray(),
+                                it.addresses
+                            )
+                        } else {
+                            showDialogToAddNewAddress()
+                        }
+                    }
                 }
             })
         }
@@ -158,9 +159,11 @@ class CartFragment : Fragment() {
 
     private fun showProgressBar() {
         hideNoResultFound()
-        hideViewsAndActions()
         binding.apply {
             progressBar.visibility = View.VISIBLE
+            tvTotalPrice.visibility = View.INVISIBLE
+            tvDeliveryCharge.visibility = View.INVISIBLE
+
         }
     }
 
@@ -192,35 +195,41 @@ class CartFragment : Fragment() {
         }
     }
 
-    private fun showConfirmationDialog(addressTypes: Array<String>, address: List<Address>): Int {
+    private fun showConfirmationDialog(addressTypes: Array<String>, address: List<Address>){
         var selectedAddressIndex = 0
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Select Delivery Address")
             .setSingleChoiceItems(addressTypes, selectedAddressIndex) { _, which ->
+                Log.e("CartFragment", "$which")
                 selectedAddressIndex = which
             }
             .setNeutralButton("Add New") { _, _ ->
-                findNavController().navigate(CartFragmentDirections.actionCartFragmentToAddressFragment())
+                navigateToAddressFragment()
             }
             .setPositiveButton("Confirm") { _, _ ->
-                if(selectedAddressIndex>0){
-                    showSnackBarWithMessage("Address chosen!")
-                    viewModel.placeOrder(address[selectedAddressIndex-1].addressId!!)
-                }else{
-                    showConfirmationDialog(addressTypes, address)
-                    showSnackBarWithMessage("Please choose valid address to continue!")
-                }
+                showToast("Address chosen!")
+                viewModel.placeOrder(address[selectedAddressIndex].addressId!!)
             }
             .show()
-        Log.e("CartFragment", "addresses with none ${addressTypes.size}")
-        return selectedAddressIndex
     }
 
-    private fun showSnackBarWithMessage(message: String) {
-        Snackbar.make(
-            requireActivity().findViewById(android.R.id.content),
-            message,
-            Snackbar.LENGTH_SHORT
-        ).show()
+    private fun showDialogToAddNewAddress() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Action Required!")
+            .setMessage("You have no address saved!")
+            .setPositiveButton("Add new address") { _, _ ->
+                navigateToAddressFragment()
+            }
+            .setNeutralButton("Cancel") { _, _ ->
+                showToast("Cancelled!")
+            }.show()
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun navigateToAddressFragment(){
+        findNavController().navigate(CartFragmentDirections.actionCartFragmentToAddressFragment())
     }
 }
